@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- *   MissSubscriber.php
+ * A subscriber on cache miss events.
  *
  * @author: marand
  *
@@ -37,15 +37,15 @@ class MissSubscriber extends BaseEventSubscriber {
     }
   }
 
-  public function afterGetMultiple($cids) {
+  public function afterGetMultiple($missed_cids) {
     $requested = $this->multipleCids;
     $this->multipleCids = array();
-    $missed_cids = array_diff($requested, $cids);
+
     if (!empty($missed_cids)) {
       $ret = array(
         'subscriber' => static::NAME,
         'op' => 'get_multiple',
-        'requested' => $cids,
+        'requested' => $requested,
         'misses' => $missed_cids,
       );
       echo serialize($ret) . "\n";

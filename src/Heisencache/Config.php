@@ -69,16 +69,46 @@ class Config {
   }
 
   /**
+   * Return an instance of a cache handler for the requested bin.
+   *
+   * @param string $bin
+   *
+   * @return \DrupalDatabaseInterface
+   */
+  public function getCacheHandler($bin) {
+    if (!isset($this->actual_bins[$bin])) {
+      $this->actual_bins[$bin] = new $this->defaultClass($bin);
+    }
+
+    $ret = $this->actual_bins[$bin];
+    return $ret;
+  }
+
+  /**
    * @return EventEmitter
    */
   public function getEmitter() {
     return $this->emitter;
   }
 
+  /**
+   * Return the directory in which the Heisencache classes are located.
+   *
+   * @return string
+   */
   public function getSrcDir() {
     return __DIR__;
   }
 
+  /**
+   * Return the singleton instance of the Heisencache configuration on the site.
+   *
+   * @param array $conf
+   *   The original site settings, prior to override. Only needed for initial
+   *   instance creation, ignored in later calls.
+   *
+   * @return \OSInet\Heisencache\Config
+   */
   public static function instance($conf = array()) {
     if (!isset(static::$instance)) {
       static::$instance = new static($conf);
@@ -86,6 +116,11 @@ class Config {
     return static::$instance;
   }
 
+  /**
+   * Initialize the default cache class with Heisencache and save the original.
+   *
+   * @return string
+   */
   protected function overrideDefaultCacheClass() {
     $this->defaultClass = isset($this->conf[self::VAR_CACHE_DEFAULT_CLASS])
       ? $this->conf[self::VAR_CACHE_DEFAULT_CLASS]
@@ -94,13 +129,21 @@ class Config {
     return static::CACHE_CLASS;
   }
 
+  /**
+   * Save the original cache handler definitions and return Heisencache for them.
+   *
+   * Instantiate the original cache handlers for later use.
+   *
+   * @return \string[]
+   *   A by-bin-name hash of the Heisencache class name.
+   */
   protected function overrideCacheClasses() {
     $len = strlen(self::VAR_CACHE_CLASS_PREFIX);
 
     foreach ($this->conf as $bin => $class) {
       if (!strncmp($bin, self::VAR_CACHE_CLASS_PREFIX, $len)) {
         $this->visible_bins[$bin] = static::CACHE_CLASS;
-        $this->actual_bins[$bin] = $class;
+        $this->actual_bins[$bin] = new $class($bin);
       }
     }
 
@@ -110,7 +153,7 @@ class Config {
   /**
    * Set up cache overrides
    *
-   * - insert Heisencache\Cache as the sole cache class
+   * - define Heisencache\Cache as the sole cache class
    * - register pre-existing cache configurations into the Cache instance
    *   - cache_class_*
    *   - cache_class_default_class

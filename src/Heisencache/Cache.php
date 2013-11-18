@@ -20,10 +20,10 @@ class Cache implements \DrupalCacheInterface {
   protected $bin;
 
   /**
-   * @var \DrupalCacheInterface[]
-   *   A bin-indexed hash of cache classes.
+   * @var \DrupalCacheInterface string
+   *   The cache instance actually implementing caching for this bin.
    */
-  protected $handlers;
+  protected $handler;
 
   /**
    * @var \OSInet\Heisencache\EventEmitter
@@ -37,7 +37,9 @@ class Cache implements \DrupalCacheInterface {
    */
   function __construct($bin) {
     $this->bin = $bin;
-    $this->emitter = Config::instance()->getEmitter();
+    $config = Config::instance();
+    $this->handler = $config->getCacheHandler($bin);
+    $this->emitter = $config->getEmitter();
     $this->emitter->emit('onCacheConstruct', $bin);
   }
 
@@ -57,7 +59,7 @@ class Cache implements \DrupalCacheInterface {
    */
   function get($cid) {
     $this->emitter->emit('beforeGet', $cid);
-    $result = FALSE;
+    $result = $this->handler->get($cid);
     $this->emitter->emit('afterGet', $cid, $result);
     return FALSE;
   }
@@ -75,7 +77,7 @@ class Cache implements \DrupalCacheInterface {
    */
   function getMultiple(&$cids) {
     $this->emitter->emit('beforeGetMultiple', $cids);
-    $result = array();
+    $result = $this->handler->getMultiple($cids);
     $this->emitter->emit('afterGetMultiple', $cids, $result);
     return $result;
   }
@@ -100,6 +102,7 @@ class Cache implements \DrupalCacheInterface {
    */
   function set($cid, $data, $expire = CACHE_PERMANENT) {
     $this->emitter->emit('beforeSet', $cid, $data, $expire);
+    $this->handler->set($cid, $data, $expire);
     $this->emitter->emit('afterSet', $cid, $data, $expire);
   }
 
@@ -121,6 +124,7 @@ class Cache implements \DrupalCacheInterface {
    */
   function clear($cid = NULL, $wildcard = FALSE) {
     $this->emitter->emit('beforeClear', $cid, $wildcard);
+    $this->handler->clear($cid, $wildcard);
     $this->emitter->emit('afterClear', $cid, $wildcard);
   }
 
@@ -135,7 +139,7 @@ class Cache implements \DrupalCacheInterface {
    */
   function isEmpty() {
     $this->emitter->emit('beforeIsEmpty');
-    $result = TRUE;
+    $result = $this->handler->isEmpty();
     $this->emitter->emit('afterIsEmpty', $result);
     return $result;
   }

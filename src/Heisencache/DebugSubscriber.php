@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- *   DebugSubscriber.php
+ * An universal subscriber for debug purposes.
  *
  * @author: marand
  *
