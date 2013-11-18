@@ -5,6 +5,8 @@
  *
  * @author: marand
  *
+ * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ *
  * @license General Public License version 2 or later
  */
 
@@ -19,14 +21,21 @@ namespace OSInet\Heisencache;
  */
 interface EventSubscriberInterface {
   /**
-   * @param string $name
+   * @param string $eventName
    *
    * @return void
    */
-  public function addEvent($name);
+  public function addEvent($eventName);
 
   /**
    * @return string[]
    */
   public function getEvents();
+
+  /**
+   * @param string $eventName
+   *
+   * @return void
+   */
+  public function removeEvent($eventName);
 }

@@ -5,6 +5,8 @@
  *
  * @author: marand
  *
+ * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ *
  * @license General Public License version 2 or later
  */
 
@@ -12,17 +14,18 @@ namespace OSInet\Heisencache;
 
 
 abstract class BaseEventSubscriber implements EventSubscriberInterface {
-  /**
-   * @var string
-   */
-  protected $name;
 
-  public function __construct($name) {
-    $this->name = $name;
+  protected $events = array();
+
+  public function addEvent($eventName) {
+    $this->events[$eventName] = TRUE;
   }
 
-  public function getName() {
-    return $this->name;
+  public function getEvents() {
+    return array_keys($this->events);
   }
 
+  public function removeEvent($eventName) {
+    unset($this->events[$eventName]);
+  }
 }

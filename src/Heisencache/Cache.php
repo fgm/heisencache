@@ -5,6 +5,8 @@
  *
  * @author: marand
  *
+ * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ *
  * @license General Public License version 2 or later
  */
 
@@ -33,9 +35,10 @@ class Cache implements \DrupalCacheInterface {
    *
    * So we have to fetch the configuration instead of receiving it.
    */
-  function __construct() {
+  function __construct($bin) {
+    $this->bin = $bin;
     $this->emitter = Config::instance()->getEmitter();
-    $this->emitter->emit('onCacheConstruct');
+    $this->emitter->emit('onCacheConstruct', $bin);
   }
 
   /**
@@ -127,7 +130,7 @@ class Cache implements \DrupalCacheInterface {
    * A cache bin is considered empty if it does not contain any valid data for
    * any cache ID.
    *
-   * @return
+   * @return bool
    *   TRUE if the cache bin specified is empty.
    */
   function isEmpty() {

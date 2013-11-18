@@ -5,11 +5,12 @@
  *
  * @author: marand
  *
+ * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ *
  * @license General Public License version 2 or later
  */
 
 namespace OSInet\Heisencache;
-
 
 class EventEmitter {
   /**
@@ -25,7 +26,6 @@ class EventEmitter {
     if (!isset($this->subscribers[$eventName][$hash])) {
       if (is_callable(array($subscriber, $eventName))) {
         $this->subscribers[$eventName][$hash] = $subscriber;
-        $subscriber->addEvent($eventName);
       }
       else {
         throw new \InvalidArgumentException(strtr("Trying to subscribe to unsupported event @eventName", $nameArg));
@@ -58,7 +58,19 @@ class EventEmitter {
     foreach ($this->subscribers[$eventName] as $subscriber) {
       call_user_func_array(array($subscriber, $eventName), $args);
     }
-
     return count($this->subscribers[$eventName]);
+  }
+
+  /**
+   * Register an event subscriber with the event emitter.
+   *
+   * @param EventSubscriberInterface $subscriber
+   *
+   * @return void
+   */
+  public function register(EventSubscriberInterface $subscriber) {
+    foreach ($subscriber->getEvents() as $eventName) {
+      $this->on($eventName, $subscriber);
+    }
   }
 }

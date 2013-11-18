@@ -5,6 +5,8 @@
  *
  * @author: marand
  *
+ * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ *
  * @license General Public License version 2 or later
  */
 
@@ -71,6 +73,10 @@ class Config {
    */
   public function getEmitter() {
     return $this->emitter;
+  }
+
+  public function getSrcDir() {
+    return __DIR__;
   }
 
   public static function instance($conf = array()) {

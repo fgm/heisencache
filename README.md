@@ -6,17 +6,23 @@ Theory of operation
 
 Heisencache is a Drupal 7 cache plugin. As such, it is implemented within a
 module package and is not a module itself. The sole role of the module is to
-provide an administrative UI.
+provide an administrative UI at some point.
 
 Heisencache works by intercepting ALL cache settings and inserting itself as a
 transparent proxy in front of the other caches, which it invokes on behalf of
 the client code invoking cache operations.
 
+The plugin can be configured per-site by implementing a settings.heisencache.inc
+file in the site settings directory. Copy default.settings.heisencache.inc to
+the site settings directory, and edit it to add configuration of your choice,
+following the examples in that file.
+
+
 Configuration example
 ---------------------
 
 In order to do this, the Heisencache cache plugin must be inserted into the
-site settings file (settings.php) as the last cache setting. Typicall, this
+site settings file (settings.php) as the last cache setting. Typically, this
 means settings should look like this, assuming Redis is used as the main cache
 plugin.
 
