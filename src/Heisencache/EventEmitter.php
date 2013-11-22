@@ -18,6 +18,14 @@ class EventEmitter {
    */
   protected $subscribers;
 
+  /**
+   * Bind a subscriber to an event name.
+   *
+   * @param string $eventName
+   * @param \OSInet\Heisencache\EventSubscriberInterface $subscriber
+   *
+   * @throws \InvalidArgumentException
+   */
   public function on($eventName, EventSubscriberInterface $subscriber) {
     $hash = spl_object_hash($subscriber);
     $nameArg = array(
@@ -35,7 +43,9 @@ class EventEmitter {
       // Nothing to do: the hash has not been recycled and is already subscribed.
     }
     else {
-      throw new \InvalidArgumentException(strtr("Trying two register a new subscriber with an existing object hash on the same event (@eventName).", $nameArg));
+      // This should not happen: hashes are only recycled when objects are
+      // released, so a duplicated hash with different objects means an error.
+      throw new \InvalidArgumentException(strtr("Trying to register a new subscriber with an existing object hash on the same event (@eventName).", $nameArg));
     }
   }
 
@@ -62,7 +72,7 @@ class EventEmitter {
   }
 
   /**
-   * Register an event subscriber with the event emitter.
+   * Register an event subscriber with the event emitter for all its events..
    *
    * @param EventSubscriberInterface $subscriber
    *
@@ -72,5 +82,20 @@ class EventEmitter {
     foreach ($subscriber->getEvents() as $eventName) {
       $this->on($eventName, $subscriber);
     }
+  }
+
+  /**
+   * Return the list of subscribers for a given event.
+   *
+   * @param string $eventName
+   *
+   * @return \OSInet\Heisencache\EventSubscriberInterface[]
+   */
+  public function getSubscribersByEventName($eventName) {
+    $ret = isset($this->subscribers[$eventName])
+      ? $this->subscribers[$eventName]
+      : array();
+
+    return $ret;
   }
 }

@@ -12,21 +12,8 @@
 
 use OSInet\Heisencache\Config;
 
-/**
- * Load required files without using an autoloader.
- */
-function heisencache_require() {
-  $srcDir = __DIR__ . '/src/Heisencache';
+require_once __DIR__ . '/classloader.inc';
 
-  // Load cache-related classes.
-  require_once "$srcDir/EventSubscriberInterface.php";
-  require_once "$srcDir/BaseEventSubscriber.php";
-  require_once "$srcDir/EventEmitter.php";
-  require_once "$srcDir/Cache.php";
-  require_once "$srcDir/Config.php";
-}
-
-heisencache_require();
 $config = Config::instance($GLOBALS['conf']);
 $GLOBALS['conf'] = $config->override();
 unset($config);

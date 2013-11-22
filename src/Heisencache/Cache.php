@@ -12,7 +12,11 @@
 
 namespace OSInet\Heisencache;
 
-
+/**
+ * Class Cache
+ *
+ * @package OSInet\Heisencache
+ */
 class Cache implements \DrupalCacheInterface {
   /**
    * @var
