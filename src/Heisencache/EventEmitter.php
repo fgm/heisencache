@@ -39,13 +39,17 @@ class EventEmitter {
         throw new \InvalidArgumentException(strtr("Trying to subscribe to unsupported event @eventName", $nameArg));
       }
     }
-    elseif ($subscriber === $this->subscribers[$eventName][$hash]) {
-      // Nothing to do: the hash has not been recycled and is already subscribed.
-    }
-    else {
-      // This should not happen: hashes are only recycled when objects are
-      // released, so a duplicated hash with different objects means an error.
-      throw new \InvalidArgumentException(strtr("Trying to register a new subscriber with an existing object hash on the same event (@eventName).", $nameArg));
+    else  {
+      if ($subscriber === $this->subscribers[$eventName][$hash]) {
+        /* Nothing to do:
+           - if the subscriber is the same, the hash has not been recycled and
+             is already subscribed, so nothing to do;
+           - else, because of the subscriber reference in $this, even an unset
+             subscriber will still have a reference and the spl_object_hash
+             will not be reused, so this case cannot happen without a PHP
+             runtime bug.
+        */
+      }
     }
   }
 

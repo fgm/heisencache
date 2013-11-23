@@ -67,40 +67,6 @@ class EventEmitterTest extends \PHPUnit_Framework_TestCase {
     }
   }
 
-  /**
-   * TODO: Find a way to cause the reallocation problem.
-   */
-  public function testOnReallocatedSubscriber() {
-    $event1 = 'event1';
-    $emitter = new EventEmitter();
-
-    $subscriber = $this->getMockSubscriber(array($event1));
-    $mock_class = get_class($subscriber);
-    $hash1 = spl_object_hash($subscriber);
-
-    try {
-      $emitter->on($event1, $subscriber);
-    }
-    catch (\Exception $e) {
-      $this->fail('Passing a subscriber to on() does not throw an exception.');
-    }
-    unset($subscriber);
-
-    $subscriber = $this->getMockSubscriber(array($event1), $mock_class);
-    $hash2 = spl_object_hash($subscriber);
-    if ($hash1 != $hash2) {
-      try {
-        $emitter->on($event1, $subscriber);
-        $this->fail('Passing a subscriber with a reallocated object has to on() throws an exception.');
-      }
-      catch (\Exception $e) {
-      }
-    }
-    else {
-      // Attempt to reuse the hash failed: no way to induce the problem.
-    }
-  }
-
   public function testOnSingleSubscriberTwoEvents() {
     $event1 = 'event1';
     $event2 = 'event2';
@@ -185,5 +151,52 @@ class EventEmitterTest extends \PHPUnit_Framework_TestCase {
       $actual = $emitter->getSubscribersByEventName($eventName);
       $this->assertTrue(in_array($subscriber, $actual));
     }
+  }
+
+  public function testEmitHappy() {
+    $event1 = 'event1';
+    $emitter = new EventEmitter();
+
+    $subscriber = $this->getMockSubscriber(array($event1));
+    $subscriber->expects($this->once())
+      ->method($event1);
+    $emitter->on($event1, $subscriber);
+
+    $emitter->emit($event1);
+  }
+
+  /**
+   * Test an event emitted without any listener at all.
+   */
+  public function testEmitSadNoSubscriber() {
+    $event1 = 'event1';
+    $emitter = new EventEmitter();
+
+    // No subscriber: no one should be notified.
+    $notified = $emitter->emit($event1);
+    $this->assertEquals(0, $notified);
+  }
+
+  /**
+   * Test an event emitted without any listener on the event.
+   */
+  public function testEmitSadOtherSubscriber() {
+    $event1 = 'event1';
+    $event2 = 'event2';
+    $emitter = new EventEmitter();
+
+    $subscriber = $this->getMockSubscriber(array($event1));
+    // Not called because this event is not the one being emitted.
+    $subscriber->expects($this->never())
+      ->method($event1);
+    // Not called because this event is not the one being subscribed.
+    $subscriber->expects($this->never())
+      ->method($event2);
+
+    // Subscriber on another event: no one should be notified.
+    $notified = $emitter->on($event1, $subscriber);
+    $this->assertEquals(0, $notified);
+
+    $emitter->emit($event2);
   }
 }
