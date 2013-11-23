@@ -24,6 +24,12 @@ class Cache implements \DrupalCacheInterface {
   protected $bin;
 
   /**
+   * @var string[]
+   *   An array of event names.
+   */
+  protected static $events = NULL;
+
+  /**
    * @var \DrupalCacheInterface string
    *   The cache instance actually implementing caching for this bin.
    */
@@ -39,12 +45,30 @@ class Cache implements \DrupalCacheInterface {
    *
    * So we have to fetch the configuration instead of receiving it.
    */
-  function __construct($bin) {
+  public function __construct($bin) {
     $this->bin = $bin;
     $config = Config::instance();
     $this->handler = $config->getCacheHandler($bin);
     $this->emitter = $config->getEmitter();
     $this->emitter->emit('onCacheConstruct', $bin);
+  }
+
+  /**
+   * @return \string[]
+   *   The array of available events.
+   */
+  public static function getEvents() {
+    if (!isset(static::$events)) {
+      $methods = get_class_methods("DrupalCacheInterface");
+      $events = array('onCacheConstruct');
+      foreach ($methods as $method) {
+        $events[] = 'before' . ucfirst($method);
+        $events[] = 'after' . ucfirst($method);
+      }
+      static::$events = $events;
+    }
+
+    return static::$events;
   }
 
   /**
@@ -61,7 +85,7 @@ class Cache implements \DrupalCacheInterface {
    * @return mixed
    *   The cache or FALSE on failure.
    */
-  function get($cid) {
+  public function get($cid) {
     $this->emitter->emit('beforeGet', $cid);
     $result = $this->handler->get($cid);
     $this->emitter->emit('afterGet', $cid, $result);
@@ -79,7 +103,7 @@ class Cache implements \DrupalCacheInterface {
    * @return array
    *   An array of the items successfully returned from cache indexed by cid.
    */
-  function getMultiple(&$cids) {
+  public function getMultiple(&$cids) {
     $this->emitter->emit('beforeGetMultiple', $cids);
     $result = $this->handler->getMultiple($cids);
     $this->emitter->emit('afterGetMultiple', $cids, $result);
@@ -104,7 +128,7 @@ class Cache implements \DrupalCacheInterface {
    *   - A Unix timestamp: Indicates that the item should be kept at least until
    *     the given time, after which it behaves like CACHE_TEMPORARY.
    */
-  function set($cid, $data, $expire = CACHE_PERMANENT) {
+  public function set($cid, $data, $expire = CACHE_PERMANENT) {
     $this->emitter->emit('beforeSet', $cid, $data, $expire);
     $this->handler->set($cid, $data, $expire);
     $this->emitter->emit('afterSet', $cid, $data, $expire);
@@ -126,7 +150,7 @@ class Cache implements \DrupalCacheInterface {
    *   specified by $cid. If $wildcard is TRUE and $cid is '*', the entire
    *   cache is emptied.
    */
-  function clear($cid = NULL, $wildcard = FALSE) {
+  public function clear($cid = NULL, $wildcard = FALSE) {
     $this->emitter->emit('beforeClear', $cid, $wildcard);
     $this->handler->clear($cid, $wildcard);
     $this->emitter->emit('afterClear', $cid, $wildcard);
@@ -141,7 +165,7 @@ class Cache implements \DrupalCacheInterface {
    * @return bool
    *   TRUE if the cache bin specified is empty.
    */
-  function isEmpty() {
+  public function isEmpty() {
     $this->emitter->emit('beforeIsEmpty');
     $result = $this->handler->isEmpty();
     $this->emitter->emit('afterIsEmpty', $result);

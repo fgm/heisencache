@@ -12,7 +12,6 @@
 
 namespace OSInet\Heisencache;
 
-
 class DebugSubscriber extends BaseEventSubscriber {
   public function show() {
     $stack = debug_backtrace(FALSE);
@@ -22,21 +21,9 @@ class DebugSubscriber extends BaseEventSubscriber {
     echo "$caller({$arg0})<br >\n";
   }
 
-  public static function getAvailableEvents() {
-    $myEvents = array(
-      'onCacheConstruct',
-      'beforeGet',            'afterGet',
-      'beforeGetMultiple',    'afterGetMultiple',
-      'beforeSet',            'afterSet',
-      'beforeClear',          'afterClear',
-      'beforeIsEmpty',        'afterIsEmpty',
-    );
-    return $myEvents;
-  }
-
   public function __construct(array $events = NULL) {
     if (!isset($events)) {
-      $events = static::getAvailableEvents();
+      $events = Cache::getEvents();
     }
     foreach ($events as $eventName) {
       $this->addEvent($eventName);

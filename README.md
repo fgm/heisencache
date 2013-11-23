@@ -17,6 +17,7 @@ file in the site settings directory. Copy `default.settings.heisencache.inc` to
 the site settings directory, and edit it to add configuration of your choice,
 following the examples in that file.
 
+Note that this plugin requires PHP >= 5.3.
 
 Configuration example
 ---------------------
