@@ -18,7 +18,7 @@ class DebugSubscriber extends BaseEventSubscriber {
     $caller = $stack[1]['function'];
     $args = func_get_args();
     $arg0 = is_string($args[0]) ? $args[0] : 'unprintable';
-    echo "$caller({$arg0})<br >\n";
+    echo "$caller({$arg0})<br />\n";
   }
 
   public function __construct(array $events = NULL) {
@@ -39,11 +39,11 @@ class DebugSubscriber extends BaseEventSubscriber {
 
   }
 
-  public function beforeGetMultiple($keys) {
+  public function beforeGetMultiple(array $keys) {
     $this->show(implode(", ", $keys));
   }
 
-  public function afterGetMultiple($keys) {
+  public function afterGetMultiple(array $keys) {
     $this->show(implode(", ", $keys));
   }
 

@@ -16,6 +16,9 @@ function heisencache_require() {
       throw new \Exception('Invalid HEISENCACHE_DRUPAL_BASE path.');
     }
 
+    // Needed for the CACHE_* constants.
+    require_once "$drupal_base/includes/bootstrap.inc";
+    // Needed for the Cache API.
     require_once "$drupal_base/includes/cache.inc";
   }
 
