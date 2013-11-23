@@ -19,10 +19,14 @@ class EventEmitterTest extends \PHPUnit_Framework_TestCase {
   const SUBSCRIBER_CLASS = 'OSInet\Heisencache\DebugSubscriber';
 
   protected function getMockSubscriber(array $events, $class = NULL) {
-    $subscriber = isset($class)
-      ? $this->getMock(self::SUBSCRIBER_CLASS, $events, array(), $class)
-      : $this->getMock(self::SUBSCRIBER_CLASS, $events, array());
+    static $sequence = 0;
 
+    if (!isset($class)) {
+      $class = "MockSubscriber$sequence";
+      $sequence++;
+    }
+
+    $subscriber = $this->getMock(self::SUBSCRIBER_CLASS, $events, array(), $class, FALSE);
     return $subscriber;
   }
 
