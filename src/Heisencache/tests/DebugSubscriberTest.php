@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * Tests for the DebugSubscriber class.
+ * Unit tests for the DebugSubscriber class.
  *
  * @author: marand
  *

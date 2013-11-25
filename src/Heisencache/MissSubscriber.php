@@ -33,8 +33,13 @@ class MissSubscriber extends BaseEventSubscriber {
         'requested' => array($cid),
         'misses' => array($cid),
       );
-      echo serialize($ret) . "\n";
     }
+    else {
+      $ret = NULL;
+    }
+
+    $ret = serialize($ret);
+    echo "$ret\n";
   }
 
   public function afterGetMultiple($missed_cids) {
@@ -48,8 +53,12 @@ class MissSubscriber extends BaseEventSubscriber {
         'requested' => $requested,
         'misses' => $missed_cids,
       );
-      echo serialize($ret) . "\n";
-    };
+    }
+    else {
+      $ret = NULL;
+    }
+    $ret = serialize($ret);
+    echo "$ret\n";
   }
 
   public function beforeGetMultiple($cids) {
