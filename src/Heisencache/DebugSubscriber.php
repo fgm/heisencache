@@ -30,48 +30,52 @@ class DebugSubscriber extends BaseEventSubscriber {
     }
   }
 
-  public function beforeGet($key) {
+  public function beforeGet($channel, $key) {
    $this->show($key);
   }
 
-  public function afterGet($key, $value) {
+  public function afterGet($channel, $key, $value) {
    $this->show($key, $value);
 
   }
 
-  public function beforeGetMultiple(array $keys) {
+  public function beforeGetMultiple($channel, array $keys) {
     $this->show(implode(", ", $keys));
   }
 
-  public function afterGetMultiple(array $keys) {
+  public function afterGetMultiple($channel, array $keys) {
     $this->show(implode(", ", $keys));
   }
 
-  public function beforeSet($key, $value) {
+  public function beforeSet($channel, $key, $value) {
     $this->show($key, $value);
   }
 
-  public function afterSet($key, $value) {
+  public function afterSet($channel, $key, $value) {
     $this->show($key, $value);
   }
 
-  public function beforeClear() {
+  public function beforeClear($channel) {
     $this->show();
   }
 
-  public function afterClear() {
+  public function afterClear($channel) {
     $this->show();
   }
 
-  public function beforeIsEmpty() {
+  public function beforeIsEmpty($channel) {
     $this->show();
   }
 
-  public function afterIsEmpty() {
+  public function afterIsEmpty($channel) {
     $this->show();
   }
 
-  public function onCacheConstruct($bin) {
-   $this->show($bin);
+  public function onCacheConstruct($channel) {
+   $this->show($channel);
   }
-} 
+
+  public function onShutdown($channel) {
+    $this->show($channel);
+  }
+}

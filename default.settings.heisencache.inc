@@ -20,15 +20,7 @@ namespace OSInet\Heisencache;
 // Obtain the plugin configuration instance.
 $config = Config::instance();
 
-// Most configurations will want to add new subscribers. Some are provided
-// in the plugin directory.
-$srcDir = $config->getSrcDir();
-
-// Include them: the Drupal autoloader is not available at this point.
-
-// require_once "$srcDir/DebugSubscriber.php";
-// $debug = new DebugSubscriber(array('beforeGetMultiple', 'onCacheConstruct'));
-// $config->getEmitter()->register($debug);
-
-require_once "$srcDir/MissSubscriber.php";
-$config->getEmitter()->register(new MissSubscriber());
+$config->getEmitter()
+//  ->register(new DebugSubscriber(array('beforeGetMultiple', 'onCacheConstruct')))
+//  ->register(new MissSubscriber())
+  ->register(new WatchdogWriterSubscriber());

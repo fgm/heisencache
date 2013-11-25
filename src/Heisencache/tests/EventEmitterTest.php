@@ -17,6 +17,7 @@ use OSInet\Heisencache\EventEmitter;
 class EventEmitterTest extends \PHPUnit_Framework_TestCase {
 
   const SUBSCRIBER_CLASS = 'OSInet\Heisencache\DebugSubscriber';
+  const CHANNEL = "some channel";
 
   protected function getMockSubscriber(array $events, $class = NULL) {
     static $sequence = 0;
@@ -166,7 +167,7 @@ class EventEmitterTest extends \PHPUnit_Framework_TestCase {
       ->method($event1);
     $emitter->on($event1, $subscriber);
 
-    $emitter->emit($event1);
+    $emitter->emit($event1, self::CHANNEL);
   }
 
   /**
@@ -177,7 +178,7 @@ class EventEmitterTest extends \PHPUnit_Framework_TestCase {
     $emitter = new EventEmitter();
 
     // No subscriber: no one should be notified.
-    $notified = $emitter->emit($event1);
+    $notified = $emitter->emit($event1, self::CHANNEL);
     $this->assertEquals(0, $notified);
   }
 
@@ -201,6 +202,6 @@ class EventEmitterTest extends \PHPUnit_Framework_TestCase {
     $notified = $emitter->on($event1, $subscriber);
     $this->assertEquals(0, $notified);
 
-    $emitter->emit($event2);
+    $emitter->emit($event2, self::CHANNEL);
   }
 }

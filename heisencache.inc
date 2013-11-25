@@ -14,9 +14,13 @@ use OSInet\Heisencache\Config;
 
 require_once __DIR__ . '/classloader.inc';
 
-$config = Config::instance($GLOBALS['conf']);
-$GLOBALS['conf'] = $config->override();
-unset($config);
+function heisencache_setup($configuration) {
+  $config = Config::instance();
+  drupal_register_shutdown_function(array($config->getEmitter(), 'emit'), 'onShutdown', 'cache');
+  return $config->override();
+}
+
+$GLOBALS['conf'] = heisencache_setup($GLOBALS['conf']);
 
 $settings_path = conf_path() . '/settings.heisencache.inc';
 if (is_file($settings_path)) {

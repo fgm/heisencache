@@ -17,20 +17,20 @@ use OSInet\Heisencache\MissSubscriber;
 
 class MissSubscriberTest extends \PHPUnit_Framework_TestCase {
 
+  const CHANNEL = "some channel";
+
   public function testGetHit() {
     $sub = new MissSubscriber();
-    $sub->afterGet('k', 'v');
+    $sub->afterGet(self::CHANNEL, 'k', 'v');
     $expected = serialize(NULL);
     $this->expectOutputRegex('/' . $expected . '/');
   }
 
   public function testGetMiss() {
     $sub = new MissSubscriber();
-    $sub->afterGet('somekey', FALSE);
+    $sub->afterGet(self::CHANNEL, 'somekey', FALSE);
 
     $this->expectOutputRegex('/s:6:"misses";a:.*somekey/');
-//    $expected = serialize(NULL);
-//    $this->expectOutputRegex('/' . $expected . '/');
   }
 
   public function testGetMultipleWithMisses() {
@@ -38,8 +38,8 @@ class MissSubscriberTest extends \PHPUnit_Framework_TestCase {
     $missed_cids = array('k1', 'k3');
 
     $sub = new MissSubscriber();
-    $sub->beforeGetMultiple($initial_cids);
-    $sub->afterGetMultiple($missed_cids);
+    $sub->beforeGetMultiple(self::CHANNEL, $initial_cids);
+    $sub->afterGetMultiple(self::CHANNEL, $missed_cids);
 
     $this->expectOutputRegex('/s:6:"misses";a:.*(k1.*k3)|(k3.*k1)/');
   }
@@ -49,8 +49,8 @@ class MissSubscriberTest extends \PHPUnit_Framework_TestCase {
     $missed_cids = array();
 
     $sub = new MissSubscriber();
-    $sub->beforeGetMultiple($initial_cids);
-    $sub->afterGetMultiple($missed_cids);
+    $sub->beforeGetMultiple(self::CHANNEL, $initial_cids);
+    $sub->afterGetMultiple(self::CHANNEL, $missed_cids);
     $expected = serialize(NULL);
     $this->expectOutputRegex('/' . $expected . '/');
   }

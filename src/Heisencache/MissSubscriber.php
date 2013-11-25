@@ -25,11 +25,12 @@ class MissSubscriber extends BaseEventSubscriber {
 
   protected $multipleCids = array();
 
-  public function afterGet($cid, $value) {
+  public function afterGet($channel, $cid, $value) {
     if ($value === FALSE) {
       $ret = array(
         'subscriber' => static::NAME,
         'op' => 'get',
+        'bin' => $channel,
         'requested' => array($cid),
         'misses' => array($cid),
       );
@@ -39,10 +40,10 @@ class MissSubscriber extends BaseEventSubscriber {
     }
 
     $ret = serialize($ret);
-    echo "$ret\n";
+    echo "<p>" . __METHOD__ . ": $ret\n";
   }
 
-  public function afterGetMultiple($missed_cids) {
+  public function afterGetMultiple($channel, $missed_cids) {
     $requested = $this->multipleCids;
     $this->multipleCids = array();
 
@@ -50,6 +51,7 @@ class MissSubscriber extends BaseEventSubscriber {
       $ret = array(
         'subscriber' => static::NAME,
         'op' => 'get_multiple',
+        'bin' => $channel,
         'requested' => $requested,
         'misses' => $missed_cids,
       );
@@ -57,11 +59,12 @@ class MissSubscriber extends BaseEventSubscriber {
     else {
       $ret = NULL;
     }
+
     $ret = serialize($ret);
-    echo "$ret\n";
+    echo "<p>" . __METHOD__ . ": $ret\n";
   }
 
-  public function beforeGetMultiple($cids) {
+  public function beforeGetMultiple($channel, $cids) {
     $this->multipleCids = $cids;
   }
 }

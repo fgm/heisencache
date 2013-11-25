@@ -46,6 +46,7 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testEventHandling() {
+    $channel = "somebin";
     $mock = $this->getMockBuilder(self::FQCN)
       ->setMethods(array('getEvents', 'show'))
       ->getMock();
@@ -60,6 +61,7 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
 
     $eventMap = array(
       'onCacheConstruct' => array('bin'),
+      'onShutdown' => array('bin'),
 
       'beforeGet' => array('k'),
       'afterGet' => array('k', 'v'),
@@ -78,6 +80,7 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
     );
 
     foreach ($eventMap as $eventName => $eventArgs) {
+      array_unshift($eventArgs, $channel);
       array_unshift($eventArgs, $eventName);
       $notified = call_user_func_array(array($emitter, 'emit'), $eventArgs);
       $this->assertEquals(1, $notified, "Event $eventName caused one notification");

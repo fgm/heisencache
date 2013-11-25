@@ -14,7 +14,7 @@ namespace OSInet\Heisencache;
 
 class EventEmitter {
   /**
-   * @var array[string][EventSubscriberInterface]
+   * @var array[string][OSInet\Heisencache\EventSubscriberInterface]
    */
   protected $subscribers;
 
@@ -59,10 +59,12 @@ class EventEmitter {
    * @param string $eventName
    *   The name of the event.
    *
+   * @param string $channel
+   *
    * @return int
    *   The number of subscribers to which the event was sent.
    */
-  public function emit($eventName) {
+  public function emit($eventName, $channel) {
     if (empty($this->subscribers[$eventName])) {
       return 0;
     }
@@ -78,14 +80,15 @@ class EventEmitter {
   /**
    * Register an event subscriber with the event emitter for all its events..
    *
-   * @param EventSubscriberInterface $subscriber
+   * @param \OSInet\Heisencache\EventSubscriberInterface $subscriber
    *
-   * @return void
+   * @return \OSInet\Heisencache\EventEmitter
    */
   public function register(EventSubscriberInterface $subscriber) {
     foreach ($subscriber->getEvents() as $eventName) {
       $this->on($eventName, $subscriber);
     }
+    return $this;
   }
 
   /**
