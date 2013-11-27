@@ -27,7 +27,10 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
   protected $events = NULL;
 
   public function setUp() {
-    $this->events = array_merge(Cache::getEmittedEvents(), MissSubscriber::getEmittedEvents());
+    $this->events = array_merge(
+      Cache::getEmittedEvents(),
+      MissSubscriber::getEmittedEvents()
+    );
   }
 
   public function testExplicitEventRegistration() {
@@ -58,7 +61,12 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
       ->will($this->returnValue($this->events));
 
     $emitter = new EventEmitter();
-    $emitter->register($mock);
+    try {
+      $emitter->register($mock);
+    }
+    catch (\InvalidArgumentException $e) {
+      $this->fail("Registering the DebugSubscriber on the Emitter failed: " . $e->getMessage());
+    }
 
     $eventMap = array(
       'onCacheConstruct' => array('bin'),

@@ -59,7 +59,7 @@ class Cache implements \DrupalCacheInterface, EventSourceInterface {
    */
   public static function getEmittedEvents() {
     if (!isset(static::$events)) {
-      $methods = get_class_methods("DrupalCacheInterface");
+      $methods = get_class_methods("\DrupalCacheInterface");
       $events = array('onCacheConstruct', 'onShutdown');
       foreach ($methods as $method) {
         $events[] = 'before' . ucfirst($method);
