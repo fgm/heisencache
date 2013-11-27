@@ -13,58 +13,95 @@
 namespace OSInet\Heisencache;
 
 
-class MissSubscriber extends BaseEventSubscriber {
+class MissSubscriber extends BaseEventSubscriber implements EventSourceInterface {
 
   const NAME = "misses";
 
-  protected $events = array(
+  /**
+   * @var \OSInet\Heisencache\EventEmitter
+   */
+  protected $emitter;
+
+  protected $subscribedEvents = array(
     'afterGet' =>  1,
     'afterGetMultiple' => 1,
     'beforeGetMultiple' => 1,
   );
 
+  protected static $emittedEvents = array(
+    'miss',
+    'missMultiple',
+  );
+
   protected $multipleCids = array();
 
+  public function __construct(EventEmitter $emitter) {
+    $this->emitter = $emitter;
+  }
+
+  /**
+   * @param string $channel
+   * @param string $cid
+   * @param mixed $value
+   *
+   * @return array
+   */
   public function afterGet($channel, $cid, $value) {
     if ($value === FALSE) {
-      $ret = array(
+      $missInfo = array(
         'subscriber' => static::NAME,
         'op' => 'get',
         'bin' => $channel,
         'requested' => array($cid),
         'misses' => array($cid),
       );
+
+      $this->emitter->emit('miss', $channel, $missInfo);
     }
     else {
-      $ret = NULL;
+      $missInfo = array();
     }
 
-    $ret = serialize($ret);
-    echo "<p>" . __METHOD__ . ": $ret\n";
+    return $missInfo;
   }
 
+  /**
+   * @param string $channel
+   * @param string[] $missed_cids
+   *
+   * @return array
+   */
   public function afterGetMultiple($channel, $missed_cids) {
     $requested = $this->multipleCids;
     $this->multipleCids = array();
 
     if (!empty($missed_cids)) {
-      $ret = array(
+      $missInfo = array(
         'subscriber' => static::NAME,
         'op' => 'get_multiple',
         'bin' => $channel,
         'requested' => $requested,
         'misses' => $missed_cids,
       );
+      $missInfo['full_miss'] = ($missed_cids == $requested);
+
+      $this->emitter->emit('missMultiple', $channel, $missInfo);
     }
     else {
-      $ret = NULL;
+      $missInfo = array();
     }
 
-    $ret = serialize($ret);
-    echo "<p>" . __METHOD__ . ": $ret\n";
+    return $missInfo;
   }
 
   public function beforeGetMultiple($channel, $cids) {
     $this->multipleCids = $cids;
+  }
+
+  /**
+   * {@inheritdoc}
+   */
+  public static function getEmittedEvents() {
+    return static::$emittedEvents;
   }
 }

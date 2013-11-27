@@ -19,39 +19,79 @@ class MissSubscriberTest extends \PHPUnit_Framework_TestCase {
 
   const CHANNEL = "some channel";
 
+  protected $emitter;
+
+  public function setUp() {
+    $this->emitter = $this->getMock('OSInet\Heisencache\EventEmitter');
+  }
+
   public function testGetHit() {
-    $sub = new MissSubscriber();
-    $sub->afterGet(self::CHANNEL, 'k', 'v');
-    $expected = serialize(NULL);
-    $this->expectOutputRegex('/' . $expected . '/');
+    $sub = new MissSubscriber($this->emitter);
+    $actual = $sub->afterGet(self::CHANNEL, 'k', 'v');
+    $this->assertInternalType('array', $actual);
+    $this->assertEmpty($actual);
   }
 
   public function testGetMiss() {
-    $sub = new MissSubscriber();
-    $sub->afterGet(self::CHANNEL, 'somekey', FALSE);
+    $key = 'somekey';
 
-    $this->expectOutputRegex('/s:6:"misses";a:.*somekey/');
+    $sub = new MissSubscriber($this->emitter);
+    $actual = $sub->afterGet(self::CHANNEL, $key, FALSE);
+
+    $this->assertInternalType('array', $actual);
+    $this->assertNotEmpty($actual);
+    $this->assertArrayHasKey('misses', $actual);
+    $this->assertNotEmpty($actual['misses']);
+    $this->assertTrue(in_array($key, $actual['misses']));
   }
 
   public function testGetMultipleWithMisses() {
     $initial_cids = array('k1', 'k2', 'k3');
     $missed_cids = array('k1', 'k3');
 
-    $sub = new MissSubscriber();
+    $sub = new MissSubscriber($this->emitter);
     $sub->beforeGetMultiple(self::CHANNEL, $initial_cids);
-    $sub->afterGetMultiple(self::CHANNEL, $missed_cids);
+    $actual = $sub->afterGetMultiple(self::CHANNEL, $missed_cids);
 
-    $this->expectOutputRegex('/s:6:"misses";a:.*(k1.*k3)|(k3.*k1)/');
+    $this->assertInternalType('array', $actual);
+    $this->assertNotEmpty($actual);
+    $this->assertArrayHasKey('full_miss', $actual);
+    $this->assertFalse($actual['full_miss']);
+    $this->assertArrayHasKey('misses', $actual);
+    $this->assertNotEmpty($actual['misses']);
+    foreach ($missed_cids as $cid) {
+      $this->assertTrue(in_array($cid, $actual['misses']));
+    }
+  }
+
+  public function testGetMultipleWithFullMiss() {
+    $initial_cids = array('k1', 'k2', 'k3');
+    $missed_cids = $initial_cids;
+
+    $sub = new MissSubscriber($this->emitter);
+    $sub->beforeGetMultiple(self::CHANNEL, $initial_cids);
+    $actual = $sub->afterGetMultiple(self::CHANNEL, $missed_cids);
+
+    $this->assertInternalType('array', $actual);
+    $this->assertNotEmpty($actual);
+    $this->assertArrayHasKey('full_miss', $actual);
+    $this->assertTrue($actual['full_miss']);
+    $this->assertArrayHasKey('misses', $actual);
+    $this->assertNotEmpty($actual['misses']);
+    foreach ($missed_cids as $cid) {
+      $this->assertTrue(in_array($cid, $actual['misses']));
+    }
   }
 
   public function testGetMultipleWithoutMisses() {
     $initial_cids = array('k1', 'k2', 'k3');
     $missed_cids = array();
 
-    $sub = new MissSubscriber();
+    $sub = new MissSubscriber($this->emitter);
     $sub->beforeGetMultiple(self::CHANNEL, $initial_cids);
-    $sub->afterGetMultiple(self::CHANNEL, $missed_cids);
-    $expected = serialize(NULL);
-    $this->expectOutputRegex('/' . $expected . '/');
+    $actual = $sub->afterGetMultiple(self::CHANNEL, $missed_cids);
+    $this->assertInternalType('array', $actual);
+    $this->assertEmpty($actual);
+
   }
 }

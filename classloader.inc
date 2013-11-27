@@ -23,6 +23,7 @@ function heisencache_require() {
   }
 
   // Load cache-related classes.
+  require_once "$srcDir/EventSourceInterface.php";
   require_once "$srcDir/EventSubscriberInterface.php";
   require_once "$srcDir/BaseEventSubscriber.php";
   require_once "$srcDir/EventEmitter.php";

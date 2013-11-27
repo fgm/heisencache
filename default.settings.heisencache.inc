@@ -17,10 +17,21 @@
 // Operate in the plugin namespace
 namespace OSInet\Heisencache;
 
-// Obtain the plugin configuration instance.
-$config = Config::instance();
+$emitter = Config::instance()->getEmitter();
 
-$config->getEmitter()
-//  ->register(new DebugSubscriber(array('beforeGetMultiple', 'onCacheConstruct')))
-//  ->register(new MissSubscriber())
-  ->register(new WatchdogWriterSubscriber());
+$emitter
+  ->register(new MissSubscriber($emitter))
+
+  // MissSubscriber is also an event source, like Cache, so we can use its events.
+
+// Sample configuration listening to everything. > insert 1 Mb per page.
+//  ->register(new WatchdogWriterSubscriber(array_merge(
+//    Cache::getEmittedEvents(),
+//    MissSubscriber::getEmittedEvents()
+//  )));
+
+  // Sample configuration to just record cache misses.
+  ->register(new WatchdogWriterSubscriber(array_merge(
+    array('onShutdown'),
+    MissSubscriber::getEmittedEvents())
+  ));

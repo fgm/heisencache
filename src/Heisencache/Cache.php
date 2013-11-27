@@ -17,7 +17,7 @@ namespace OSInet\Heisencache;
  *
  * @package OSInet\Heisencache
  */
-class Cache implements \DrupalCacheInterface {
+class Cache implements \DrupalCacheInterface, EventSourceInterface {
   /**
    * @var
    */
@@ -57,7 +57,7 @@ class Cache implements \DrupalCacheInterface {
    * @return \string[]
    *   The array of available events.
    */
-  public static function getEvents() {
+  public static function getEmittedEvents() {
     if (!isset(static::$events)) {
       $methods = get_class_methods("DrupalCacheInterface");
       $events = array('onCacheConstruct', 'onShutdown');

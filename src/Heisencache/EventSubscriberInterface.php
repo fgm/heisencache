@@ -30,7 +30,7 @@ interface EventSubscriberInterface {
   /**
    * @return string[]
    */
-  public function getEvents();
+  public function getSubscribedEvents();
 
   /**
    * @param string $eventName

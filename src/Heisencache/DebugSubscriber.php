@@ -23,7 +23,7 @@ class DebugSubscriber extends BaseEventSubscriber {
 
   public function __construct(array $events = NULL) {
     if (!isset($events)) {
-      $events = Cache::getEvents();
+      $events = array_merge(Cache::getEmittedEvents(), MissSubscriber::getEmittedEvents());
     }
     foreach ($events as $eventName) {
       $this->addEvent($eventName);
@@ -68,6 +68,14 @@ class DebugSubscriber extends BaseEventSubscriber {
   }
 
   public function afterIsEmpty($channel) {
+    $this->show();
+  }
+
+  public function miss($channel) {
+    $this->show();
+  }
+
+  public function missMultiple($channel) {
     $this->show();
   }
 

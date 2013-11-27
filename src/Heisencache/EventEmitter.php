@@ -85,7 +85,7 @@ class EventEmitter {
    * @return \OSInet\Heisencache\EventEmitter
    */
   public function register(EventSubscriberInterface $subscriber) {
-    foreach ($subscriber->getEvents() as $eventName) {
+    foreach ($subscriber->getSubscribedEvents() as $eventName) {
       $this->on($eventName, $subscriber);
     }
     return $this;

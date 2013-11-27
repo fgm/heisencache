@@ -19,7 +19,7 @@ class WatchdogWriterSubscriber extends BaseEventSubscriber {
 
   public function __construct(array $events = NULL) {
     if (!isset($events)) {
-      $events = Cache::getEvents();
+      $events = Cache::getEmittedEvents();
     }
     foreach ($events as $eventName) {
       $this->addEvent($eventName);
@@ -48,7 +48,7 @@ class WatchdogWriterSubscriber extends BaseEventSubscriber {
    * @param $name
    */
   public function __call($eventName, $args) {
-    if (!in_array($eventName, $this->events)) {
+    if (!in_array($eventName, $this->subscribedEvents)) {
       throw new \InvalidArgumentException("Unsupported event $eventName");
     }
     else {
@@ -57,8 +57,10 @@ class WatchdogWriterSubscriber extends BaseEventSubscriber {
   }
 
   public function onShutdown($channel) {
-    watchdog('heisencache', 'Cache events: @events', array(
-      '@events' => serialize($this->history),
-    ), WATCHDOG_DEBUG);
+    if (!empty($this->history)) {
+      watchdog('heisencache', 'Cache events: @events', array(
+        '@events' => serialize($this->history),
+      ), WATCHDOG_DEBUG);
+    }
   }
 }

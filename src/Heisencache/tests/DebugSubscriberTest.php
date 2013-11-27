@@ -16,6 +16,7 @@ namespace OSInet\Heisencache\tests;
 use OSInet\Heisencache\Cache;
 use OSInet\Heisencache\DebugSubscriber;
 use OSInet\Heisencache\EventEmitter;
+use OSInet\Heisencache\MissSubscriber;
 
 class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
   /**
@@ -26,7 +27,7 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
   protected $events = NULL;
 
   public function setUp() {
-    $this->events = Cache::getEvents();
+    $this->events = array_merge(Cache::getEmittedEvents(), MissSubscriber::getEmittedEvents());
   }
 
   public function testExplicitEventRegistration() {
@@ -35,25 +36,25 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
     $events = array($event1, $event2);
 
     $sub = new DebugSubscriber($events);
-    $actual = $sub->getEvents();
+    $actual = $sub->getSubscribedEvents();
     $this->assertEquals($actual, $events);
   }
 
   public function testImplicitEventRegistration() {
     $sub = new DebugSubscriber();
-    $actual = $sub->getEvents();
+    $actual = $sub->getSubscribedEvents();
     $this->assertEquals($actual, $this->events);
   }
 
   public function testEventHandling() {
     $channel = "somebin";
     $mock = $this->getMockBuilder(self::FQCN)
-      ->setMethods(array('getEvents', 'show'))
+      ->setMethods(array('getSubscribedEvents', 'show'))
       ->getMock();
     $mock->expects($this->exactly(count($this->events)))
       ->method('show');
     $mock->expects($this->once())
-      ->method('getEvents')
+      ->method('getSubscribedEvents')
       ->will($this->returnValue($this->events));
 
     $emitter = new EventEmitter();
@@ -77,6 +78,9 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
 
       'beforeIsEmpty' => array(),
       'afterIsEmpty' => array(),
+
+      'miss' => array(),
+      'missMultiple' => array(),
     );
 
     foreach ($eventMap as $eventName => $eventArgs) {

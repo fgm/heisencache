@@ -15,17 +15,17 @@ namespace OSInet\Heisencache;
 
 abstract class BaseEventSubscriber implements EventSubscriberInterface {
 
-  protected $events = array();
+  protected $subscribedEvents = array();
 
   public function addEvent($eventName) {
-    $this->events[$eventName] = TRUE;
+    $this->subscribedEvents[$eventName] = TRUE;
   }
 
-  public function getEvents() {
-    return array_keys($this->events);
+  public function getSubscribedEvents() {
+    return array_keys($this->subscribedEvents);
   }
 
   public function removeEvent($eventName) {
-    unset($this->events[$eventName]);
+    unset($this->subscribedEvents[$eventName]);
   }
 }
