@@ -21,6 +21,7 @@ $emitter = Config::instance()->getEmitter();
 
 $emitter
   ->register(new MissSubscriber($emitter))
+  ->register(new PerformanceSubscriber($emitter))
 
   // MissSubscriber is also an event source, like Cache, so we can use its events.
 
@@ -33,5 +34,6 @@ $emitter
   // Sample configuration to just record cache misses.
   ->register(new WatchdogWriterSubscriber(array_merge(
     array('onShutdown'),
-    MissSubscriber::getEmittedEvents())
-  ));
+    MissSubscriber::getEmittedEvents(),
+    PerformanceSubscriber::getEmittedEvents()
+  )));
