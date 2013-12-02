@@ -83,7 +83,7 @@ class EventEmitterTest extends \PHPUnit_Framework_TestCase {
       $emitter->on($event1, $subscriber);
     }
     catch (\Exception $e) {
-      $this->pass('Passing a subscriber to on() does not throw an exception.');
+      $this->fail('Passing a subscriber to on() does not throw an exception.');
       }
 
     $actual = $emitter->getSubscribersByEventName($event1);
@@ -198,10 +198,11 @@ class EventEmitterTest extends \PHPUnit_Framework_TestCase {
     $subscriber->expects($this->never())
       ->method($event2);
 
-    // Subscriber on another event: no one should be notified.
-    $notified = $emitter->on($event1, $subscriber);
-    $this->assertEquals(0, $notified);
+    // Subscriber is on event1, so no one should be notified on emit(event2).
+    $listener_count = $emitter->on($event1, $subscriber);
+    $this->assertEquals(1, $listener_count);
 
-    $emitter->emit($event2, self::CHANNEL);
+    $notified_count = $emitter->emit($event2, self::CHANNEL);
+    $this->assertEquals(0, $notified_count);
   }
 }

@@ -58,7 +58,6 @@ class PerformanceSubscriber extends BaseEventSubscriber implements EventSourceIn
 
   /**
    * @param string $channel
-   * @param string $cid
    */
   public function beforeClear($channel) {
     $timer_id = static::getTimerId($channel, array());
@@ -67,8 +66,6 @@ class PerformanceSubscriber extends BaseEventSubscriber implements EventSourceIn
 
   /**
    * @param string $channel
-   * @param string $cid
-   * @param mixed $data
    *
    * @return array
    */
@@ -153,6 +150,11 @@ class PerformanceSubscriber extends BaseEventSubscriber implements EventSourceIn
 
     // Most backends will use at least 1 32-bit word to return FALSE.
     $size = 4 * count($missed_cids);
+
+    foreach ($result as $data) {
+      $size += strlen(serialize($data));
+    }
+    $perfInfo['size'] = $size;
 
     $this->emitter->emit('performance', $channel, $perfInfo);
 

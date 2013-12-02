@@ -45,7 +45,10 @@ class WatchdogWriterSubscriber extends BaseEventSubscriber {
   /**
    * on() will accept ANY event for this subscriber, but only handle ours.
    *
-   * @param $name
+   * @param string $eventName
+   * @param array $args
+   *
+   * @throws \InvalidArgumentException
    */
   public function __call($eventName, $args) {
     if (!in_array($eventName, $this->subscribedEvents)) {

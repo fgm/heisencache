@@ -24,6 +24,7 @@ class EventEmitter {
    * @param string $eventName
    * @param \OSInet\Heisencache\EventSubscriberInterface $subscriber
    *
+   * @return int
    * @throws \InvalidArgumentException
    */
   public function on($eventName, EventSubscriberInterface $subscriber) {
@@ -51,6 +52,8 @@ class EventEmitter {
         */
       }
     }
+
+    return count($this->subscribers[$eventName]);
   }
 
   /**
