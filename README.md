@@ -1,6 +1,9 @@
 Installing Heisencache
 ======================
 
+
+[![Build Status](https://secure.travis-ci.org/FGM/heisencache.png?branch=7.x-1.x)](http://travis-ci.org/FGM/heisencache)
+
 Theory of operation
 -------------------
 
