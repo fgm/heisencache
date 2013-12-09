@@ -62,4 +62,4 @@ directory. Otherwise:
 
 - copy `phpunit.xml.dist` to `phpunit.xml`
 - modify the `HEISENCACHE_DRUPAL_BASE` value to point to the Drupal base directory.
-- run PHPunit like: `phpunit .`
+- run PHPunit like: `phpunit src`
