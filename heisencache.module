@@ -3,3 +3,17 @@
  * @file
  * Empty module file needed to register as a module.
  */
+
+/**
+ * Implements hook_views_api().
+ */
+function heisencache_views_api() {
+  $path = drupal_get_path('module', 'heisencache');
+  $ret = array(
+    'api' => "3",
+    'path' => "$path/views",
+    'template path' => "$path/themes",
+  );
+
+  return $ret;
+}
