@@ -25,15 +25,27 @@ $emitter
 
   // MissSubscriber is also an event source, like Cache, so we can use its events.
 
-// Sample configuration listening to everything. > insert 1 Mb per page.
-//  ->register(new WatchdogWriterSubscriber(array_merge(
-//    Cache::getEmittedEvents(),
-//    MissSubscriber::getEmittedEvents()
-//  )));
+  // Sample configuration listening to everything (big info volume per page).
+  // ->register(new WatchdogWriterSubscriber(array_merge(
+  //    Cache::getEmittedEvents(),
+  //    MissSubscriber::getEmittedEvents()
+  //  )));
 
-  // Sample configuration to just record cache misses.
-  ->register(new WatchdogWriterSubscriber(array_merge(
+  // Sample Watchdog-based configuration to record cache misses and performance.
+  // Note: WatchdogWriterSubscriber will not record anything on cached pages.
+  //  ->register(new WatchdogWriterSubscriber(array_merge(
+  //    array('onShutdown'),
+  //    MissSubscriber::getEmittedEvents(),
+  //    PerformanceSubscriber::getEmittedEvents()
+  //  )));
+
+  // Sample SQL-based configuration to record cache misses, even on pages served
+  // from the Drupal page cache.
+  // Note: SqlWriterSubscriber needs the Heisencache module to be enabled.
+  ->register(new SqlWriterSubscriber(array_merge(
     array('onShutdown'),
-    MissSubscriber::getEmittedEvents(),
-    PerformanceSubscriber::getEmittedEvents()
-  )));
+    MissSubscriber::getEmittedEvents()
+  )))
+
+  // Do not forget to terminate the registration instruction.
+  ;

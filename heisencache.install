@@ -1,0 +1,49 @@
+<?php
+use OSInet\Heisencache\SqlWriterSubscriber;
+
+/**
+ * @file
+ *   heisencache.install.inc
+ *
+ * @author: marand
+ *
+ * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ *
+ * @license General Public License version 2 or later
+ */
+
+/**
+ * Implements hook_schema().
+ */
+function heisencache_schema() {
+  $ret = array();
+
+  $ret[SqlWriterSubscriber::SINK] = array(
+    'description' => 'Stores raw Heisencache events par page cycle, not meant for direct consumption.',
+    'fields' => array(
+      'id' => array(
+        'type' => 'serial',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'description' => "The page cycle id",
+      ),
+      'uid' => array(
+        'type' => 'int',
+        'unsigned' => TRUE,
+        'not null' => TRUE,
+        'default' => 0,
+      ),
+      'data' => array(
+        'type' => 'text',
+        // On MySQL, medium text only holds up to 16 MB.
+        // Some configurations may write more than this.
+        'size' => 'big',
+        'not null' => TRUE,
+        'description' => 'The event data in bulk, as observed by subscribers',
+      ),
+    ),
+    'primary key' => array('id'),
+  );
+
+  return $ret;
+}

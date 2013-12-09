@@ -13,51 +13,7 @@
 namespace OSInet\Heisencache;
 
 
-class WatchdogWriterSubscriber extends BaseEventSubscriber {
-
-  public $history;
-
-  public function __construct(array $events = NULL) {
-    if (!isset($events)) {
-      $events = Cache::getEmittedEvents();
-    }
-    foreach ($events as $eventName) {
-      $this->addEvent($eventName);
-    }
-    $this->history = array();
-  }
-
-  /**
-   * Default handler invoked for all events except shutdown.
-   *
-   * @see WatchdogWriterSubscriber;;onShutdown()
-   *
-   * @param string $eventName
-   * @param array $args
-   */
-  public function genericCall($eventName, $args) {
-    if (strpos($eventName, 'before') !== 0 && strpos($eventName, 'after') !== 0) {
-      //echo "<p>" . __CLASS__ . "::$eventName(" . $args[0] . ")</p>\n";
-    }
-    $this->history[] = array($eventName, $args);
-  }
-
-  /**
-   * on() will accept ANY event for this subscriber, but only handle ours.
-   *
-   * @param string $eventName
-   * @param array $args
-   *
-   * @throws \InvalidArgumentException
-   */
-  public function __call($eventName, $args) {
-    if (!in_array($eventName, $this->subscribedEvents)) {
-      throw new \InvalidArgumentException("Unsupported event $eventName");
-    }
-    else {
-      $this->genericCall($eventName, $args);
-    }
-  }
+class WatchdogWriterSubscriber extends BaseWriterSubscriber {
 
   public function onShutdown($channel) {
     if (!empty($this->history)) {

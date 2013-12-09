@@ -1,5 +1,6 @@
 build
 vendor
+settings.heisencache.inc
 
 composer.phar
 
