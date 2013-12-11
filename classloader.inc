@@ -1,6 +1,17 @@
 <?php
 
 /**
+ * @file
+ * Heisencache: class loader.
+ *
+ * @author: marand
+ *
+ * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ *
+ * @license General Public License version 2 or later
+ */
+
+/**
  * Load required files without using an autoloader.
  *
  * - When loading for unit tests, start by loading Drupal cache API.

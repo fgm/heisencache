@@ -1,5 +1,16 @@
 <?php
 
+/**
+ * @file
+ * Heisencache: field handler for bulk data in watchdog.
+ *
+ * @author: marand
+ *
+ * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ *
+ * @license General Public License version 2 or later
+ */
+
 class heisencache_views_handler_field_events extends views_handler_field {
 
   /**
