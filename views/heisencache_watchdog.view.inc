@@ -12,7 +12,7 @@
 
 $view = new view();
 $view->name = 'heisencache_watchdog';
-$view->description = '';
+$view->description = 'View the bulk data stored by the Watchdog Writer Subscriber and the dblog module before processing.';
 $view->tag = 'Heisencache';
 $view->base_table = 'watchdog';
 $view->human_name = 'Heisencache Watchdog';

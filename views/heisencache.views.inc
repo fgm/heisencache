@@ -34,6 +34,9 @@ function _heisencache_views_data_sink() {
     'id' => array(
       'title' => t('Id'),
       'help' => t('The id of the sink row'),
+      'sort' => array(
+        'handler' => 'views_handler_sort',
+      ),
       'field' => array(
         'handler' => 'views_handler_field_numeric',
         'click  sortable' => TRUE,
@@ -56,6 +59,9 @@ function _heisencache_views_data_sink() {
       'filter' => array(
         'handler' => 'views_handler_filter_user_name',
       ),
+      'sort' => array(
+        'handler' => 'views_handler_sort',
+      ),
       'argument' => array(
         'handler' => 'views_handler_argument_numeric',
       ),
@@ -65,6 +71,13 @@ function _heisencache_views_data_sink() {
       ),
     ),
 
+    'data' => array(
+      'title' => t('Serialized event data'),
+      'help' => t('A serialized array of all the events observed by the SQL Writer Subscriber and not yet processed.'),
+      'field' => array(
+        'handler' => 'views_handler_field',
+      ),
+    ),
   );
   return $ret;
 }
