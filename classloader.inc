@@ -45,6 +45,7 @@ function heisencache_require() {
   require_once "$srcDir/DebugSubscriber.php";
   require_once "$srcDir/MissSubscriber.php";
   require_once "$srcDir/PerformanceSubscriber.php";
+  require_once "$srcDir/WriteSubscriber.php";
 
   // Load writer subscribers.
   require_once "$srcDir/BaseWriterSubscriber.php";
