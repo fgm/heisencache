@@ -65,7 +65,7 @@ class WriteSubscriber extends BaseEventSubscriber implements EventSourceInterfac
    *
    * @param string $channel
    * @param string $cid
-   * @param string $wildcard
+   * @param boolean $wildcard
    */
   public function afterClear($channel, $cid, $wildcard) {
     $clearInfo = array(
@@ -73,7 +73,7 @@ class WriteSubscriber extends BaseEventSubscriber implements EventSourceInterfac
       'op' => 'clear',
       'bin' => $channel,
       'requested' => array($cid),
-      'wildcard' => $wildcard
+      'wildcard' => $wildcard ? 1 : 0,
     );
 
     $this->emitter->emit('write', $channel, $clearInfo);
