@@ -1,9 +1,9 @@
 <?php
 /**
  * @file
- * A subscriber on cache miss events.
+ * A subscriber on cache set and clear events.
  *
- * @author: marand
+ * @author: bpresles
  *
  * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
  *
@@ -36,14 +36,16 @@ class WriteSubscriber extends BaseEventSubscriber implements EventSourceInterfac
   }
 
   /**
+   * Event handler for afterSet.
+   *
    * @param string $channel
    * @param string $cid
    * @param mixed $value
+   * @param int $expire
    *
    * @return array
    */
   public function afterSet($channel, $cid, $value, $expire) {
-
     $writeInfo = array(
       'subscriber' => static::NAME,
       'op' => 'set',
@@ -55,17 +57,17 @@ class WriteSubscriber extends BaseEventSubscriber implements EventSourceInterfac
 
     $this->emitter->emit('write', $channel, $writeInfo);
 
-
     return $writeInfo;
   }
 
   /**
+   * Event handler for afterClear.
+   *
    * @param string $channel
    * @param string $cid
    * @param string $wildcard
    */
   public function afterClear($channel, $cid, $wildcard) {
-
     $clearInfo = array(
       'subscriber' => static::NAME,
       'op' => 'clear',
