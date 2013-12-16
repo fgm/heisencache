@@ -1,5 +1,43 @@
 <?php
+
 /**
  * @file
- * Empty module file needed to register as a module.
+ * Heisencache administrative module.
+ *
+ * @author: marand
+ *
+ * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ *
+ * @license General Public License version 2 or later
  */
+
+/**
+ * Implements hook_menu().
+ *
+ * @return array
+ */
+function heisencache_menu() {
+  $items = array();
+  $items['admin/reports/heisencache'] = array(
+    'title' => 'Heisencache',
+    'access arguments' => array('administer site configuration'),
+    'page callback' => 'heisencache_page_reports',
+    'file' => 'heisencache.admin.inc',
+  );
+
+  return $items;
+}
+
+/**
+ * Implements hook_views_api().
+ */
+function heisencache_views_api() {
+  $path = drupal_get_path('module', 'heisencache');
+  $ret = array(
+    'api' => "3",
+    'path' => "$path/views",
+    'template path' => "$path/themes",
+  );
+
+  return $ret;
+}

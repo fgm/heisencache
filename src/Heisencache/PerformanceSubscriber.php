@@ -13,14 +13,9 @@
 namespace OSInet\Heisencache;
 
 
-class PerformanceSubscriber extends BaseEventSubscriber implements EventSourceInterface {
+class PerformanceSubscriber extends EventSourceSubscriber {
 
   const NAME = "performance";
-
-  /**
-   * @var \OSInet\Heisencache\EventEmitter
-   */
-  protected $emitter;
 
   protected $subscribedEvents = array(
     'beforeClear' => 1,
@@ -44,10 +39,6 @@ class PerformanceSubscriber extends BaseEventSubscriber implements EventSourceIn
   protected static $timers = array();
 
   protected $pendingGetMultiple;
-
-  public function __construct(EventEmitter $emitter) {
-    $this->emitter = $emitter;
-  }
 
   protected static function getTimerId($channel, $cids) {
     $args = array_unshift($cids, $channel);
@@ -220,12 +211,5 @@ class PerformanceSubscriber extends BaseEventSubscriber implements EventSourceIn
     $this->emitter->emit('performance', $channel, $perfInfo);
 
     return $perfInfo;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getEmittedEvents() {
-    return static::$emittedEvents;
   }
 }

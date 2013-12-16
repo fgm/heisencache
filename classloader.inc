@@ -1,6 +1,17 @@
 <?php
 
 /**
+ * @file
+ * Heisencache: class loader.
+ *
+ * @author: marand
+ *
+ * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ *
+ * @license General Public License version 2 or later
+ */
+
+/**
  * Load required files without using an autoloader.
  *
  * - When loading for unit tests, start by loading Drupal cache API.
@@ -26,6 +37,7 @@ function heisencache_require() {
   require_once "$srcDir/EventSourceInterface.php";
   require_once "$srcDir/EventSubscriberInterface.php";
   require_once "$srcDir/BaseEventSubscriber.php";
+  require_once "$srcDir/EventSourceSubscriber.php";
   require_once "$srcDir/EventEmitter.php";
   require_once "$srcDir/Cache.php";
   require_once "$srcDir/Config.php";
@@ -34,6 +46,7 @@ function heisencache_require() {
   require_once "$srcDir/DebugSubscriber.php";
   require_once "$srcDir/MissSubscriber.php";
   require_once "$srcDir/PerformanceSubscriber.php";
+  require_once "$srcDir/WriteSubscriber.php";
 
   // Load writer subscribers.
   require_once "$srcDir/BaseWriterSubscriber.php";

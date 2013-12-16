@@ -2,7 +2,11 @@ name = Heisencache
 description = A cache observer to reduce uncertainty about cache behavior
 package = Performance and scalability
 project status url = http://features.osinet.eu/fserver
+
 php = 5.3
 core = 7.x
 
-; Cache plugin does not use autoloading, so no files[] declarations.
+; Cache plugin does not use autoloading, so no files[] declarations for it.
+
+; Views integration uses autoloading, though, so files[] for it.
+files[] = views/heisencache_views_handler_field_events.inc
