@@ -37,6 +37,7 @@ function heisencache_require() {
   require_once "$srcDir/EventSourceInterface.php";
   require_once "$srcDir/EventSubscriberInterface.php";
   require_once "$srcDir/BaseEventSubscriber.php";
+  require_once "$srcDir/EventSourceSubscriber.php";
   require_once "$srcDir/EventEmitter.php";
   require_once "$srcDir/Cache.php";
   require_once "$srcDir/Config.php";

@@ -13,14 +13,9 @@
 namespace OSInet\Heisencache;
 
 
-class WriteSubscriber extends BaseEventSubscriber implements EventSourceInterface {
+class WriteSubscriber extends EventSourceSubscriber {
 
   const NAME = "writes";
-
-  /**
-   * @var \OSInet\Heisencache\EventEmitter
-   */
-  protected $emitter;
 
   protected $subscribedEvents = array(
     'afterSet' =>  1,
@@ -30,10 +25,6 @@ class WriteSubscriber extends BaseEventSubscriber implements EventSourceInterfac
   protected static $emittedEvents = array(
     'write',
   );
-
-  public function __construct(EventEmitter $emitter) {
-    $this->emitter = $emitter;
-  }
 
   /**
    * Event handler for afterSet.
@@ -79,12 +70,5 @@ class WriteSubscriber extends BaseEventSubscriber implements EventSourceInterfac
     $this->emitter->emit('write', $channel, $clearInfo);
 
     return $clearInfo;
-  }
-
-  /**
-   * {@inheritdoc}
-   */
-  public static function getEmittedEvents() {
-    return static::$emittedEvents;
   }
 }

@@ -13,14 +13,9 @@
 namespace OSInet\Heisencache;
 
 
-class MissSubscriber extends BaseEventSubscriber implements EventSourceInterface {
+class MissSubscriber extends EventSourceSubscriber {
 
   const NAME = "misses";
-
-  /**
-   * @var \OSInet\Heisencache\EventEmitter
-   */
-  protected $emitter;
 
   protected $subscribedEvents = array(
     'afterGet' =>  1,
@@ -34,10 +29,6 @@ class MissSubscriber extends BaseEventSubscriber implements EventSourceInterface
   );
 
   protected $multipleCids = array();
-
-  public function __construct(EventEmitter $emitter) {
-    $this->emitter = $emitter;
-  }
 
   /**
    * @param string $channel
@@ -98,10 +89,4 @@ class MissSubscriber extends BaseEventSubscriber implements EventSourceInterface
     $this->multipleCids = $cids;
   }
 
-  /**
-   * {@inheritdoc}
-   */
-  public static function getEmittedEvents() {
-    return static::$emittedEvents;
-  }
 }
