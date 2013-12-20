@@ -171,9 +171,6 @@ function _heisencache_views_data_watchdog() {
 }
 
 function heisencache_views_data_alter(&$data) {
-  if (module_exists('dblog')) {
-    $data = array_merge($data, _heisencache_views_data_watchdog());
-  }
-
+  $data = array_merge($data, _heisencache_views_data_watchdog());
   $data = array_merge($data, _heisencache_views_data_sink());
 }
