@@ -5,9 +5,9 @@
  *
  * @author: bpresles
  *
- * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ * @author: Frederic G. MARAND <fgm@osinet.fr>
  *
- * @license General Public License version 2 or later
+ * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
  */
 
 namespace OSInet\Heisencache;
@@ -57,6 +57,8 @@ class WriteSubscriber extends EventSourceSubscriber {
    * @param string $channel
    * @param string $cid
    * @param boolean $wildcard
+   *
+   * @return array
    */
   public function afterClear($channel, $cid, $wildcard) {
     $clearInfo = array(

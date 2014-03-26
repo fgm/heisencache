@@ -3,9 +3,9 @@
  * @file
  * Unit tests for the MissSubscriber class.
  *
- * @author: marand
+ * @author: Frederic G. MARAND <fgm@osinet.fr>
  *
- * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -33,7 +33,7 @@ class MissSubscriberTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testGetMiss() {
-    $key = 'somekey';
+    $key = 'some_key';
 
     $sub = new MissSubscriber($this->emitter);
     $actual = $sub->afterGet(self::CHANNEL, $key, FALSE);

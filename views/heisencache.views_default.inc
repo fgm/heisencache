@@ -4,23 +4,26 @@
  * @file
  * Default Views for Heisencache writers.
  *
- * @author: marand
+ * @author: Frederic G. MARAND <fgm@osinet.fr>
  *
- * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
 
 function heisencache_views_default_views() {
   $ret = array();
-  $diri = new \DirectoryIterator(__DIR__);
-  $regi = new \RegexIterator($diri, '/\.view\.inc$/');
+  $directory_iterator = new \DirectoryIterator(__DIR__);
+  $regex_iterator = new \RegexIterator($directory_iterator, '/\.view\.inc$/');
   $schema = drupal_get_complete_schema();
-  foreach ($regi as $item) {
+  foreach ($regex_iterator as $item) {
     unset($view);
+    /** @noinspection PhpUndefinedMethodInspection */
     $pathname = $item->getPathname();
+    /** @noinspection PhpIncludeInspection */
     include_once $pathname;
     if (!isset($view)) {
+      /** @noinspection PhpUndefinedMethodInspection */
       $view_arg = array(
         '@view' => $item->getFilename(),
       );

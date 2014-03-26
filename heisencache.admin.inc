@@ -4,9 +4,9 @@
  * @file
  * Heisencache administrative UI controllers.
  *
- * @author: marand
+ * @author: Frederic G. MARAND <fgm@osinet.fr>
  *
- * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -17,8 +17,8 @@ function heisencache_page_reports() {
   });
 
   $items = array();
-  foreach ($views as $name => $view) {
-    foreach ($view->display as $display_name => $display) {
+  foreach ($views as $view) {
+    foreach ($view->display as $display) {
       if (empty($display->display_options['path']))  {
         continue;
       }

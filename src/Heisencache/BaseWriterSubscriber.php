@@ -3,9 +3,9 @@
  * @file
  *   BaseWriterSubscriber.php
  *
- * @author: marand
+ * @author: Frederic G. MARAND <fgm@osinet.fr>
  *
- * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -20,6 +20,12 @@ abstract class BaseWriterSubscriber extends BaseEventSubscriber {
    *   Array of events triggered in this page cycle.
    */
   protected $history;
+
+  /**
+   * @var bool
+   *   Echo generalCall() call information for debugging purposes..
+   */
+  protected $showGenericCalls;
 
   public function __construct(array $events = NULL) {
     if (!isset($events)) {
@@ -40,9 +46,10 @@ abstract class BaseWriterSubscriber extends BaseEventSubscriber {
    * @param array $args
    */
   public function genericCall($eventName, $args) {
-    if (strpos($eventName, 'before') !== 0 && strpos($eventName, 'after') !== 0) {
-      //echo "<p>" . __CLASS__ . "::$eventName(" . $args[0] . ")</p>\n";
+    if ($this->showGenericCalls && strpos($eventName, 'before') !== 0 && strpos($eventName, 'after') !== 0) {
+      echo "<p>" . __CLASS__ . "::$eventName(" . $args[0] . ")</p>\n";
     }
+
     $this->history[] = array($eventName, $args);
   }
 
@@ -61,5 +68,9 @@ abstract class BaseWriterSubscriber extends BaseEventSubscriber {
     else {
       $this->genericCall($eventName, $args);
     }
+  }
+
+  public function setDebugCalls($showGenericCalls = FALSE) {
+    $this->showGenericCalls = $showGenericCalls;
   }
 }

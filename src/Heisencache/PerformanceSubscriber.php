@@ -3,9 +3,9 @@
  * @file
  * A subscriber on cache performance events.
  *
- * @author: marand
+ * @author: Frederic G. MARAND <fgm@osinet.fr>
  *
- * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -62,7 +62,7 @@ class PerformanceSubscriber extends EventSourceSubscriber {
    */
   public function afterClear($channel) {
     $timer_id = static::getTimerId($channel, array());
-    $perfInfo = array(
+    $performanceInfo = array(
       'subscriber' => static::NAME,
       'op' => 'clear',
       'bin' => $channel,
@@ -70,9 +70,9 @@ class PerformanceSubscriber extends EventSourceSubscriber {
     );
     unset(static::$timers[$timer_id]);
 
-    $this->emitter->emit('performance', $channel, $perfInfo);
+    $this->emitter->emit('performance', $channel, $performanceInfo);
 
-    return $perfInfo;
+    return $performanceInfo;
   }
 
   /**
@@ -93,7 +93,7 @@ class PerformanceSubscriber extends EventSourceSubscriber {
    */
   public function afterGet($channel, $cid, $value) {
     $timer_id = static::getTimerId($channel, array($cid));
-    $perfInfo = array(
+    $performanceInfo = array(
       'subscriber' => static::NAME,
       'op' => 'get',
       'bin' => $channel,
@@ -102,12 +102,12 @@ class PerformanceSubscriber extends EventSourceSubscriber {
     );
     unset(static::$timers[$timer_id]);
 
-    // Most backends will use at least 1 32-bit word to return FALSE.
+    // Most back-ends will use at least 1 32-bit word to return FALSE.
     $missInfo['size'] = ($value === FALSE) ? 4 : strlen(serialize($value->data));
 
-    $this->emitter->emit('performance', $channel, $perfInfo);
+    $this->emitter->emit('performance', $channel, $performanceInfo);
 
-    return $perfInfo;
+    return $performanceInfo;
   }
 
   /**
@@ -130,7 +130,7 @@ class PerformanceSubscriber extends EventSourceSubscriber {
   public function afterGetMultiple($channel, $missed_cids, $result) {
     $cids = $this->pendingGetMultiple[$channel];
     $timer_id = static::getTimerId($channel, $cids);
-    $perfInfo = array(
+    $performanceInfo = array(
       'subscriber' => static::NAME,
       'op' => 'getMultiple',
       'bin' => $channel,
@@ -139,17 +139,17 @@ class PerformanceSubscriber extends EventSourceSubscriber {
     );
     unset(static::$timers[$timer_id]);
 
-    // Most backends will use at least 1 32-bit word to return FALSE.
+    // Most back-ends will use at least 1 32-bit word to return FALSE.
     $size = 4 * count($missed_cids);
 
     foreach ($result as $data) {
       $size += strlen(serialize($data));
     }
-    $perfInfo['size'] = $size;
+    $performanceInfo['size'] = $size;
 
-    $this->emitter->emit('performance', $channel, $perfInfo);
+    $this->emitter->emit('performance', $channel, $performanceInfo);
 
-    return $perfInfo;
+    return $performanceInfo;
   }
 
   /**
@@ -167,7 +167,7 @@ class PerformanceSubscriber extends EventSourceSubscriber {
    */
   public function afterIsEmpty($channel) {
     $timer_id = static::getTimerId($channel, array());
-    $perfInfo = array(
+    $performanceInfo = array(
       'subscriber' => static::NAME,
       'op' => 'isEmpty',
       'bin' => $channel,
@@ -175,9 +175,9 @@ class PerformanceSubscriber extends EventSourceSubscriber {
     );
     unset(static::$timers[$timer_id]);
 
-    $this->emitter->emit('performance', $channel, $perfInfo);
+    $this->emitter->emit('performance', $channel, $performanceInfo);
 
-    return $perfInfo;
+    return $performanceInfo;
   }
 
   /**
@@ -198,7 +198,7 @@ class PerformanceSubscriber extends EventSourceSubscriber {
    */
   public function afterSet($channel, $cid, $data) {
     $timer_id = static::getTimerId($channel, array($cid));
-    $perfInfo = array(
+    $performanceInfo = array(
       'subscriber' => static::NAME,
       'op' => 'set',
       'bin' => $channel,
@@ -208,8 +208,8 @@ class PerformanceSubscriber extends EventSourceSubscriber {
     );
     unset(static::$timers[$timer_id]);
 
-    $this->emitter->emit('performance', $channel, $perfInfo);
+    $this->emitter->emit('performance', $channel, $performanceInfo);
 
-    return $perfInfo;
+    return $performanceInfo;
   }
 }

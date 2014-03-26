@@ -3,9 +3,9 @@
  * @file
  * Unit tests for the DebugSubscriber class.
  *
- * @author: marand
+ * @author: Frederic G. MARAND <fgm@osinet.fr>
  *
- * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -20,7 +20,7 @@ use OSInet\Heisencache\MissSubscriber;
 
 class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
   /**
-   * Fully qualified class name for DebugSubcriber.
+   * Fully qualified class name for DebugSubscriber.
    */
   const FQCN = 'OSInet\Heisencache\DebugSubscriber';
 
@@ -50,7 +50,9 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
   }
 
   public function testEventHandling() {
-    $channel = "somebin";
+    $channel = "some_bin";
+
+    /** @var \OSInet\Heisencache\Tests\MockEventSubscriberInterface $mock */
     $mock = $this->getMockBuilder(self::FQCN)
       ->setMethods(array('getSubscribedEvents', 'show'))
       ->getMock();
@@ -106,4 +108,3 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
     $this->expectOutputRegex('/' . __FUNCTION__ . "\($arg\)/");
   }
 }
- 

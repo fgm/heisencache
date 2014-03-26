@@ -3,9 +3,9 @@
  * @file
  *   Cache.php : The cache class used by Drupal.
  *
- * @author: marand
+ * @author: Frederic G. MARAND <fgm@osinet.fr>
  *
- * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -137,7 +137,7 @@ class Cache implements \DrupalCacheInterface, EventSourceInterface {
   /**
    * Expires data from the cache.
    *
-   * If called without arguments, expirable entries will be cleared from the
+   * If called without arguments, applicable entries will be cleared from the
    * cache_page and cache_block bins.
    *
    * @param $cid

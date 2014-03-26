@@ -3,9 +3,9 @@
  * @file
  * Test the EventEmitter class.
  *
- * @author: marand
+ * @author: Frederic G. MARAND <fgm@osinet.fr>
  *
- * @copyright (c) 2013 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -19,6 +19,12 @@ class EventEmitterTest extends \PHPUnit_Framework_TestCase {
   const SUBSCRIBER_CLASS = 'OSInet\Heisencache\DebugSubscriber';
   const CHANNEL = "some channel";
 
+  /**
+   * @param array $events
+   * @param null $class
+   *
+   * @return \OSInet\Heisencache\tests\MockEventSubscriberInterface
+   */
   protected function getMockSubscriber(array $events, $class = NULL) {
     static $sequence = 0;
 
