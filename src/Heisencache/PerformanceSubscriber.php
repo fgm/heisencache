@@ -40,9 +40,9 @@ class PerformanceSubscriber extends EventSourceSubscriber {
 
   protected $pendingGetMultiple;
 
-  protected static function getTimerId($channel, $cids) {
-    $args = array_unshift($cids, $channel);
-    $timer_id = serialize($args);
+  public static function getTimerId($channel, $cids) {
+    array_unshift($cids, $channel);
+    $timer_id = serialize($cids);
 
     return $timer_id;
   }

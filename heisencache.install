@@ -12,6 +12,8 @@
 
 use OSInet\Heisencache\SqlWriterSubscriber;
 
+require_once __DIR__ . '/vendor/autoload.php';
+
 /**
  * Implements hook_schema().
  */
