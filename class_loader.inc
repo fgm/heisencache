@@ -33,6 +33,9 @@ function heisencache_require() {
     /** @noinspection PhpIncludeInspection */
     require_once "$drupal_base/includes/cache.inc";
   }
+  else {
+    $drupal_base = NULL;
+  }
 
   // Load cache-related classes.
   require_once __DIR__ . "/src/Heisencache/EventSourceInterface.php";
@@ -54,6 +57,8 @@ function heisencache_require() {
   require_once __DIR__ . "/src/Heisencache/BaseWriterSubscriber.php";
   require_once __DIR__ . "/src/Heisencache/SqlWriterSubscriber.php";
   require_once __DIR__ . "/src/Heisencache/WatchdogWriterSubscriber.php";
+
+  return $drupal_base;
 }
 
 heisencache_require();
