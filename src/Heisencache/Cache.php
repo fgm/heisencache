@@ -89,7 +89,7 @@ class Cache implements \DrupalCacheInterface, EventSourceInterface {
     $this->emitter->emit('beforeGet', $this->bin, $cid);
     $result = $this->handler->get($cid);
     $this->emitter->emit('afterGet', $this->bin, $cid, $result);
-    return FALSE;
+    return $result;
   }
 
   /**
