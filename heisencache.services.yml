@@ -1,0 +1,5 @@
+services:
+  heisencache.cache_factory:
+    class: Drupal\heisencache\CacheFactory
+    # But look at HeisencacheServiceProvider::alter() for extra argument.
+    arguments: ['@event_dispatcher']

@@ -12,12 +12,12 @@
 
 use OSInet\Heisencache\SqlWriterSubscriber;
 
-require_once __DIR__ . '/vendor/autoload.php';
+#require_once __DIR__ . '/vendor/autoload.php';
 
 /**
  * Implements hook_schema().
  */
-function heisencache_schema() {
+function Zheisencache_schema() {
   $ret = array();
 
   $ret[SqlWriterSubscriber::SINK] = array(
