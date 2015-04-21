@@ -14,32 +14,34 @@ namespace Drupal\heisencache;
 
 
 use Drupal\Core\Cache\CacheFactoryInterface;
+use Drupal\heisencache\Event\EventDispatcherTrait;
 use Drupal\heisencache\Event\FactoryGetEvent;
+use OSInet\Heisencache\Cache;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
-class CacheFactory implements CacheFactoryInterface, ContainerAwareInterface {
+/**
+ * Class CacheFactory is a decorator for the core CacheFactory, adding event
+ * generation around its methods, and building decorated CacheBacking instances.
+ *
+ * @package Drupal\heisencache
+ */
+class CacheFactory implements CacheFactoryInterface {
 
-  const GET_BIN_PRE = 'get_bin_pre';
-  const GET_BIN_POST = 'get_bin_post';
+  use EventDispatcherTrait;
 
-  use ContainerAwareTrait;
+  const FACTORY_GET = 'factory get';
 
   /**
    * @var \Drupal\Core\Cache\CacheFactoryInterface
    */
-  protected $core_factory;
-
-  /**
-   * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
-   */
-  protected $dispatcher;
+  protected $decorated_factory;
 
   public function __construct(EventDispatcherInterface $dispatcher, CacheFactoryInterface $core_factory)  {
-    $this->core_factory = $core_factory;
+    $this->decorated_factory = $core_factory;
     $this->dispatcher = $dispatcher;
   }
 
@@ -48,10 +50,11 @@ class CacheFactory implements CacheFactoryInterface, ContainerAwareInterface {
    */
   public function get($bin) {
     $event = new FactoryGetEvent($bin);
-    $this->dispatcher->dispatch(static::GET_BIN_PRE, $event);
-    $ret = $this->core_factory->get($bin);
-    $this->dispatcher->dispatch(static::GET_BIN_POST, $event);
-    return $ret;
+    $this->dispatch($event);
+    $decorated_backend = $this->decorated_factory->get($bin);
+    $decorator = new Cache($bin, $decorated_backend, $this->dispatcher);
+    $this->dispatch($event->setPost());
+    return $decorator;
   }
 
 }

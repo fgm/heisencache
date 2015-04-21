@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * FactoryGetEvent.php
+ * BackendSet.php
  *
  * @author: Frédéric G. MARAND <fgm@osinet.fr>
  *
@@ -13,9 +13,9 @@
 namespace Drupal\heisencache\Event;
 
 /**
- * Class FactoryGetEvent: triggered pre/post backend construction by factory.
+ * Class BackendSet: triggered pre/post single item set.
  *
  * @package Drupal\heisencache\Event
  */
-class FactoryGetEvent extends EventBase {
+class BackendSet extends EventBase {
 }

@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * FactoryGetEvent.php
+ * BackendInvalidateAll.php
  *
  * @author: Frédéric G. MARAND <fgm@osinet.fr>
  *
@@ -13,9 +13,9 @@
 namespace Drupal\heisencache\Event;
 
 /**
- * Class FactoryGetEvent: triggered pre/post backend construction by factory.
+ * Class BackendInvalidateAll: triggered pre/post all-items invalidation.
  *
  * @package Drupal\heisencache\Event
  */
-class FactoryGetEvent extends EventBase {
+class BackendInvalidateAll extends EventBase {
 }

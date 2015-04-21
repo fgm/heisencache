@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * FactoryGetEvent.php
+ * CacheConstructEvent.php
  *
  * @author: Frédéric G. MARAND <fgm@osinet.fr>
  *
@@ -13,9 +13,9 @@
 namespace Drupal\heisencache\Event;
 
 /**
- * Class FactoryGetEvent: triggered pre/post backend construction by factory.
+ * Class BackendConstruct: triggered pre/post core backend construction.
  *
  * @package Drupal\heisencache\Event
  */
-class FactoryGetEvent extends EventBase {
+class BackendConstruct extends EventBase {
 }

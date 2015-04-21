@@ -1,7 +1,7 @@
 <?php
 /**
  * @file
- * FactoryGetEvent.php
+ * BackendSetMultiple.php
  *
  * @author: Frédéric G. MARAND <fgm@osinet.fr>
  *
@@ -13,9 +13,11 @@
 namespace Drupal\heisencache\Event;
 
 /**
- * Class FactoryGetEvent: triggered pre/post backend construction by factory.
+ * Class BackendSetMultiple: triggered pre/post multiple-items set.
  *
  * @package Drupal\heisencache\Event
  */
-class FactoryGetEvent extends EventBase {
+class BackendSetMultiple extends EventBase {
+
+  public $name = 'backend set multiple';
 }

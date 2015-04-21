@@ -45,7 +45,9 @@ class CacheTest extends \PHPUnit_Framework_TestCase {
 
     // Override default override with our mock cache. Since this is not a public
     // property and there is no setter, force it using reflection.
-    $cache = new Cache('cache');
+    $core_cache = \Drupal::cache('cache');
+    $dispatcher = \Drupal::service('event_dispatcher');
+    $cache = new Cache('cache', $core_cache, $dispatcher);
     $rp = new \ReflectionProperty($cache, 'handler');
     $rp->setAccessible(TRUE);
     $rp->setValue($cache, $handler);

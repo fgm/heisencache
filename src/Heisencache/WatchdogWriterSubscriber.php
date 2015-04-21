@@ -13,13 +13,15 @@
 namespace OSInet\Heisencache;
 
 
+use Drupal\Core\Logger\RfcLogLevel;
+
 class WatchdogWriterSubscriber extends BaseWriterSubscriber {
 
   public function onShutdown($channel) {
     if (!empty($this->history)) {
       watchdog('heisencache', 'Cache events: @events', array(
         '@events' => serialize($this->history),
-      ), WATCHDOG_DEBUG);
+      ), RfcLogLevel::DEBUG);
     }
   }
 }
