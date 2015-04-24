@@ -65,7 +65,7 @@ class Config {
   }
 
   protected function __clone() {
-    throw new \Exception('Heisencache configuration should not be cloned.');
+    throw new \Exception('You shall not clone (or not).');
   }
 
   /**
