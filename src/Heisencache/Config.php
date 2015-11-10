@@ -142,6 +142,7 @@ class Config {
 
     foreach ($this->conf as $bin => $class) {
       if (!strncmp($bin, self::VAR_CACHE_CLASS_PREFIX, $len)) {
+        $bin = substr($bin, $len);
         $this->visible_bins[$bin] = static::CACHE_CLASS;
         $this->actual_bins[$bin] = new $class($bin);
       }
