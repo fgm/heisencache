@@ -1,18 +1,19 @@
 {
-    "name": "osinet/heisencache",
-    "description": "A cache decorator for Drupal, to reduce uncertainty by observing cache behaviour",
-    "license": "GPL-2.0+",
-    "authors": [
-        {
-            "name": "Frederic G. MARAND",
-            "email": "fgm@osinet.fr"
-        }
-    ],
-    "config": {
-        "process-timeout": 3600
-    },
-    "minimum-stability": "dev",
-    "require-dev": {
-      "phpunit/phpunit": "3.7.10"
+  "authors": [
+    {
+      "name": "Frederic G. MARAND",
+      "email": "fgm@osinet.fr"
     }
+  ],
+  "config": {
+    "process-timeout": 3600
+  },
+  "description": "A cache decorator for Drupal, to reduce uncertainty by observing cache behaviour",
+  "license": "GPL-2.0+",
+  "minimum-stability": "dev",
+  "name": "drupal/heisencache",
+  "require-dev": {
+    "phpunit/phpunit": "3.7.10"
+  },
+  "type": "drupal-module"
 }

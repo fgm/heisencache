@@ -63,5 +63,3 @@ directory. Otherwise:
 - copy `phpunit.xml.dist` to `phpunit.xml`
 - modify the `HEISENCACHE_DRUPAL_BASE` value to point to the Drupal base directory.
 - run PHPunit like: `phpunit src`
-
-[![Bitdeli Badge](https://d2weczhvl823v0.cloudfront.net/FGM/heisencache/trend.png)](https://bitdeli.com/free "Bitdeli Badge")
