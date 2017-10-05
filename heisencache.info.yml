@@ -3,7 +3,7 @@
 #
 # @author: Frederic G. MARAND <fgm@osinet.fr>
 #
-# @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
+# @copyright (c) 2013-2017 Ouest Systèmes Informatiques (OSInet).
 #
 # @license General Public License version 2 or later
 #
@@ -13,5 +13,5 @@ type: module
 package: Performance and scalability
 # project status url = http://features.osinet.eu/fserver
 
-php: = 5.4
+php: 7.1
 core: 8.x
