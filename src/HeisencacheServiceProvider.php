@@ -4,7 +4,7 @@ namespace Drupal\heisencache;
 
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderInterface;
-use Drupal\heisencache\Cache\DecorateCachePass;
+use Drupal\heisencache\Cache\CacheInstrumentationPass;
 
 /**
  * Class HeisencacheServiceProvider defines the module services.
@@ -19,7 +19,7 @@ class HeisencacheServiceProvider implements ServiceProviderInterface {
    * Add a pass decorating cache services (bins, backends) with Heisencache.
    */
   public function register(ContainerBuilder $container) {
-    $container->addCompilerPass(new DecorateCachePass());
+    $container->addCompilerPass(new CacheInstrumentationPass());
   }
 
 }

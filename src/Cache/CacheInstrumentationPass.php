@@ -7,19 +7,25 @@ use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
 
 /**
- * Class DecorateCachePass decorates cache bins and used cache backends.
+ * Class CacheInstrumentationPass decorates cache bins.
  *
  * @package Drupal\heisencache\Cache
  *
  * @see \Drupal\heisencache\HeisencacheServiceProvider::register()
  */
-class DecorateCachePass implements CompilerPassInterface {
+class CacheInstrumentationPass implements CompilerPassInterface {
+
+  /**
+   * @var \Symfony\Component\DependencyInjection\Reference
+   */
+  protected $dispatcher;
 
   /**
    * {@inheritdoc}
    */
   public function process(ContainerBuilder $container) {
     $bins = $container->getParameter('cache_bins');
+    $this->dispatcher = new Reference('event_dispatcher');
     array_walk($bins, [$this, 'decorateBin'], $container);
   }
 
@@ -31,6 +37,7 @@ class DecorateCachePass implements CompilerPassInterface {
       ->setDecoratedService($serviceId)
       ->addArgument(new Reference($decoratedName))
       ->addArgument($bin)
+      ->addArgument($this->dispatcher)
       ->setPublic(TRUE);
   }
 
