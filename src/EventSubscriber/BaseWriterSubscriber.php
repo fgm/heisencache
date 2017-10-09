@@ -1,17 +1,9 @@
 <?php
-/**
- * @file
- *   BaseWriterSubscriber.php
- *
- * @author: Frederic G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
- *
- * @license General Public License version 2 or later
- */
 
-namespace OSInet\Heisencache;
+namespace Drupal\heisencache\EventSubscriber;
 
+use Drupal\heisencache\Cache\InstrumentedBin;
+use Drupal\heisencache\Exception\InvalidArgumentException;
 
 abstract class BaseWriterSubscriber extends BaseEventSubscriber {
 
@@ -27,9 +19,9 @@ abstract class BaseWriterSubscriber extends BaseEventSubscriber {
    */
   protected $showGenericCalls;
 
-  public function __construct(array $events = NULL) {
+  public function __construct(array $events = []) {
     if (!isset($events)) {
-      $events = Cache::getEmittedEvents();
+      $events = InstrumentedBin::getEmittedEvents();
     }
     foreach ($events as $eventName) {
       $this->addEvent($eventName);
@@ -59,11 +51,11 @@ abstract class BaseWriterSubscriber extends BaseEventSubscriber {
    * @param string $eventName
    * @param array $args
    *
-   * @throws \InvalidArgumentException
+   * @throws \Drupal\heisencache\Exception\InvalidArgumentException
    */
   public function __call($eventName, $args) {
     if (!in_array($eventName, $this->subscribedEvents)) {
-      throw new \InvalidArgumentException("Unsupported event $eventName");
+      throw new InvalidArgumentException("Unsupported event $eventName");
     }
     else {
       $this->genericCall($eventName, $args);

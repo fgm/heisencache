@@ -10,14 +10,14 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache;
+namespace Drupal\heisencache\EventSubscriber;
 
 /**
  * Interface EventSubscriberInterface.
  *
  * Implementers MUST also implement one method for each subscribed event.
  *
- * @package OSInet\Heisencache
+ * @package Drupal\heisencache\EventSubscriber
  */
 interface EventSubscriberInterface {
   /**

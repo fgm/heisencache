@@ -1,16 +1,6 @@
 <?php
-/**
- * @file
- * An universal subscriber for debug purposes.
- *
- * @author: Frederic G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
- *
- * @license General Public License version 2 or later
- */
 
-namespace OSInet\Heisencache;
+namespace Drupal\heisencache\EventSubscriber;
 
 class DebugSubscriber extends BaseEventSubscriber {
   public function show() {
@@ -36,7 +26,6 @@ class DebugSubscriber extends BaseEventSubscriber {
 
   public function afterGet($channel, $key, $value) {
    $this->show($key, $value);
-
   }
 
   public function beforeGetMultiple($channel, array $keys) {

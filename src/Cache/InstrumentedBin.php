@@ -17,6 +17,7 @@ use Drupal\heisencache\Event\BackendInvalidateMultiple;
 use Drupal\heisencache\Event\BackendSet;
 use Drupal\heisencache\Event\BackendSetMultiple;
 use Drupal\heisencache\Event\EventDispatcherTrait;
+use Drupal\heisencache\Event\EventInterface;
 use Drupal\heisencache\Event\EventSourceInterface;
 use Drupal\heisencache\Event\RemoveBin;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;

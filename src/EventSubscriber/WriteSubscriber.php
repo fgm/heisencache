@@ -10,7 +10,7 @@
  * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
  */
 
-namespace OSInet\Heisencache;
+namespace Drupal\heisencache\EventSubscriber;
 
 
 class WriteSubscriber extends EventSourceSubscriber {

@@ -10,7 +10,7 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache;
+namespace Drupal\heisencache\EventSubscriber;
 
 
 use Drupal\Core\Logger\RfcLogLevel;

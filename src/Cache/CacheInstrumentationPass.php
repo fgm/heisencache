@@ -29,8 +29,18 @@ class CacheInstrumentationPass implements CompilerPassInterface {
     array_walk($bins, [$this, 'decorateBin'], $container);
   }
 
+  /**
+   * Decorate cache bin services with the Heisencache wrapper.
+   *
+   * @param string $bin
+   *   The cache bin name.
+   * @param string $serviceId
+   *   The name of the service for the cache bin.
+   * @param \Symfony\Component\DependencyInjection\ContainerBuilder $container
+   *   The container.
+   */
   protected function decorateBin(string $bin, string $serviceId, ContainerBuilder $container) {
-    $decoratorName = 'heisencache.decorating_' . $serviceId;
+    $decoratorName = "heisencache.decorating_{$serviceId}";
     $decoratedName = "{$decoratorName}.inner";
 
     $container->register($decoratorName, InstrumentedBin::class)
