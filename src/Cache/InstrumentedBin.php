@@ -75,7 +75,7 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
    * {@inheritdoc}
    */
   public function delete($cid) {
-    $event = new BackendDelete($this->bin, EventInterface::PRE, get_defined_vars());
+    $event = new BackendDelete($this->bin, EventInterface::PRE, compact('cid'));
     $this->dispatch($event);
     $this->decorated->delete($cid);
     $this->dispatch($event->setPost());
@@ -95,7 +95,7 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
    * {@inheritdoc}
    */
   public function deleteMultiple(array $cids) {
-    $event = new BackendDeleteMultiple($this->bin, EventInterface::PRE, get_defined_vars());
+    $event = new BackendDeleteMultiple($this->bin, EventInterface::PRE, compact('cids'));
     $this->dispatch($event);
     $this->decorated->deleteMultiple($cids);
     $this->dispatch($event->setPost());
@@ -115,7 +115,7 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
    * {@inheritdoc}
    */
   public function get($cid, $allow_invalid = FALSE) {
-    $event = new BackendGet($this->bin, EventInterface::PRE, get_defined_vars());
+    $event = new BackendGet($this->bin, EventInterface::PRE, compact('cid', 'allow_invalid'));
     $this->dispatch($event);
     $result = $this->decorated->get($cid, $allow_invalid);
     $this->dispatch($event->setPost()->setData([
@@ -151,7 +151,7 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
    * {@inheritdoc}
    */
   public function getMultiple(&$cids, $allow_invalid = FALSE) {
-    $event = new BackendGetMultiple($this->bin, EventInterface::PRE, get_defined_vars());
+    $event = new BackendGetMultiple($this->bin, EventInterface::PRE, compact('cids', 'allow_invalid'));
     $this->dispatch($event);
     $result = $this->decorated->getMultiple($cids, $allow_invalid);
     $this->dispatch($event->setPost()->setData([
@@ -165,7 +165,7 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
    * {@inheritdoc}
    */
   public function invalidate($cid) {
-    $event = new BackendInvalidate($this->bin, EventInterface::PRE, get_defined_vars());
+    $event = new BackendInvalidate($this->bin, EventInterface::PRE, compact('cid'));
     $this->dispatch($event);
     $this->decorated->invalidate($cid);
     $this->dispatch($event->setPost());
@@ -186,7 +186,7 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
    * {@inheritdoc}
    */
   public function invalidateMultiple(array $cids) {
-    $event = new BackendInvalidateMultiple($this->bin, EventInterface::PRE, get_defined_vars());
+    $event = new BackendInvalidateMultiple($this->bin, EventInterface::PRE, compact('cids'));
     $this->dispatch($event);
     $this->decorated->invalidateMultiple($cids);
     $this->dispatch($event->setPost());
@@ -206,7 +206,7 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
    * {@inheritdoc}
    */
   public function set($cid, $data, $expire = CoreCache::PERMANENT, array $tags = []) {
-    $event = new BackendSet($this->bin, EventInterface::PRE, get_defined_vars());
+    $event = new BackendSet($this->bin, EventInterface::PRE, compact('cid', 'data', 'expire', 'tags'));
     $this->dispatch($event);
     $this->decorated->set($cid, $data, $expire, $tags);
     $this->dispatch($event->setPost());
@@ -216,7 +216,7 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
    * {@inheritdoc}
    */
   public function setMultiple(array $items = []) {
-    $event = new BackendSetMultiple($this->bin, EventInterface::PRE, get_defined_vars());
+    $event = new BackendSetMultiple($this->bin, EventInterface::PRE, compact('items'));
     $this->dispatch($event);
     $this->decorated->setMultiple($items);
     $this->dispatch($event->setPost());

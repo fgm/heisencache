@@ -2,6 +2,8 @@
 
 namespace Drupal\heisencache\Event;
 
+use Drupal\heisencache\HeisencacheServiceProvider as H;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
@@ -40,16 +42,30 @@ abstract class EventBase extends Event implements EventInterface {
    */
   public $kind;
 
+  /**
+   * EventBase constructor.
+   *
+   * @param string $bin
+   *   The name of the bin on which an event is being dispatched.
+   * @param string $kind
+   *   The kind of event: self::(PRE|IN\POST).
+   * @param array $data
+   *   Optional: event data.
+   */
   public function __construct($bin, $kind = self::PRE, array $data = [])  {
+    $data += ['id' => $_SERVER['UNIQUE_ID'] ?? 'unknown_id'];
     $this->bin = $bin;
     $this->kind = $kind;
     $this->data = $data;
-    $class = explode('\\', get_class($this));
-    $event_name = array_pop($class);
-    $event_name = strtolower(preg_replace('/[A-Z]*/', '_$1', $event_name));
-    $this->eventName = $event_name;
+    // __CLASS__ would give this class, unlike get_class($this).
+    $event_name = substr(strrchr(get_class($this), '\\'), 1);
+    $event_name = Container::underscore($event_name);
+    $this->eventName = H::MODULE . ".${event_name}";
   }
 
+  /**
+   * {@inheritdoc}
+   */
   public function kind() {
     return $this->kind;
   }
@@ -72,6 +88,7 @@ abstract class EventBase extends Event implements EventInterface {
       $rm->setAccessible(TRUE);
       $rm->setValue($this, FALSE);
     }
+
     return $this;
   }
 
