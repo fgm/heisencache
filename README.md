@@ -38,8 +38,12 @@ Note that this plugin requires PHP >= 7.1.
 Installing
 ----------
 
-Just enable the module. Heisencache will automatically find existing cache
-services and wrap around them.
+Just add and enable the module: Composer will find the dependencies, and once
+enabled, Heisencache will automatically find existing cache services and wrap 
+around them. 
+
+    composer require drupal/heisencache
+    drush en heisencache
 
 However, at this point, it will just make your site slower with zero benefits, 
 because its logic will be added to the existing caches and the events it 

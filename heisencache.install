@@ -1,18 +1,30 @@
 <?php
 /**
  * @file
- * Heisencache installer: define the SQL Writer schema
+ * Heisencache installer.
  *
  * @author: Frederic G. MARAND <fgm@osinet.fr>
  *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2017 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
 
+use Drupal\heisencache\Requirements;
 use OSInet\Heisencache\SqlWriterSubscriber;
 
-#require_once __DIR__ . '/vendor/autoload.php';
+/**
+ * Implements hook_requirements().
+ */
+function heisencache_requirements($phase) {
+  // Autoloader may not be usable for module during install phase.
+  require_once __DIR__ . '/src/Requirements.php';
+
+  /** @var \Drupal\heisencache\Requirements $service */
+  $service = Drupal::classResolver()->getInstanceFromDefinition(Requirements::class);
+  $requirements = $service->requirements($phase);
+  return $requirements;
+}
 
 /**
  * Implements hook_schema().

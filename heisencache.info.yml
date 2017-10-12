@@ -7,11 +7,11 @@
 #
 # @license General Public License version 2 or later
 #
-name: Heisencache
-description: A cache observer to reduce uncertainty about cache behavior
-type: module
-package: Performance and scalability
-# project status url = http://features.osinet.eu/fserver
 
-php: 7.1
+configure: heisencache.report
 core: 8.x
+description: A cache observer to reduce uncertainty about cache behavior
+name: Heisencache
+package: Performance and scalability
+php: 7.1
+type: module

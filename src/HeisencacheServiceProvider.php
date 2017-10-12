@@ -5,6 +5,8 @@ namespace Drupal\heisencache;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 use Drupal\heisencache\Cache\CacheInstrumentationPass;
+use Drupal\heisencache\Menu\LinksProvider;
+use Drupal\heisencache\Routing\RouteProvider;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\Finder\Finder;
 
@@ -14,10 +16,19 @@ use Symfony\Component\Finder\Finder;
  * @package Drupal\heisencache
  */
 class HeisencacheServiceProvider implements ServiceProviderInterface {
+  const MODULE = 'heisencache';
   const NS = 'EventSubscriber';
   const FQNS = __NAMESPACE__ . '\\' . self::NS;
 
-  protected function discoverSubscribers() {
+  // Generic service names.
+  const LINKS_PROVIDER = self::MODULE . '.links_provider';
+  const ROUTE_PROVIDER = self::MODULE . '.route_provider';
+
+  /**
+   * @param \Drupal\Core\DependencyInjection\ContainerBuilder $container
+   *   The container builder.
+   */
+  protected function discoverSubscribers(ContainerBuilder $container) {
     $subscribers = [];
     $finder = new Finder();
     $finder->files()->in(__DIR__ . '/' . self::NS);
@@ -27,9 +38,21 @@ class HeisencacheServiceProvider implements ServiceProviderInterface {
       if (!$reflectionClass->isInstantiable()) {
         continue;
       }
-      $serviceName = 'heisencache.subscriber.' . Container::underscore($name);
+      $serviceName = self::MODULE . '.subscriber.' . Container::underscore($name);
       echo "$serviceName\t";
     }
+  }
+
+  /**
+   * Register the generic providers.
+   *
+   * @param \Drupal\Core\DependencyInjection\ContainerBuilder $container
+   *   The container builder.
+   */
+  protected function registerGenericProviders(ContainerBuilder $container) {
+    $container->register(self::ROUTE_PROVIDER, RouteProvider::class)
+      ->addTag('event_subscriber');
+    $container->register(self::LINKS_PROVIDER, LinksProvider::class);
   }
 
   /**
@@ -39,7 +62,8 @@ class HeisencacheServiceProvider implements ServiceProviderInterface {
    */
   public function register(ContainerBuilder $container) {
     $container->addCompilerPass(new CacheInstrumentationPass());
-    $this->discoverSubscribers();
+    $this->registerGenericProviders($container);
+    $this->discoverSubscribers($container);
   }
 
 }
