@@ -2,6 +2,7 @@ build
 vendor
 settings.heisencache.inc
 
+composer.lock
 composer.phar
 
 phpunit.xml

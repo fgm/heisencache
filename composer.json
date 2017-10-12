@@ -15,5 +15,8 @@
   "require-dev": {
     "phpunit/phpunit": ">=4.8.35"
   },
-  "type": "drupal-module"
+  "type": "drupal-module",
+  "require": {
+    "league/commonmark": "^0.15.6"
+  }
 }

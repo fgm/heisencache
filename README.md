@@ -1,39 +1,61 @@
-Installing Heisencache
-======================
+**Caveat emptor:** 2017-10-12 The Drupal 8 version of this project is currently 
+a work in progress, with next to no usable functionality.
+
+Heisencache
+===========
 
 Theory of operation
 -------------------
 
-Heisencache is a Drupal 7 cache plugin. As such, it is implemented within a
-module package and is not a module itself. The sole role of the module is to
-provide an administrative UI at some point.
+Heisencache is a Drupal 8 cache plugin. Unlike the Drupal 7 version, it is an
+actual module using standard Drupal kernel dispatching.
 
-Heisencache works by intercepting ALL cache settings and inserting itself as a
-transparent proxy in front of the other caches, which it invokes on behalf of
-the client code invoking cache operations.
+Heisencache works by intercepting ALL enabled cache backend services and 
+inserting itself as a decorator in front of them. It then dispatches pre- and 
+post- events around each operation on them using the standard Drupal 8 event
+dispatcher (not a custom event system as in the Drupal 7 version). 
 
-Note that this plugin requires PHP >= 5.3.
+Event subscribers can then react on these events to perform any kind of 
+analysis or monitoring. Heisencache comes with a number of pre-built listeners:
 
-Installation example
---------------------
+* Basic subscribers: 
+  * `DebugSubscriber`: catch everything
+  * `MissSubscriber`: catch cache misses occurring on `get[Multiple]` operations
+  * `PerformanceSubscriber`: measure time and data volume for every operation
+  * `WriteSubscriber`: catch only operations modifying the cache: `set[Multiple]`, 
+    `invalidate[All|Multiple]`, `delete[All|Multiple]`, `removeBin`.
+* Writer subscribers: these catch all calls and save the collected data during 
+  shutdown
+  * `SqlWriterSubscriber`: write to a raw SQL table
+  * `WatchdogSubscriber`: Write using a logger channel.
 
-In order to do this, the Heisencache cache plugin must be inserted into the
-site settings file (`settings.php`) as the last cache setting. Typically, this
-means that the bottom of `settings.php` should look like this, assuming Redis is
-used as the main cache plugin.
-
-    # Configure other caches as if Heisencache was not there.
-    $conf['cache_default_class']         = 'Redis_Cache';
-    $conf['cache_class_cache_form']      = 'DrupalDatabaseCache';
-    $conf['cache_class_cache_update']    = 'DrupalDatabaseCache';
-    $conf['cache_backends'][]            = 'sites/all/modules/contrib/redis/redis.autoload.inc';
-
-    # Then override the configuration: declare the plugin, load it, and invoke it.
-    $conf['cache_backends'][] = 'sites/all/modules/contrib/heisencache/heisencache.inc';
+Most custom extensions developed by users are likely to be custom writer 
+subscribers to ship events to specific off-site storage for deferred analysis.
+ 
+Note that this plugin requires PHP >= 7.1.
 
 
-Configuration
--------------
+Installing
+----------
+
+Just enable the module. Heisencache will automatically find existing cache
+services and wrap around them.
+
+However, at this point, it will just make your site slower with zero benefits, 
+because its logic will be added to the existing caches and the events it 
+triggers will not be used by any listener.
+
+To actually use it, you will then need to configure it, thus defining what 
+event subscribers are to be used.
+
+<hr />
+
+*Text below this line is only valid for the Drupal 7 version*
+
+<hr />
+ 
+Configuring
+-----------
 
 The plugin can be configured per-site by implementing a `settings.heisencache.inc`
 file in the site settings directory. Copy `default.settings.heisencache.inc` to
