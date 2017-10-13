@@ -13,11 +13,15 @@
 namespace Drupal\heisencache\EventSubscriber;
 
 
-class PerformanceSubscriber extends EventSourceSubscriber {
+use Drupal\heisencache\Event\EventSourceInterface;
+
+class PerformanceSubscriber extends BaseEventSubscriber implements EventSourceInterface {
+
+  use EventSourceTrait;
 
   const NAME = "performance";
 
-  protected $subscribedEvents = array(
+  protected static $subscribedEvents = [
     'beforeClear' => 1,
     'afterClear' => 1,
 
@@ -32,9 +36,9 @@ class PerformanceSubscriber extends EventSourceSubscriber {
 
     'beforeGetMultiple' => 1,
     'afterGetMultiple' => 1,
-  );
+  ];
 
-  protected static $emittedEvents = array('performance');
+  protected static $emittedEvents = ['performance'];
 
   protected static $timers = array();
 

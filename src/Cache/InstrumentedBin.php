@@ -18,8 +18,9 @@ use Drupal\heisencache\Event\BackendSet;
 use Drupal\heisencache\Event\BackendSetMultiple;
 use Drupal\heisencache\Event\EventDispatcherTrait;
 use Drupal\heisencache\Event\EventInterface;
-use Drupal\heisencache\Event\EventSourceInterface;
+use Drupal\heisencache\EventSubscriber\EventSourceInterface;
 use Drupal\heisencache\Event\RemoveBin;
+use Drupal\heisencache\HeisencacheServiceProvider as H;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
@@ -136,10 +137,13 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
   public static function getEmittedEvents() {
     if (!isset(static::$events)) {
       $methods = get_class_methods(CacheBackendInterface::class);
-      $events = ['onCacheConstruct', 'onShutdown'];
+      $events = [
+        H::MODULE . '.onCacheConstruct',
+        H::MODULE . '.onShutdown',
+      ];
       foreach ($methods as $method) {
-        $events[] = 'before' . ucfirst($method);
-        $events[] = 'after' . ucfirst($method);
+        $events[] = H::MODULE . '.before' . ucfirst($method);
+        $events[] = H::MODULE . '.after' . ucfirst($method);
       }
       static::$events = $events;
     }

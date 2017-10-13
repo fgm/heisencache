@@ -5,7 +5,7 @@ namespace Drupal\heisencache\EventSubscriber;
 use Drupal\heisencache\Cache\InstrumentedBin;
 use Drupal\heisencache\Exception\InvalidArgumentException;
 
-abstract class BaseWriterSubscriber extends BaseEventSubscriber {
+abstract class BaseWriter implements ShutdownWriterInterface {
 
   /**
    * @var array
@@ -32,7 +32,7 @@ abstract class BaseWriterSubscriber extends BaseEventSubscriber {
   /**
    * Default handler invoked for all events except shutdown.
    *
-   * @see WatchdogWriterSubscriber;;onShutdown()
+   * @see WatchdogWriter::onShutdown()
    *
    * @param string $eventName
    * @param array $args

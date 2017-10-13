@@ -2,6 +2,7 @@
 
 namespace Drupal\heisencache\Cache;
 
+use Drupal\Core\Site\Settings;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;

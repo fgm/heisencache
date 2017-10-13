@@ -10,7 +10,7 @@
  * @license General Public License version 2 or later
  */
 
-namespace Drupal\heisencache\Event;
+namespace Drupal\heisencache\EventSubscriber;
 
 
 interface EventSourceInterface {

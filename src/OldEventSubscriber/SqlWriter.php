@@ -5,7 +5,7 @@ namespace Drupal\heisencache\EventSubscriber;
 use Drupal\Core\Database\Connection;
 use Drupal\heisencache\Exception\RuntimeException;
 
-class SqlWriterSubscriber extends BaseWriterSubscriber {
+class SqlWriter extends BaseWriter {
   const SINK = 'heisencache_sink';
 
   /**

@@ -13,22 +13,26 @@
 namespace Drupal\heisencache\EventSubscriber;
 
 
-class MissSubscriber extends EventSourceSubscriber {
+use Drupal\heisencache\Event\EventSourceInterface;
+
+class MissSubscriber extends BaseEventSubscriber implements EventSourceInterface {
+
+  use EventSourceTrait;
 
   const NAME = "misses";
 
-  protected $subscribedEvents = array(
+  protected static $subscribedEvents = [
     'afterGet' =>  1,
     'afterGetMultiple' => 1,
     'beforeGetMultiple' => 1,
-  );
+  ];
 
-  protected static $emittedEvents = array(
+  protected static $emittedEvents = [
     'miss',
     'missMultiple',
-  );
+  ];
 
-  protected $multipleCids = array();
+  protected $multipleCids = [];
 
   /**
    * @param string $channel

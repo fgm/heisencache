@@ -13,18 +13,22 @@
 namespace Drupal\heisencache\EventSubscriber;
 
 
-class WriteSubscriber extends EventSourceSubscriber {
+use Drupal\heisencache\Event\EventSourceInterface;
+
+class WriteSubscriber extends BaseEventSubscriber implements EventSourceInterface {
+
+  use EventSourceTrait;
 
   const NAME = "writes";
 
-  protected $subscribedEvents = array(
+  protected static $subscribedEvents = [
     'afterSet' =>  1,
     'afterClear' => 1,
-  );
+  ];
 
-  protected static $emittedEvents = array(
+  protected static $emittedEvents = [
     'write',
-  );
+  ];
 
   /**
    * Event handler for afterSet.
