@@ -5,11 +5,14 @@ namespace Drupal\heisencache;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceModifierInterface;
 use Drupal\Core\DependencyInjection\ServiceProviderInterface;
+use Drupal\Core\Logger\LoggerChannel;
 use Drupal\heisencache\Cache\CacheInstrumentationPass;
 use Drupal\heisencache\EventSubscriber\ConfigurableSubscriberInterface;
+use Drupal\heisencache\Exception\ConfigurationException;
 use Drupal\heisencache\Menu\LinksProvider;
 use Drupal\heisencache\Routing\RouteProvider;
 use Symfony\Component\DependencyInjection\Container;
+use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\Finder\Finder;
 
 /**
@@ -23,6 +26,7 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
   const FQNS = __NAMESPACE__ . '\\' . self::NS;
 
   // Generic service names.
+  const LOGGER = 'logger.channel.' . self::MODULE;
   const LINKS_PROVIDER = self::MODULE . '.links_provider';
   const ROUTE_PROVIDER = self::MODULE . '.route_provider';
 
@@ -49,10 +53,10 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    * @return array<string,\ReflectionClass>
    *   An array names of configurable subscriber services.
    */
-  protected function registerSubscribers(ContainerBuilder $container): array {
+  protected function discoverSubscribers(ContainerBuilder $container): array {
     $subscriberConfiguration = $this->getSubscriberConfiguration($container);
 
-    $subscribers = [];
+    $configuredSubscribers = [];
     $finder = new Finder();
     $finder->files()->in(__DIR__ . '/' . self::NS);
     foreach ($finder as $file) {
@@ -67,10 +71,22 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
 
       $serviceName = self::MODULE . '.subscriber.' . Container::underscore($name);
       $serviceName = preg_replace('/_subscriber$/', '', $serviceName);
-      $subscribers[] = $serviceName;
+      // The NULL value has a specific meaning, so do not use isset/empty.
+      if (array_key_exists($serviceName, $subscriberConfiguration)) {
+        $configuredSubscribers[$serviceName] = [
+          'events' => $subscriberConfiguration[$serviceName],
+          'rc' => $reflectionClass,
+        ];
+        unset($subscriberConfiguration[$serviceName]);
+      }
+    }
+    if (!empty($subscriberConfiguration)) {
+      throw new ConfigurationException(strtr('Configuration requests non-discovered subscribers: @subscribers.', [
+        '@subscribers' => implode(', ', array_keys($subscriberConfiguration)),
+      ]));
     }
 
-    return $subscribers;
+    return $configuredSubscribers;
   }
 
   /**
@@ -80,14 +96,38 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    *   The container builder.
    */
   protected function registerGenericProviders(ContainerBuilder $container) {
-    $container->setParameter(self::MODULE, [
-      'subscribers' => [
-        'debug' => NULL,
-      ],
-    ]);
+    $definition = (new DefinitionDecorator('logger.channel_base'))
+      ->addArgument(self::MODULE);
+    $container->setDefinition(self::LOGGER, $definition);
+
     $container->register(self::ROUTE_PROVIDER, RouteProvider::class)
       ->addTag('event_subscriber');
     $container->register(self::LINKS_PROVIDER, LinksProvider::class);
+  }
+
+  /**
+   * Register the default Heisencache parameter configuration.
+   *
+   * @param \Drupal\Core\DependencyInjection\ContainerBuilder $container
+   */
+  protected function registerParameters(ContainerBuilder $container) {
+    $container->setParameter(self::MODULE, [
+      'subscribers' => [],
+    ]);
+  }
+
+  /**
+   * @param \Drupal\Core\DependencyInjection\ContainerBuilder $container
+   * @param string $name
+   * @param array|null $events
+   * @param \ReflectionClass $rc
+   */
+  protected function registerSubscriber(ContainerBuilder $container, string $name, $events, \ReflectionClass $rc) {
+    $definition = call_user_func([$rc->getName(), 'describe']);
+    foreach ((array) $events as $eventName) {
+      $definition->addMethodCall('addEvent', [$eventName]);
+    }
+    $container->setDefinition($name, $definition);
   }
 
   /**
@@ -100,10 +140,22 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
   public function register(ContainerBuilder $container) {
     $container->addCompilerPass(new CacheInstrumentationPass());
     $this->registerGenericProviders($container);
+    $this->registerParameters($container);
   }
 
+  /**
+   * {@inheritdoc}
+   *
+   * Heisencache subscribers need to be registered during the container alter
+   * phase since they are dynamic: the parameters are not yet available during
+   * the register phase: only the default configuration is available at this
+   * point.
+   */
   public function alter(ContainerBuilder $container) {
-    $this->registerSubscribers($container);
+    $subscribers = $this->discoverSubscribers($container);
+    foreach ($subscribers as $name => $info) {
+      $this->registerSubscriber($container, $name, $info['events'], $info['rc']);
+    }
   }
 
 }

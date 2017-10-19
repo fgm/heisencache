@@ -1,24 +1,17 @@
 <?php
-/**
- * @file
- * EventDispatcherTrait.php
- *
- * @author: Frédéric G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2015 Ouest Systèmes Informatiques (OSInet).
- *
- * @license General Public License version 2 or later
- */
 
 namespace Drupal\heisencache\Event;
 
-
 /**
  * Facade for Symfony dispatcher.
+ *
+ * @package Drupal\heisencache\Event
  */
 trait EventDispatcherTrait {
 
   /**
+   * The event.dispatcher service.
+   *
    * @var \Symfony\Component\EventDispatcher\EventDispatcherInterface
    */
   protected $dispatcher;
@@ -33,4 +26,5 @@ trait EventDispatcherTrait {
   protected function dispatch(EventBase $event) {
     $this->dispatcher->dispatch($event->name(), $event);
   }
+
 }

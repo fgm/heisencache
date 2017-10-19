@@ -5,7 +5,8 @@ namespace Drupal\heisencache\EventSubscriber;
 use Drupal\heisencache\Cache\InstrumentedBin;
 use Drupal\heisencache\Exception\InvalidArgumentException;
 
-abstract class BaseWriter implements ShutdownWriterInterface {
+abstract class BaseWriter extends ConfigurableSubscriberBase
+  implements ConfigurableSubscriberInterface, ShutdownWriterInterface {
 
   /**
    * @var array

@@ -15,7 +15,7 @@ abstract class ConfigurableSubscriberBase implements ConfigurableSubscriberInter
    *
    * @var array
    */
-  protected static $subscribedEvents = [];
+  public static $subscribedEvents = [];
 
   /**
    * ConfigurableSubscriberBase constructor.
@@ -38,9 +38,10 @@ abstract class ConfigurableSubscriberBase implements ConfigurableSubscriberInter
    * {@inheritdoc}
    */
   public static function describe(): Definition {
-    $def = new Definition(__CLASS__);
-    $def->addArgument('[]')
-      ->addTag('event_subscriber');
+    $def = new Definition(get_called_class());
+    $def->addArgument([])
+      ->addTag('event_subscriber')
+      ->setPublic(TRUE);
     return $def;
   }
 

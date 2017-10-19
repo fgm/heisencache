@@ -1,14 +1,4 @@
 <?php
-/**
- * @file
- * EventInterface.php
- *
- * @author: Frédéric G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2015 Ouest Systèmes Informatiques (OSInet).
- *
- * @license General Public License version 2 or later
- */
 
 namespace Drupal\heisencache\Event;
 
@@ -21,27 +11,31 @@ namespace Drupal\heisencache\Event;
  */
 interface EventInterface {
   /**
-   * Event happening before operation
+   * Event has been dispatched before operation.
    */
   const PRE = 'pre';
 
   /**
-   * Event created within operation
+   * Event has been dispatched within operation.
    */
   const IN = 'in';
 
   /**
-   * Event happening after operation
+   * Event has been dispatched after operation.
    */
   const POST = 'post';
 
   /**
+   * Getter for the event kind.
+   *
    * @return string
    *   The event kind: pre|in|post
    */
   public function kind();
 
   /**
+   * Getter for the event name.
+   *
    * @return string
    *   The event name.
    */
@@ -49,6 +43,7 @@ interface EventInterface {
 
   /**
    * Sets the event kind to "post", allow it to propagate, and returns it.
+   *
    * Events are created as "pre" by default.
    *
    * @return $this

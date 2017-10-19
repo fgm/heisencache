@@ -7,7 +7,7 @@ use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\EventDispatcher\Event;
 
 /**
- * Class EventBase
+ * Base Heisencache event.
  *
  * Unlike the base Symfony Event class, this one always contains a bin, which
  * may be empty on a few events only, like system shutdown. Events are marked
@@ -17,26 +17,35 @@ use Symfony\Component\EventDispatcher\Event;
  * @package Drupal\heisencache\Event
  */
 abstract class EventBase extends Event implements EventInterface {
+
   /**
+   * The event name.
+   *
    * @var string
    *  "$name", although deprecated, still exists in Symfony Event class, so we
-   *  may not overwrite it.
+   *   may not overwrite it.
    */
   public $eventName = 'base';
 
   /**
+   * The cache bin on which the event was triggered.
+   *
    * @var string
    *   No need for getter/setter: no side effects.
    */
   public $bin;
 
   /**
+   * Event data.
+   *
    * @var mixed[]
    *   Whatever data a concrete event may want to store.
    */
   protected $data;
 
   /**
+   * The event kind: pre or post.
+   *
    * @var string
    *   EventInterface::PRE|POST
    */
@@ -52,7 +61,7 @@ abstract class EventBase extends Event implements EventInterface {
    * @param array $data
    *   Optional: event data.
    */
-  public function __construct($bin, $kind = self::PRE, array $data = [])  {
+  public function __construct($bin, $kind = self::PRE, array $data = []) {
     $data += ['id' => $_SERVER['UNIQUE_ID'] ?? 'unknown_id'];
     $this->bin = $bin;
     $this->kind = $kind;
@@ -93,7 +102,10 @@ abstract class EventBase extends Event implements EventInterface {
   }
 
   /**
+   * Merge the passed data with the existing instance data.
+   *
    * @param mixed[] $data
+   *   The new data to merge.
    *
    * @return $this
    */
@@ -110,4 +122,5 @@ abstract class EventBase extends Event implements EventInterface {
     $this->kind = static::POST;
     return $this;
   }
+
 }

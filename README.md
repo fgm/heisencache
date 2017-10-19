@@ -52,31 +52,39 @@ triggers will not be used by any listener.
 To actually use it, you will then need to configure it, thus defining what 
 event subscribers are to be used.
 
+Configuring
+-----------
+
+The module can be configured using the `heisencache` container parameter. This
+configuration contains at `subscribers` sub-key, the value for which is a map of
+event names by subscriber short name.
+
+A typical starter example would be:
+
+```yaml
+# In sites/default/services.yml:
+parameters:
+  # various other parameters
+  heisencache:
+    subscribers:
+      debug: ['invalidate', 'miss']
+      watchdog_writer: ~
+```
+
+Such a configuration means Heisencache is configured to instantiate:
+
+* the `heisencache.subscriber.debug` service - implemented by the 
+  `DebugSubscriber` class, and configure it to subscribe to the Heisencache 
+  `invalidate` and `miss` events, by passing it these event names.
+* the `heisencache.subscriber.watchdog_writer` service - implemented by the
+  `WatchdogWriter` class, and let it configure the events to which it subscribes 
+  on its own, by passing it no event name, not even an empty list.
+
 <hr />
 
 *Text below this line is only valid for the Drupal 7 version*
 
 <hr />
- 
-Configuring
------------
-
-The plugin can be configured per-site by implementing a `settings.heisencache.inc`
-file in the site settings directory. Copy `default.settings.heisencache.inc` to
-the site settings directory, and edit it to add configuration of your choice,
-following the examples in that file.
-
-Your configuration will most of the time involve:
-
-  * registering a number of event Subscribers, like MissSubscriber
-  * registering one WriterSubscriber, passing it the events emitted by all
-    the subscribers you registered previously, plus the `onShutdown` event to
-    trigger writes only once per page, on shutdown.
-  * supplied WriterSubscriber classes:
-    * The `WatchdogWriterSubscriber` does not need the Heisencache module, but
-      cannot log cache events on cached pages.
-    * The `SqlWriterSubscriber` can log events on cached pages, but needs the
-      Heisencache module to be enabled.
 
 Running tests
 -------------
