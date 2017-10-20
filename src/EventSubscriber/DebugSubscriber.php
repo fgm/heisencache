@@ -2,6 +2,22 @@
 
 namespace Drupal\heisencache\EventSubscriber;
 
+use Drupal\heisencache\Event\BackendDelete;
+use Drupal\heisencache\Event\BackendDeleteAll;
+use Drupal\heisencache\Event\BackendDeleteMultiple;
+use Drupal\heisencache\Event\BackendGarbageCollection;
+use Drupal\heisencache\Event\BackendGet;
+use Drupal\heisencache\Event\BackendGetMultiple;
+use Drupal\heisencache\Event\BackendInvalidate;
+use Drupal\heisencache\Event\BackendInvalidateAll;
+use Drupal\heisencache\Event\BackendInvalidateMultiple;
+use Drupal\heisencache\Event\BackendSet;
+use Drupal\heisencache\Event\BackendSetMultiple;
+use Drupal\heisencache\Event\EventBase;
+use Drupal\heisencache\Event\FactoryGetEvent;
+use Drupal\heisencache\Event\RemoveBin;
+use Robo\Task\Docker\Remove;
+
 /**
  * Class DebugSubscriber
  *
@@ -12,123 +28,199 @@ namespace Drupal\heisencache\EventSubscriber;
  * configuration, but can still only handle the H, CacheBackendInterface and
  * MissSubscriber events.
  */
-class DebugSubscriber extends ConfigurableSubscriberBase {
+class DebugSubscriber extends ConfigurableListenerBase {
   const DELIMITER = ', ';
 
   public function show(string $bin): void {
     $stack = debug_backtrace(FALSE);
     $caller = $stack[1]['function'];
     $args = func_get_args();
-    $arg1 = is_string($args[1]) ? $args[1] : 'unprintable';
-    echo "$caller({$arg1})<br />\n";
+    $arg1 = is_string($args[1]) ? $args[1] : json_encode($args[1]);
+    echo "$caller($bin, {$arg1})<br />\n";
   }
 
-  public function beforeDelete(string $bin, string $key): void {
-    $this->show($bin, $key);
+  public function beforeBackendDelete(BackendDelete $event): void {
+    if ($event->kind() !== EventBase::PRE) {
+      return;
+    }
+    $this->show($event->bin, $event->data()['cid']);
   }
 
-  public function afterDelete(string $bin, string $key): void {
-    $this->show($bin, $key);
+  public function afterBackendDelete(BackendDelete $event): void {
+    if ($event->kind() !== EventBase::POST) {
+      return;
+    }
+    $this->show($event->bin, $event->data()['cid']);
   }
 
-  public function beforeDeleteAll(string $bin): void {
-    $this->show($bin);
+  public function beforeBackendDeleteAll(BackendDeleteAll $event): void {
+    if ($event->kind() !== EventBase::PRE) {
+      return;
+    }
+    $this->show($event->bin);
   }
 
-  public function afterDeleteAll(string $bin): void {
-    $this->show($bin);
+  public function afterBackendDeleteAll(BackendDeleteAll $event): void {
+    if ($event->kind() !== EventBase::POST) {
+      return;
+    }
+    $this->show($event->bin);
   }
 
-  public function beforeDeleteMultiple(string $bin, array $keys): void {
-    $this->show($bin, implode(static::DELIMITER, $keys));
+  public function beforeBackendDeleteMultiple(BackendDeleteMultiple $event): void {
+    if ($event->kind() !== EventBase::PRE) {
+      return;
+    }
+    $this->show($event->bin, implode(static::DELIMITER, $event->data()['keys']));
   }
 
-  public function afterDeleteMultiple(string $bin, array $keys): void {
-    $this->show($bin, implode(static::DELIMITER, $keys));
+  public function afterBackendDeleteMultiple(BackendDeleteMultiple $event): void {
+    if ($event->kind() !== EventBase::POST) {
+      return;
+    }
+    $this->show($event->bin, implode(static::DELIMITER, $event->data()['keys']));
   }
 
-  public function afterGarbageCollection(string $bin): void {
-    $this->show($bin);
+  public function beforeBackendGarbageCollection(BackendGarbageCollection $event): void {
+    if ($event->kind() !== EventBase::PRE) {
+      return;
+    }
+    $this->show($event->bin);
   }
 
-  public function beforeGet(string $bin, string $key): void {
-    $this->show($bin, $key);
+  public function afterBackendGarbageCollection(BackendGarbageCollection $event): void {
+    if ($event->kind() !== EventBase::POST) {
+      return;
+    }
+    $this->show($event->bin);
   }
 
-  public function afterGet(string $bin, string $key, $value): void {
-    $this->show($bin, $key, $value);
+  public function beforeBackendGet(BackendGet $event): void {
+    if ($event->kind() !== EventBase::PRE) {
+      return;
+    }
+    $this->show($event->bin, $event->data()['cid']);
   }
 
-  public function beforeGetMultiple(string $bin, array $keys): void {
-    $this->show($bin, implode(static::DELIMITER, $keys));
+  public function afterBackendGet(BackendGet $event): void {
+    if ($event->kind() !== EventBase::POST) {
+      return;
+    }
+    $this->show($event->bin, $event->data()['cid'], $event->data()['value']);
   }
 
-  public function afterGetMultiple(string $bin, array $keys): void {
-    $this->show($bin, implode(static::DELIMITER, $keys));
+  public function beforeBackendGetMultiple(BackendGetMultiple $event): void {
+    if ($event->kind() !== EventBase::PRE) {
+      return;
+    }
+    $this->show($event->bin, implode(static::DELIMITER, $event->data()['cids']));
   }
 
-  public function beforeInvalidate(string $bin, string $key): void {
-    $this->show($bin, $key);
+  public function afterBackendGetMultiple(BackendGetMultiple $event): void {
+    if ($event->kind() !== EventBase::POST) {
+      return;
+    }
+    $this->show($event->bin, implode(static::DELIMITER, $event->data()['cids']));
   }
 
-  public function afterInvalidate(string $bin, string $key): void {
-    $this->show($bin, $key);
+  public function beforeBackendInvalidate(BackendInvalidate $event): void {
+    if ($event->kind() !== EventBase::PRE) {
+      return;
+    }
+    $this->show($event->bin, $event->data()['cid']);
   }
 
-  public function beforeInvalidateAll(string $bin): void {
-    $this->show($bin);
+  public function afterBackendInvalidate(BackendInvalidate $event): void {
+    if ($event->kind() !== EventBase::POST) {
+      return;
+    }
+    $this->show($event->bin, $event->data()['cid']);
   }
 
-  public function afterInvalidateAll(string $bin): void {
-    $this->show($bin);
+  public function beforeBackendInvalidateAll(BackendInvalidateAll $event): void {
+    if ($event->kind() !== EventBase::PRE) {
+      return;
+    }
+    $this->show($event->bin);
   }
 
-  public function beforeInvalidateMultiple(string $bin, array $keys): void {
-    $this->show($bin, implode(static::DELIMITER, $keys));
+  public function afterBackendInvalidateAll(BackendInvalidateAll $event): void {
+    if ($event->kind() !== EventBase::POST) {
+      return;
+    }
+    $this->show($event->bin);
   }
 
-  public function afterInvalidateMultiple(string $bin, array $keys): void {
-    $this->show($bin, implode(static::DELIMITER, $keys));
+  public function beforeBackendInvalidateMultiple(BackendInvalidateMultiple $event): void {
+    if ($event->kind() !== EventBase::PRE) {
+      return;
+    }
+    $this->show($event->bin, implode(static::DELIMITER, $event->data()['cids']));
   }
 
-  public function beforeRemoveBin(string $bin): void {
-    $this->show($bin);
+  public function afterBackendInvalidateMultiple(BackendInvalidateMultiple $event): void {
+    if ($event->kind() !== EventBase::POST) {
+      return;
+    }
+    $this->show($event->bin, implode(static::DELIMITER, $event->data()['cids']));
   }
 
-  public function afterRemoveBin(string $bin): void {
-    $this->show($bin);
+  public function beforeBackendRemoveBin(RemoveBin $event): void {
+    if ($event->kind() !== EventBase::PRE) {
+      return;
+    }
+    $this->show($event->bin);
   }
 
-  public function beforeSet(string $bin, $key, $value): void {
-    $this->show($bin, $key, $value);
+  public function afterBackendRemoveBin(RemoveBin $event): void {
+    if ($event->kind() !== EventBase::POST) {
+      return;
+    }
+    $this->show($event->bin);
   }
 
-  public function afterSet(string $bin, $key, $value): void {
-    $this->show($bin, $key, $value);
+  public function beforeBackendSet(BackendSet $event): void {
+    if ($event->kind() !== EventBase::PRE) {
+      return;
+    }
+    $this->show($event->bin, $event->data()['cid'], $event->data()['value']);
   }
 
-  public function beforeSetMultiple(string $bin, array $items): void {
-    $this->show($bin, $items);
+  public function afterBackendSet(BackendSet $event): void {
+    if ($event->kind() !== EventBase::POST) {
+      return;
+    }
+    $this->show($event->bin, $event->data()['cid'], $event->data()['value']);
   }
 
-  public function afterSetMultiple(string $bin, array $items): void {
-    $this->show($bin, $items);
+  public function beforeBackendSetMultiple(BackendSetMultiple $event): void {
+    if ($event->kind() !== EventBase::PRE) {
+      return;
+    }
+    $this->show($event->bin, $event->data());
   }
 
-  public function onCacheConstruct(string $bin): void {
-    $this->show($bin);
+  public function afterBackendSetMultiple(BackendSetMultiple $event): void {
+    if ($event->kind() !== EventBase::POST) {
+      return;
+    }
+    $this->show($event->bin, $event->data());
   }
 
-  public function onMiss(string $bin, string $key): void {
-    $this->show($bin);
+  public function onCacheConstruct(FactoryGetEvent $event): void {
+    $this->show($event->bin);
   }
 
-  public function onMissMultiple(string $bin, array $keys): void {
-    $this->show($bin);
+  public function onMiss(EventBase $event): void {
+    $this->show($event->bin);
   }
 
-  public function onShutdown(string $bin): void {
-    $this->show($bin);
+  public function onMissMultiple(EventBase $event): void {
+    $this->show($event->bin, $event->data()['cids']);
+  }
+
+  public function onShutdown(EventBase $event): void {
+    $this->show($event->bin);
   }
 
 }

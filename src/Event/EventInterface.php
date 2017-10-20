@@ -13,17 +13,17 @@ interface EventInterface {
   /**
    * Event has been dispatched before operation.
    */
-  const PRE = 'pre';
+  const PRE = 'before';
 
   /**
    * Event has been dispatched within operation.
    */
-  const IN = 'in';
+  const IN = 'on';
 
   /**
    * Event has been dispatched after operation.
    */
-  const POST = 'post';
+  const POST = 'after';
 
   /**
    * Getter for the event kind.

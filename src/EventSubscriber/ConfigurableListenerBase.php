@@ -6,7 +6,7 @@ namespace Drupal\heisencache\EventSubscriber;
 use Drupal\heisencache\DescribedServiceInterface;
 use Symfony\Component\DependencyInjection\Definition;
 
-abstract class ConfigurableSubscriberBase implements ConfigurableSubscriberInterface, DescribedServiceInterface {
+abstract class ConfigurableListenerBase implements ConfigurableListenerInterface, DescribedServiceInterface {
 
   /**
    * An array of the events subscribed by instances of this class.
@@ -15,7 +15,7 @@ abstract class ConfigurableSubscriberBase implements ConfigurableSubscriberInter
    *
    * @var array
    */
-  public static $subscribedEvents = [];
+  public $subscribedEvents = [];
 
   /**
    * ConfigurableSubscriberBase constructor.
@@ -30,8 +30,8 @@ abstract class ConfigurableSubscriberBase implements ConfigurableSubscriberInter
   /**
    * {@inheritdoc}
    */
-  public static function addEvent($eventName) {
-    static::$subscribedEvents[$eventName] = $eventName;
+  public function addEvent($eventName): void {
+    $this->subscribedEvents[$eventName] = $eventName;
   }
 
   /**
@@ -40,7 +40,7 @@ abstract class ConfigurableSubscriberBase implements ConfigurableSubscriberInter
   public static function describe(): Definition {
     $def = new Definition(get_called_class());
     $def->addArgument([])
-      ->addTag('event_subscriber')
+      ->addTag(ConfigurableListenerInterface::TAG)
       ->setPublic(TRUE);
     return $def;
   }
@@ -48,15 +48,15 @@ abstract class ConfigurableSubscriberBase implements ConfigurableSubscriberInter
   /**
    * {@inheritdoc}
    */
-  public static function getSubscribedEvents() {
-    return array_keys(static::$subscribedEvents);
+  public function getSubscribedEvents(): array {
+    return array_keys($this->subscribedEvents);
   }
 
   /**
    * {@inheritdoc}
    */
-  public static function removeEvent($eventName) {
-    unset(static::$subscribedEvents[$eventName]);
+  public function removeEvent($eventName): void {
+    unset($this->subscribedEvents[$eventName]);
   }
 
 }

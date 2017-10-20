@@ -5,12 +5,13 @@ namespace Drupal\heisencache;
 use Drupal\Core\DependencyInjection\ContainerBuilder;
 use Drupal\Core\DependencyInjection\ServiceModifierInterface;
 use Drupal\Core\DependencyInjection\ServiceProviderInterface;
-use Drupal\Core\Logger\LoggerChannel;
 use Drupal\heisencache\Cache\CacheInstrumentationPass;
-use Drupal\heisencache\EventSubscriber\ConfigurableSubscriberInterface;
+use Drupal\heisencache\Cache\CacheSubscriptionPass;
+use Drupal\heisencache\EventSubscriber\ConfigurableListenerInterface;
 use Drupal\heisencache\Exception\ConfigurationException;
 use Drupal\heisencache\Menu\LinksProvider;
 use Drupal\heisencache\Routing\RouteProvider;
+use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\Finder\Finder;
@@ -21,13 +22,18 @@ use Symfony\Component\Finder\Finder;
  * @package Drupal\heisencache
  */
 class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceModifierInterface {
+
   const MODULE = 'heisencache';
+
   const NS = 'EventSubscriber';
+
   const FQNS = __NAMESPACE__ . '\\' . self::NS;
 
   // Generic service names.
   const LOGGER = 'logger.channel.' . self::MODULE;
+
   const LINKS_PROVIDER = self::MODULE . '.links_provider';
+
   const ROUTE_PROVIDER = self::MODULE . '.route_provider';
 
   /**
@@ -65,7 +71,7 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
 
       // Only list actual configurable services.
       if (!$reflectionClass->isInstantiable()
-      || !$reflectionClass->implementsInterface(ConfigurableSubscriberInterface::class)) {
+        || !$reflectionClass->implementsInterface(ConfigurableListenerInterface::class)) {
         continue;
       }
 
@@ -138,7 +144,12 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    * - Register subscriber services
    */
   public function register(ContainerBuilder $container) {
-    $container->addCompilerPass(new CacheInstrumentationPass());
+    // Add services before optimization.
+    $container->addCompilerPass(new CacheInstrumentationPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION);
+    // But modify the event_dispatcher subscriptions after they have been setup
+    // during RegisterEventSubscriberPass, which runs after removing.
+    $container->addCompilerPass(new CacheSubscriptionPass(), PassConfig::TYPE_AFTER_REMOVING);
+
     $this->registerGenericProviders($container);
     $this->registerParameters($container);
   }

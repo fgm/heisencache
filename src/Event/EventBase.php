@@ -62,14 +62,42 @@ abstract class EventBase extends Event implements EventInterface {
    *   Optional: event data.
    */
   public function __construct($bin, $kind = self::PRE, array $data = []) {
-    $data += ['id' => $_SERVER['UNIQUE_ID'] ?? 'unknown_id'];
+    if (isset($_SERVER['UNIQUE_ID'])) {
+      $data += ['unique_id' => $_SERVER['UNIQUE_ID']];
+    }
     $this->bin = $bin;
     $this->kind = $kind;
     $this->data = $data;
     // __CLASS__ would give this class, unlike get_class($this).
-    $event_name = substr(strrchr(get_class($this), '\\'), 1);
+    $this->eventName = static::eventNameFromClass(get_class($this));
+  }
+
+  public static function callbacksFromEventName(string $eventName): array {
+    $callbacks = [];
+    foreach (['after', 'before', 'on'] as $kind) {
+      $callbacks[] = lcfirst(Container::camelize("${kind}_${eventName}"));
+    }
+
+    return $callbacks;
+  }
+
+  public function data(): array {
+    return $this->data;
+  }
+
+  /**
+   * Build an event name from a FQCN.
+   *
+   * @param string $class
+   *   The complete class name.
+   *
+   * @return string
+   *   The event name.
+   */
+  public static function eventNameFromClass(string $class): string {
+    $event_name = substr(strrchr($class, '\\'), 1);
     $event_name = Container::underscore($event_name);
-    $this->eventName = H::MODULE . ".${event_name}";
+    return H::MODULE . ".${event_name}";
   }
 
   /**

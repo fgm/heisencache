@@ -2,8 +2,6 @@
 
 namespace Drupal\heisencache\EventSubscriber;
 
-
-use Drupal\Core\Logger\RfcLogLevel;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
