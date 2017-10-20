@@ -81,6 +81,11 @@ abstract class EventBase extends Event implements EventInterface {
     return $callbacks;
   }
 
+  public static function classFromEventName(string $eventName): string {
+    $class = __NAMESPACE__ . "\\${$eventName}";
+    return $class;
+  }
+
   public function data(): array {
     return $this->data;
   }

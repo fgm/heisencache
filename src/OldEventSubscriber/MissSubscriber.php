@@ -1,20 +1,14 @@
 <?php
-/**
- * @file
- * A subscriber on cache miss events.
- *
- * @author: Frederic G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
- *
- * @license General Public License version 2 or later
- */
 
 namespace Drupal\heisencache\EventSubscriber;
 
-
 use Drupal\heisencache\Event\EventSourceInterface;
 
+/**
+ * Class MissSubscriber tracks cache get[_multiple] calls resulting in a MISS.
+ *
+ * @package Drupal\heisencache\EventSubscriber
+ */
 class MissSubscriber extends BaseEventSubscriber implements EventSourceInterface {
 
   use EventSourceTrait;

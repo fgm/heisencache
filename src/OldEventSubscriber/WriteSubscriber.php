@@ -1,27 +1,21 @@
 <?php
-/**
- * @file
- * A subscriber on cache set and clear events.
- *
- * @author: bpresles
- *
- * @author: Frederic G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
- */
 
 namespace Drupal\heisencache\EventSubscriber;
 
-
 use Drupal\heisencache\Event\EventSourceInterface;
 
-class WriteSubscriber extends BaseEventSubscriber implements EventSourceInterface {
+/**
+ * Class WriteSubscriber listens to calls mutating the cache bin contents.
+ *
+ * @package Drupal\heisencache\EventSubscriber
+ */
+class WriteSubscriber extends ConfigurableListenerBase implements EventSourceInterface {
 
   use EventSourceTrait;
 
   const NAME = "writes";
 
-  protected static $subscribedEvents = [
+  protected $subscribedEvents = [
     'afterSet' =>  1,
     'afterClear' => 1,
   ];
