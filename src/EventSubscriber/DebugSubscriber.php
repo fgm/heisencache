@@ -31,12 +31,18 @@ use Robo\Task\Docker\Remove;
 class DebugSubscriber extends ConfigurableListenerBase {
   const DELIMITER = ', ';
 
+  public static function color(): array {
+    $id = hash("crc32b", $_SERVER['UNIQUE_ID'] ?? '');
+    return [$id, '#' . substr($id, 0, 6)];
+  }
+
   public function show(string $bin): void {
     $stack = debug_backtrace(FALSE);
     $caller = $stack[1]['function'];
     $args = func_get_args();
     $arg1 = is_string($args[1]) ? $args[1] : json_encode($args[1]);
-    echo "$caller($bin, {$arg1})<br />\n";
+    list($id, $color) = $this->color();
+    echo "<span style='color: ${color}'>$id: $caller($bin, {$arg1})</span><br />\n";
   }
 
   public function beforeBackendDelete(BackendDelete $event): void {

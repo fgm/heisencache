@@ -5,6 +5,11 @@ namespace Drupal\heisencache;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
 use League\CommonMark\Converter;
 
+/**
+ * Class Requirements implements hook_requirements().
+ *
+ * @package Drupal\heisencache
+ */
 class Requirements {
 
   use StringTranslationTrait;
@@ -12,7 +17,7 @@ class Requirements {
   /**
    * Implements hook_requirements().
    */
-  public function requirements($phase) {
+  public function hookRequirements($phase) {
     $req = [];
     $this->requireCommonMark($req);
     return $req;

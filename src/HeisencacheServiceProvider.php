@@ -8,6 +8,7 @@ use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 use Drupal\heisencache\Cache\CacheInstrumentationPass;
 use Drupal\heisencache\Cache\CacheSubscriptionPass;
 use Drupal\heisencache\EventSubscriber\ConfigurableListenerInterface;
+use Drupal\heisencache\EventSubscriber\TerminateWriterInterface;
 use Drupal\heisencache\Exception\ConfigurationException;
 use Drupal\heisencache\Menu\LinksProvider;
 use Drupal\heisencache\Routing\RouteProvider;
@@ -15,6 +16,7 @@ use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
 use Symfony\Component\Finder\Finder;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Class HeisencacheServiceProvider defines the module services.
@@ -37,11 +39,15 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
   const ROUTE_PROVIDER = self::MODULE . '.route_provider';
 
   /**
-   * @param \Drupal\Core\DependencyInjection\ContainerBuilder $container
+   * Obtain the listener/subscriber configuration from the container parameters.
    *
-   * @return string
+   * @param \Drupal\Core\DependencyInjection\ContainerBuilder $container
+   *   The container.
+   *
+   * @return array
+   *   The parsed configuration.
    */
-  protected function getSubscriberConfiguration(ContainerBuilder $container): array {
+  protected function getSubscriberConfiguration(ContainerBuilder $container) : array {
     // Cannot access configuration during a container build, so use a parameter.
     $configuredServices = $container->getParameter('heisencache')['subscribers'];
     $result = [];
@@ -59,7 +65,7 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    * @return array<string,\ReflectionClass>
    *   An array names of configurable subscriber services.
    */
-  protected function discoverSubscribers(ContainerBuilder $container): array {
+  protected function discoverSubscribers(ContainerBuilder $container) : array {
     $subscriberConfiguration = $this->getSubscriberConfiguration($container);
 
     $configuredSubscribers = [];
@@ -116,6 +122,7 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    * Register the default Heisencache parameter configuration.
    *
    * @param \Drupal\Core\DependencyInjection\ContainerBuilder $container
+   *   The container in which to register parameters.
    */
   protected function registerParameters(ContainerBuilder $container) {
     $container->setParameter(self::MODULE, [
@@ -124,15 +131,24 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
   }
 
   /**
+   * Register a configured listeners in the container.
+   *
    * @param \Drupal\Core\DependencyInjection\ContainerBuilder $container
+   *   The container in which to register this listener service.
    * @param string $name
+   *   The name under which to register the service.
    * @param array|null $events
+   *   The events which the service listens to.
    * @param \ReflectionClass $rc
+   *   The reflection class for the service.
    */
   protected function registerSubscriber(ContainerBuilder $container, string $name, $events, \ReflectionClass $rc) {
     $definition = call_user_func([$rc->getName(), 'describe']);
     foreach ((array) $events as $eventName) {
       $definition->addMethodCall('addEvent', [$eventName]);
+    }
+    if (empty($events) && in_array(TerminateWriterInterface::class, $rc->getInterfaceNames())) {
+      $definition->addMethodCall('addEvent', [KernelEvents::TERMINATE, TRUE]);
     }
     $container->setDefinition($name, $definition);
   }
@@ -141,11 +157,11 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    * {@inheritdoc}
    *
    * - Add a pass decorating cache services (bins, backends) with Heisencache.
-   * - Register link and route provider services
-   * - Register subscriber services
+   * - Register link and route provider services.
+   * - Register subscriber services.
    */
   public function register(ContainerBuilder $container) {
-    // Add services before optimization.
+    // Add decoractor services before optimization.
     $container->addCompilerPass(new CacheInstrumentationPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION);
     // But modify the event_dispatcher subscriptions after they have been setup
     // during RegisterEventSubscriberPass, which runs after removing.

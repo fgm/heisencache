@@ -8,6 +8,15 @@ use Drupal\heisencache\HeisencacheServiceProvider as H;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 
+/**
+ * Class CacheSubscriptionPass registers the Heisencache event listeners.
+ *
+ * It is needed because their configuration is parametric at runtime, unlike
+ * the standard event subscribers, which may not change their subscriptions per-
+ * instance.
+ *
+ * @package Drupal\heisencache\Cache
+ */
 class CacheSubscriptionPass implements CompilerPassInterface {
 
   /**
@@ -48,10 +57,12 @@ class CacheSubscriptionPass implements CompilerPassInterface {
       /** @var \Drupal\heisencache\EventSubscriber\ConfigurableListenerInterface $listener */
       $listener = $container->get($id);
       // Get all subscribed events. The format is plainer than Symfony's.
-      foreach ($listener->getSubscribedEvents() as $short_event_name) {
-        $event_name = H::MODULE . ".${short_event_name}";
+      foreach ($listener->getSubscribedEvents() as $short_event_name => $event_name) {
+        $event_name = ($event_name === $short_event_name)
+          ? H::MODULE . ".${short_event_name}"
+          : $short_event_name;
         $priority = 0;
-        $candidateCallbacks = EventBase::callbacksFromEventName($short_event_name);
+        $candidateCallbacks = EventBase::callbacksFromEventName($event_name);
         $callbacks = array_intersect($candidateCallbacks, $listenerMethods);
         foreach ($callbacks as $callback) {
           $subscribers[$event_name][$priority][] = [

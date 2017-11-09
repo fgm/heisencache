@@ -2,6 +2,7 @@
 
 namespace Drupal\heisencache\EventSubscriber;
 
+use Drupal\heisencache\HeisencacheServiceProvider as H;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
@@ -27,12 +28,12 @@ class WatchdogWriter extends BaseWriter {
 
   public static function describe(): Definition {
     $def = parent::describe()
-      ->addArgument(new Reference('logger.channel.heisencache'));
+      ->addArgument(new Reference(H::LOGGER));
     return $def;
   }
 
-  public function onShutdown(): void {
-    if (!empty($this->history)) {
+  public function onTerminate(): void {
+    if (TRUE || !empty($this->history)) {
       $this->logger->debug('Cache events: @events', [
         '@events' => serialize($this->history),
       ]);

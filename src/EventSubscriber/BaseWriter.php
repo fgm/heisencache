@@ -6,7 +6,7 @@ use Drupal\heisencache\Cache\InstrumentedBin;
 use Drupal\heisencache\Exception\InvalidArgumentException;
 
 abstract class BaseWriter extends ConfigurableListenerBase
-  implements ConfigurableListenerInterface, ShutdownWriterInterface {
+  implements ConfigurableListenerInterface, TerminateWriterInterface {
 
   /**
    * @var array
@@ -33,7 +33,7 @@ abstract class BaseWriter extends ConfigurableListenerBase
   /**
    * Default handler invoked for all events except shutdown.
    *
-   * @see WatchdogWriter::onShutdown()
+   * @see WatchdogWriter::onTerminate()
    *
    * @param string $eventName
    * @param array $args

@@ -72,8 +72,19 @@ abstract class EventBase extends Event implements EventInterface {
     $this->eventName = static::eventNameFromClass(get_class($this));
   }
 
-  public static function callbacksFromEventName(string $eventName): array {
+  /**
+   * Build candidate handler names for an event name.
+   *
+   * @param string $eventName
+   *   The name of the event for which to build candidates.
+   *
+   * @return array
+   *   The name of the candidate handlers.
+   */
+  public static function callbacksFromEventName(string $eventName) : array {
     $callbacks = [];
+    list(, $event) = explode('.', $eventName, 2);
+    $callbacks[] = 'on' . Container::camelize($event);
     foreach (['after', 'before', 'on'] as $kind) {
       $callbacks[] = lcfirst(Container::camelize("${kind}_${eventName}"));
     }
@@ -81,12 +92,27 @@ abstract class EventBase extends Event implements EventInterface {
     return $callbacks;
   }
 
-  public static function classFromEventName(string $eventName): string {
+  /**
+   * Build the name of the event class from the event name.
+   *
+   * @param string $eventName
+   *   The event name.
+   *
+   * @return string
+   *   The class name.
+   */
+  public static function classFromEventName(string $eventName) : string {
     $class = __NAMESPACE__ . "\\${$eventName}";
     return $class;
   }
 
-  public function data(): array {
+  /**
+   * Getter for the event data.
+   *
+   * @return array
+   *   The data, as an array of opaque rows.
+   */
+  public function data() : array {
     return $this->data;
   }
 
@@ -99,7 +125,7 @@ abstract class EventBase extends Event implements EventInterface {
    * @return string
    *   The event name.
    */
-  public static function eventNameFromClass(string $class): string {
+  public static function eventNameFromClass(string $class) : string {
     $event_name = substr(strrchr($class, '\\'), 1);
     $event_name = Container::underscore($event_name);
     return H::MODULE . ".${event_name}";

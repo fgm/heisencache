@@ -30,8 +30,8 @@ abstract class ConfigurableListenerBase implements ConfigurableListenerInterface
   /**
    * {@inheritdoc}
    */
-  public function addEvent($eventName): void {
-    $this->subscribedEvents[$eventName] = $eventName;
+  public function addEvent(string $eventName, bool $raw = FALSE): void {
+    $this->subscribedEvents[$eventName] = $raw ? TRUE : $eventName;
   }
 
   /**
@@ -49,7 +49,7 @@ abstract class ConfigurableListenerBase implements ConfigurableListenerInterface
    * {@inheritdoc}
    */
   public function getSubscribedEvents(): array {
-    return array_keys($this->subscribedEvents);
+    return $this->subscribedEvents;
   }
 
   /**

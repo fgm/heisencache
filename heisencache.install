@@ -22,7 +22,7 @@ function heisencache_requirements($phase) {
 
   /** @var \Drupal\heisencache\Requirements $service */
   $service = Drupal::classResolver()->getInstanceFromDefinition(Requirements::class);
-  $requirements = $service->requirements($phase);
+  $requirements = $service->hookRequirements($phase);
   return $requirements;
 }
 

@@ -24,7 +24,7 @@ use Drupal\heisencache\HeisencacheServiceProvider as H;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class InstrumentedBin
+ * Class InstrumentedBin wraps event sources around cache handlers.
  *
  * @package Drupal\heisencache\Cache
  */
@@ -33,20 +33,23 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
   use EventDispatcherTrait;
 
   /**
+   * The name of the cache bin.
+   *
    * @var string
-   *   The name of the cache bin.
    */
   protected $bin;
 
   /**
+   * An array of event names.
+   *
    * @var string[]
-   *   An array of event names.
    */
   protected static $events = NULL;
 
   /**
+   * The decorated cache backend instance for the bin.
+   *
    * @var \Drupal\Core\Cache\CacheBackendInterface
-   *   The decorated cache backend instance for the bin.
    */
   protected $decorated;
 
@@ -58,6 +61,7 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
    * @param string $bin
    *   The cache bin for which the backend is instantiated.
    * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
+   *   The event_dispatcher service.
    */
   public function __construct(
     CacheBackendInterface $decorated,

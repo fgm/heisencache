@@ -39,7 +39,7 @@ class SqlWriter extends BaseWriter {
     }
   }
 
-  public function onShutdown() {
+  public function onTerminate(): void {
     if (empty($this->history)) {
       return;
     }

@@ -2,11 +2,11 @@
 
 namespace Drupal\heisencache\EventSubscriber;
 
-interface ShutdownWriterInterface {
+interface TerminateWriterInterface {
 
   /**
    * Writes the collected information gathered during the page cycle.
    */
-  public function onShutdown(): void;
+  public function onTerminate(): void;
 
 }
