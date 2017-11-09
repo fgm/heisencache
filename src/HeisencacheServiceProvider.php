@@ -32,8 +32,8 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
   // Generic service names.
   const LOGGER = 'logger.channel.' . self::MODULE;
 
+  const HELP_PROVIDER = self::MODULE . '.help_provider';
   const LINKS_PROVIDER = self::MODULE . '.links_provider';
-
   const ROUTE_PROVIDER = self::MODULE . '.route_provider';
 
   /**
@@ -106,6 +106,7 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
       ->addArgument(self::MODULE);
     $container->setDefinition(self::LOGGER, $definition);
 
+    $container->register(self::HELP_PROVIDER, HelpProvider::class);
     $container->register(self::ROUTE_PROVIDER, RouteProvider::class)
       ->addTag('event_subscriber');
     $container->register(self::LINKS_PROVIDER, LinksProvider::class);

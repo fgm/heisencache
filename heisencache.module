@@ -11,27 +11,12 @@
  */
 
 use Drupal\heisencache\HeisencacheServiceProvider as H;
-use League\CommonMark\CommonMarkConverter;
 
 /**
  * Implements hook_help().
  */
 function heisencache_help($route_name) {
-  switch ($route_name) {
-    case 'help.page.heisencache':
-      // Hook_requirements() will have prevented module enabling if the library
-      // was not already present, so there is no need to check for its presence.
-      $converter = new CommonMarkConverter();
-      $markdown = file_get_contents(__DIR__ . '/README.md');
-      $html = $converter->convertToHtml($markdown);
-      break;
-
-    default:
-      $html = NULL;
-      break;
-  }
-
-  return $html;
+  return \Drupal::service(H::HELP_PROVIDER)->help($route_name);
 }
 
 /**

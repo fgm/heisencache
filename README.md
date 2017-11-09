@@ -1,5 +1,5 @@
-**Caveat emptor:** 2017-10-12 The Drupal 8 version of this project is currently 
-a work in progress, with next to no usable functionality.
+**Caveat emptor:** 2017-11-09 The Drupal 8 version of this project is currently 
+a work in progress, with very little usable functionality.
 
 Heisencache
 ===========
