@@ -7,6 +7,7 @@ use Drupal\Core\DependencyInjection\ServiceModifierInterface;
 use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 use Drupal\heisencache\Cache\CacheInstrumentationPass;
 use Drupal\heisencache\Cache\CacheSubscriptionPass;
+use Drupal\heisencache\Cache\InstrumentedBin;
 use Drupal\heisencache\EventSubscriber\ConfigurableListenerInterface;
 use Drupal\heisencache\EventSubscriber\EventSourceInterface;
 use Drupal\heisencache\EventSubscriber\TerminateWriterInterface;
@@ -142,18 +143,30 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    * @param string $name
    *   The name under which to register the service.
    * @param array|null $events
-   *   The events which the service listens to.
+   *   The events which the service listens to. Passing null means all events.
    * @param \ReflectionClass $rc
    *   The reflection class for the service.
+   * @param array $knownEvents
+   *   The list of events known by this configuration. Used to provide default
+   *   event lists for services configured without an explicit events list.
    */
-  protected function registerSubscriber(ContainerBuilder $container, string $name, $events, \ReflectionClass $rc) {
+  protected function registerSubscriber(
+    ContainerBuilder $container,
+    string $name,
+    $events,
+    \ReflectionClass $rc,
+    array $knownEvents) {
     $definition = $rc->implementsInterface(DescribedServiceInterface::class)
       // Auto-described service: use its own description.
       ? call_user_func([$rc->getName(), 'describe'])
       // Static service: use the existing container definition.
       : $container->getDefinition($name);
 
-    foreach ((array) $events as $eventName) {
+    if (is_null($events)) {
+      $events = $knownEvents;
+    }
+
+    foreach ($events as $eventName) {
       $definition->addMethodCall('addEvent', [$eventName]);
     }
 
@@ -191,9 +204,35 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    */
   public function alter(ContainerBuilder $container) {
     $subscribers = $this->discoverSubscribers($container);
+    $knownEvents = $this->collectEvents($subscribers);
     foreach ($subscribers as $name => $info) {
-      $this->registerSubscriber($container, $name, $info['events'], $info['rc']);
+      $this->registerSubscriber($container, $name, $info['events'], $info['rc'], $knownEvents);
     }
+  }
+
+  /**
+   * Collect events defined by all event sources involved in the configuration.
+   *
+   * @param array $subscribers
+   *   The discovered subscribers.
+   *
+   * @return array
+   *   A sorted list of events emitted by the sources.
+   */
+  protected function collectEvents(array $subscribers) {
+    $result = [];
+    $subscribers['instrumented_bin'] = ['rc' => new \ReflectionClass(InstrumentedBin::class)];
+    /**@var \ReflectionClass $rc */
+    foreach ($subscribers as ['rc' => $rc]) {
+      if ($rc->implementsInterface(EventSourceInterface::class)) {
+        $rm = $rc->getMethod('getEmittedEvents');
+        $result += $rm->invoke(NULL);
+      }
+    }
+
+    sort($result);
+    $result = array_unique($result);
+    return $result;
   }
 
 }
