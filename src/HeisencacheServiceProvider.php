@@ -8,6 +8,7 @@ use Drupal\Core\DependencyInjection\ServiceProviderInterface;
 use Drupal\heisencache\Cache\CacheInstrumentationPass;
 use Drupal\heisencache\Cache\CacheSubscriptionPass;
 use Drupal\heisencache\EventSubscriber\ConfigurableListenerInterface;
+use Drupal\heisencache\EventSubscriber\EventSourceInterface;
 use Drupal\heisencache\EventSubscriber\TerminateWriterInterface;
 use Drupal\heisencache\Exception\ConfigurationException;
 use Drupal\heisencache\Menu\LinksProvider;
@@ -15,7 +16,6 @@ use Drupal\heisencache\Routing\RouteProvider;
 use Symfony\Component\DependencyInjection\Compiler\PassConfig;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\DependencyInjection\DefinitionDecorator;
-use Symfony\Component\Finder\Finder;
 use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
@@ -47,7 +47,7 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    * @return array
    *   The parsed configuration.
    */
-  protected function getSubscriberConfiguration(ContainerBuilder $container) : array {
+  protected function getConfigurationParameter(ContainerBuilder $container) : array {
     // Cannot access configuration during a container build, so use a parameter.
     $configuredServices = $container->getParameter('heisencache')['subscribers'];
     $result = [];
@@ -60,42 +60,42 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
   }
 
   /**
-   * Discover builtin subscribers.
+   * Discover builtin and third-party subscribers.
+   *
+   * @param \Drupal\Core\DependencyInjection\ContainerBuilder $container
+   *   The container builder.
    *
    * @return array<string,\ReflectionClass>
    *   An array names of configurable subscriber services.
+   *
+   * @throws \Drupal\heisencache\Exception\ConfigurationException
    */
   protected function discoverSubscribers(ContainerBuilder $container) : array {
-    $subscriberConfiguration = $this->getSubscriberConfiguration($container);
+    $subscriberParameter = $this->getConfigurationParameter($container);
 
     $configuredSubscribers = [];
-    $finder = new Finder();
-    $finder->files()->in(__DIR__ . '/' . self::NS);
-    foreach ($finder as $file) {
-      $name = basename($file->getRelativePathname(), '.php');
-      $reflectionClass = new \ReflectionClass(self::FQNS . "\\$name");
-
-      // Only list actual configurable services.
-      if (!$reflectionClass->isInstantiable()
-        || !$reflectionClass->implementsInterface(ConfigurableListenerInterface::class)) {
-        continue;
+    foreach ($subscriberParameter as $serviceName => $events) {
+      // "Discover" existing static (third-party) listeners.
+      if ($container->hasDefinition($serviceName)) {
+        $class = $container->getDefinition($serviceName)->getClass();
       }
-
-      $serviceName = self::MODULE . '.subscriber.' . Container::underscore($name);
-      $serviceName = preg_replace('/_subscriber$/', '', $serviceName);
-      // The NULL value has a specific meaning, so do not use isset/empty.
-      if (array_key_exists($serviceName, $subscriberConfiguration)) {
-        $configuredSubscribers[$serviceName] = [
-          'events' => $subscriberConfiguration[$serviceName],
-          'rc' => $reflectionClass,
-        ];
-        unset($subscriberConfiguration[$serviceName]);
+      // Discover Heisencache dynamic listeners. They are known to be called:
+      // heisencache.listener.<short name> so no need for pattern matching.
+      else {
+        $shortName = ucfirst(current(array_slice(explode('.', $serviceName, 3), 2)));
+        $class = static::FQNS . '\\' . Container::camelize($shortName . 'Subscriber');
       }
-    }
-    if (!empty($subscriberConfiguration)) {
-      throw new ConfigurationException(strtr('Configuration requests non-discovered subscribers: @subscribers.', [
-        '@subscribers' => implode(', ', array_keys($subscriberConfiguration)),
-      ]));
+      $reflectionClass = new \ReflectionClass($class);
+      if (!$reflectionClass->isInstantiable()) {
+        throw new ConfigurationException("Service $serviceName is not instantiable.");
+      }
+      if (!$reflectionClass->implementsInterface(ConfigurableListenerInterface::class)) {
+        throw new ConfigurationException("Service $serviceName is not configurable.");
+      }
+      $configuredSubscribers[$serviceName] = [
+        'events' => $events,
+        'rc' => $reflectionClass,
+      ];
     }
 
     return $configuredSubscribers;
@@ -131,7 +131,11 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
   }
 
   /**
-   * Register a configured listeners in the container.
+   * Register a configured listener in the container.
+   *
+   * Since it runs at the AFTER_REMOVING step, all services are already
+   * available, even though they are not yet fully configured, since this is
+   * when we add the events they listen to.
    *
    * @param \Drupal\Core\DependencyInjection\ContainerBuilder $container
    *   The container in which to register this listener service.
@@ -143,13 +147,16 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    *   The reflection class for the service.
    */
   protected function registerSubscriber(ContainerBuilder $container, string $name, $events, \ReflectionClass $rc) {
-    $definition = call_user_func([$rc->getName(), 'describe']);
+    $definition = $rc->implementsInterface(DescribedServiceInterface::class)
+      // Auto-described service: use its own description.
+      ? call_user_func([$rc->getName(), 'describe'])
+      // Static service: use the existing container definition.
+      : $container->getDefinition($name);
+
     foreach ((array) $events as $eventName) {
       $definition->addMethodCall('addEvent', [$eventName]);
     }
-    if (empty($events) && in_array(TerminateWriterInterface::class, $rc->getInterfaceNames())) {
-      $definition->addMethodCall('addEvent', [KernelEvents::TERMINATE, TRUE]);
-    }
+
     $container->setDefinition($name, $definition);
   }
 
@@ -164,7 +171,7 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    * @see \Drupal\heisencache\HeisencacheServiceProvider::alter()
    */
   public function register(ContainerBuilder $container) {
-    // Add decoractor services before optimization.
+    // Add decorator services before optimization.
     $container->addCompilerPass(new CacheInstrumentationPass(), PassConfig::TYPE_BEFORE_OPTIMIZATION);
     // But modify the event_dispatcher subscriptions after they have been setup
     // during RegisterEventSubscriberPass, which runs after removing.

@@ -10,6 +10,7 @@
  * @license General Public License version 2 or later
  */
 
+use Drupal\heisencache\EventSubscriber\SqlWriter;
 use Drupal\heisencache\Requirements;
 use OSInet\Heisencache\SqlWriterSubscriber;
 
@@ -28,36 +29,18 @@ function heisencache_requirements($phase) {
 
 /**
  * Implements hook_schema().
+ *
+ * Autoloading may not be such a great idea, but it works for our needs.
+ *
+ * @see https://www.drupal.org/node/2667588#comment-10856112
  */
-function Zheisencache_schema() {
-  $ret = array();
+function heisencache_schema() {
+  $module = 'heisencache';
 
-  $ret[SqlWriterSubscriber::SINK] = array(
-    'description' => 'Stores raw Heisencache events par page cycle, not meant for direct consumption.',
-    'fields' => array(
-      'id' => array(
-        'type' => 'serial',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'description' => "The page cycle id",
-      ),
-      'uid' => array(
-        'type' => 'int',
-        'unsigned' => TRUE,
-        'not null' => TRUE,
-        'default' => 0,
-      ),
-      'data' => array(
-        'type' => 'text',
-        // On MySQL, medium text only holds up to 16 MB.
-        // Some configurations may write more than this.
-        'size' => 'big',
-        'not null' => TRUE,
-        'description' => 'The event data in bulk, as observed by subscribers',
-      ),
-    ),
-    'primary key' => array('id'),
-  );
+  drupal_classloader_register($module, drupal_get_path('module', $module));
 
-  return $ret;
+  $schema = [];
+  $schema = SqlWriter::hookSchema($schema);
+
+  return $schema;
 }

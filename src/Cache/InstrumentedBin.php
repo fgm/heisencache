@@ -16,10 +16,10 @@ use Drupal\heisencache\Event\BackendInvalidateAll;
 use Drupal\heisencache\Event\BackendInvalidateMultiple;
 use Drupal\heisencache\Event\BackendSet;
 use Drupal\heisencache\Event\BackendSetMultiple;
-use Drupal\heisencache\Event\EventDispatcherTrait;
 use Drupal\heisencache\Event\EventInterface;
 use Drupal\heisencache\EventSubscriber\EventSourceInterface;
 use Drupal\heisencache\Event\RemoveBin;
+use Drupal\heisencache\EventSubscriber\EventSourceTrait;
 use Drupal\heisencache\HeisencacheServiceProvider as H;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
@@ -30,7 +30,7 @@ use Symfony\Component\EventDispatcher\EventDispatcherInterface;
  */
 class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
 
-  use EventDispatcherTrait;
+  use EventSourceTrait;
 
   /**
    * The name of the cache bin.
@@ -60,17 +60,17 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
    *   The original cache backend to instrument.
    * @param string $bin
    *   The cache bin for which the backend is instantiated.
-   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $eventDispatcher
    *   The event_dispatcher service.
    */
   public function __construct(
     CacheBackendInterface $decorated,
     string $bin,
-    EventDispatcherInterface $dispatcher
+    EventDispatcherInterface $eventDispatcher
   ) {
     $this->bin = $bin;
     $this->decorated = $decorated;
-    $this->dispatcher = $dispatcher;
+    $this->eventDispatcher = $eventDispatcher;
 
     $event = new BackendConstruct($bin);
     $this->dispatch($event);

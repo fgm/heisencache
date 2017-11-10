@@ -9,6 +9,8 @@ namespace Drupal\heisencache\EventSubscriber;
  */
 interface EventSourceInterface {
 
+  const EMITTER_TAG = 'heisencache_emitter';
+
   /**
    * Return the names of the events emitted by this source.
    *

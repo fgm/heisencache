@@ -11,7 +11,7 @@ namespace Drupal\heisencache\EventSubscriber;
  */
 interface ConfigurableListenerInterface {
 
-  const TAG = 'heisencache_listener';
+  const LISTENER_TAG = 'heisencache_listener';
 
   /**
    * Add an event to the service listening list.

@@ -59,4 +59,35 @@ class SqlWriter extends WriterBase {
     }
   }
 
+  public static function hookSchema(array $schema) {
+    $schema[self::SINK] = array(
+      'description' => 'Stores raw Heisencache events par page cycle, not meant for direct consumption.',
+      'fields' => array(
+        'id' => array(
+          'type' => 'serial',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'description' => "The page cycle id",
+        ),
+        'uid' => array(
+          'type' => 'int',
+          'unsigned' => TRUE,
+          'not null' => TRUE,
+          'default' => 0,
+        ),
+        'data' => array(
+          'type' => 'text',
+          // On MySQL, medium text only holds up to 16 MB.
+          // Some configurations may write more than this.
+          'size' => 'big',
+          'not null' => TRUE,
+          'description' => 'The event data in bulk, as observed by subscribers',
+        ),
+      ),
+      'primary key' => array('id'),
+    );
+
+    return $schema;
+  }
+
 }

@@ -34,7 +34,7 @@ class CacheSubscriptionPass implements CompilerPassInterface {
     $subscribers = $definition->getArgument($argIndex);
     $interface = ConfigurableListenerInterface::class;
 
-    foreach (array_keys($container->findTaggedServiceIds(ConfigurableListenerInterface::TAG)) as $id) {
+    foreach (array_keys($container->findTaggedServiceIds(ConfigurableListenerInterface::LISTENER_TAG)) as $id) {
 
       // We must assume that the class value has been correctly filled, even if
       // the service is created by a factory.

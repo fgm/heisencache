@@ -40,7 +40,7 @@ abstract class ConfigurableListenerBase implements ConfigurableListenerInterface
   public static function describe(): Definition {
     $def = new Definition(get_called_class());
     $def->addArgument([])
-      ->addTag(ConfigurableListenerInterface::TAG)
+      ->addTag(ConfigurableListenerInterface::LISTENER_TAG)
       ->setPublic(TRUE);
     return $def;
   }

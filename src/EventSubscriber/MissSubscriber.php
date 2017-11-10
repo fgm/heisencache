@@ -5,6 +5,7 @@ namespace Drupal\heisencache\EventSubscriber;
 use Drupal\heisencache\Event\EventInterface;
 use Drupal\heisencache\Event\MissEvent;
 use Drupal\heisencache\HeisencacheServiceProvider as H;
+use Symfony\Component\DependencyInjection\Definition;
 
 /**
  * Class MissSubscriber tracks cache get[_multiple] calls resulting in a MISS.
@@ -19,6 +20,7 @@ class MissSubscriber extends ConfigurableListenerBase implements EventSourceInte
    * Events
    */
   const MISS = EventInterface::POST . '_' . H::MODULE . '_miss';
+
   const MISS_MULTIPLE = EventInterface::POST . '_' . H::MODULE . '_miss_multiple';
 
   const NAME = "misses";
@@ -28,9 +30,9 @@ class MissSubscriber extends ConfigurableListenerBase implements EventSourceInte
     self::MISS_MULTIPLE,
   ];
 
-  protected static $subscribedEvents = [
-    EventInterface::POST . '.' . EventInterface::BACKEND_GET =>  1,
-    EventInterface::POST . '.' . EventInterface::BACKEND_GET_MULTIPLE=> 1,
+  public $subscribedEvents = [
+    EventInterface::POST . '.' . EventInterface::BACKEND_GET => 1,
+    EventInterface::POST . '.' . EventInterface::BACKEND_GET_MULTIPLE => 1,
     EventInterface::PRE . '.' . EventInterface::BACKEND_GET_MULTIPLE => 1,
   ];
 
@@ -45,10 +47,10 @@ class MissSubscriber extends ConfigurableListenerBase implements EventSourceInte
     if ($value !== FALSE) {
       return;
     }
-    $missInfo = array(
+    $missInfo = [
       'misses' => [$cid],
       'requested' => [$cid],
-    );
+    ];
     $event = new MissEvent($channel, EventInterface::POST, $missInfo);
     $this->dispatcher()->dispatch(self::MISS, $event);
   }
@@ -65,11 +67,11 @@ class MissSubscriber extends ConfigurableListenerBase implements EventSourceInte
     }
 
     $requested = $this->multipleCids;
-    $this->multipleCids = array();
-    $missInfo = array(
+    $this->multipleCids = [];
+    $missInfo = [
       'misses' => $missed,
       'requested' => $requested,
-    );
+    ];
     $event = new MissEvent($channel, EventInterface::POST, $missInfo);
     $this->dispatcher()->dispatch(self::MISS_MULTIPLE, $event);
   }

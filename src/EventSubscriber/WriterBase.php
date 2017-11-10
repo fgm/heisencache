@@ -4,6 +4,7 @@ namespace Drupal\heisencache\EventSubscriber;
 
 use Drupal\heisencache\Cache\InstrumentedBin;
 use Drupal\heisencache\Exception\InvalidArgumentException;
+use Symfony\Component\DependencyInjection\Definition;
 
 abstract class WriterBase extends ConfigurableListenerBase implements TerminateWriterInterface {
 
@@ -37,7 +38,7 @@ abstract class WriterBase extends ConfigurableListenerBase implements TerminateW
   /**
    * Default handler invoked for all events except terminate.
    *
-   * @see WatchdogWriter::onTerminate()
+   * @see WatchdogWriterSubscriber::onTerminate()
    *
    * @param string $eventName
    * @param array $args
