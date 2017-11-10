@@ -5,7 +5,7 @@ namespace Drupal\heisencache\EventSubscriber;
 use Drupal\Core\Database\Connection;
 use Drupal\heisencache\Exception\RuntimeException;
 
-class SqlWriter extends BaseWriter {
+class SqlWriter extends WriterBase {
   const SINK = 'heisencache_sink';
 
   /**
@@ -44,7 +44,7 @@ class SqlWriter extends BaseWriter {
       return;
     }
 
-    // Runs as a shutdown function, so we cannot just let an exception bubble.
+    // May run as a shutdown function, so we cannot just let an exception bubble.
     try {
       $this->ensureDestinationTable();
       $record = array(

@@ -25,7 +25,7 @@ analysis or monitoring. Heisencache comes with a number of pre-built listeners:
   * `WriteSubscriber`: catch only operations modifying the cache: `set[Multiple]`, 
     `invalidate[All|Multiple]`, `delete[All|Multiple]`, `removeBin`.
 * Writer subscribers: these catch all calls and save the collected data during 
-  shutdown
+  handling of Kernel::TERMINATE:
   * `SqlWriterSubscriber`: write to a raw SQL table
   * `WatchdogSubscriber`: Write using a logger channel.
 

@@ -16,7 +16,7 @@ require_once __DIR__ . '/class_loader.inc';
 
 function heisencache_setup($configuration) {
   $config = Config::instance($configuration);
-  drupal_register_shutdown_function(array($config->getEmitter(), 'emit'), 'onShutdown', 'cache');
+  drupal_register_shutdown_function(array($config->getEmitter(), 'emit'), 'onTerminate', 'cache');
   return $config->override();
 }
 

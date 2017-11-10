@@ -86,7 +86,7 @@ abstract class EventBase extends Event implements EventInterface {
     list(, $event) = explode('.', $eventName, 2);
     $callbacks[] = 'on' . Container::camelize($event);
     foreach (['after', 'before', 'on'] as $kind) {
-      $callbacks[] = lcfirst(Container::camelize("${kind}_${eventName}"));
+      $callbacks[] = lcfirst(Container::camelize("${kind}_${event}"));
     }
 
     return $callbacks;

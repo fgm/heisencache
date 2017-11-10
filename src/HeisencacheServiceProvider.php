@@ -158,7 +158,10 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    *
    * - Add a pass decorating cache services (bins, backends) with Heisencache.
    * - Register link and route provider services.
-   * - Register subscriber services.
+   * - Do NOT register subscriber services: the parameter configuring them is
+   *   not yet available at this step.
+   *
+   * @see \Drupal\heisencache\HeisencacheServiceProvider::alter()
    */
   public function register(ContainerBuilder $container) {
     // Add decoractor services before optimization.
@@ -176,7 +179,7 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    *
    * Heisencache subscribers need to be registered during the container alter
    * phase since they are dynamic: the parameters are not yet available during
-   * the register phase: only the default configuration is available at this
+   * the register() phase: only the default configuration is available at this
    * point.
    */
   public function alter(ContainerBuilder $container) {

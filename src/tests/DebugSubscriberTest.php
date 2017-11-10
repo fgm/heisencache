@@ -71,8 +71,7 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
     }
 
     $eventMap = array(
-      'onCacheConstruct' => array('bin'),
-      'onShutdown' => array('bin'),
+      'onTerminate' => array('bin'),
 
       'beforeGet' => array('k'),
       'afterGet' => array('k', 'v'),

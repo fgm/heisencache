@@ -2,14 +2,12 @@
 
 namespace Drupal\heisencache\EventSubscriber;
 
-use Drupal\heisencache\Event\EventSourceInterface;
-
 /**
  * Tracks time and I/O information for backend calls.
  *
  * @package Drupal\heisencache\EventSubscriber
  */
-class PerformanceSubscriber extends BaseEventSubscriber implements EventSourceInterface {
+class PerformanceSubscriber extends ConfigurableListenerBase implements EventSourceInterface {
 
   use EventSourceTrait;
 

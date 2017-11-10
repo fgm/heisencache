@@ -72,7 +72,7 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
     $this->decorated = $decorated;
     $this->dispatcher = $dispatcher;
 
-    $event = new BackendConstruct($bin, EventInterface::IN);
+    $event = new BackendConstruct($bin);
     $this->dispatch($event);
   }
 
@@ -133,7 +133,7 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
    * List the events emitted by a bin.
    *
    * They are the before/after hooks for all backend methods, plus construction
-   * and shutdown.
+   * and terminate.
    *
    * @return \string[]
    *   The array of available events.
@@ -142,12 +142,11 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
     if (!isset(static::$events)) {
       $methods = get_class_methods(CacheBackendInterface::class);
       $events = [
-        H::MODULE . '.onCacheConstruct',
-        H::MODULE . '.onShutdown',
+        H::MODULE . '.onTerminate',
       ];
       foreach ($methods as $method) {
-        $events[] = H::MODULE . '.before' . ucfirst($method);
-        $events[] = H::MODULE . '.after' . ucfirst($method);
+        $events[] = H::MODULE . '.' . EventInterface::PRE . ucfirst($method);
+        $events[] = H::MODULE . '.' . EventInterface::POST . ucfirst($method);
       }
       static::$events = $events;
     }

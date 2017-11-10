@@ -14,9 +14,7 @@ use Drupal\heisencache\Event\BackendInvalidateMultiple;
 use Drupal\heisencache\Event\BackendSet;
 use Drupal\heisencache\Event\BackendSetMultiple;
 use Drupal\heisencache\Event\EventBase;
-use Drupal\heisencache\Event\FactoryGetEvent;
 use Drupal\heisencache\Event\RemoveBin;
-use Robo\Task\Docker\Remove;
 
 /**
  * Class DebugSubscriber
@@ -213,10 +211,6 @@ class DebugSubscriber extends ConfigurableListenerBase {
     $this->show($event->bin, $event->data());
   }
 
-  public function onCacheConstruct(FactoryGetEvent $event): void {
-    $this->show($event->bin);
-  }
-
   public function onMiss(EventBase $event): void {
     $this->show($event->bin);
   }
@@ -225,7 +219,7 @@ class DebugSubscriber extends ConfigurableListenerBase {
     $this->show($event->bin, $event->data()['cids']);
   }
 
-  public function onShutdown(EventBase $event): void {
+  public function onTerminate(EventBase $event): void {
     $this->show($event->bin);
   }
 

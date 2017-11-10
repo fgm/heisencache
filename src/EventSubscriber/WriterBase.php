@@ -5,8 +5,7 @@ namespace Drupal\heisencache\EventSubscriber;
 use Drupal\heisencache\Cache\InstrumentedBin;
 use Drupal\heisencache\Exception\InvalidArgumentException;
 
-abstract class BaseWriter extends ConfigurableListenerBase
-  implements ConfigurableListenerInterface, TerminateWriterInterface {
+abstract class WriterBase extends ConfigurableListenerBase implements TerminateWriterInterface {
 
   /**
    * @var array
@@ -20,7 +19,12 @@ abstract class BaseWriter extends ConfigurableListenerBase
    */
   protected $showGenericCalls;
 
-  public function __construct(array $events = []) {
+  /**
+   * BaseWriter constructor.
+   *
+   * @param array|null $events
+   */
+  public function __construct($events = []) {
     if (!isset($events)) {
       $events = InstrumentedBin::getEmittedEvents();
     }
@@ -31,7 +35,7 @@ abstract class BaseWriter extends ConfigurableListenerBase
   }
 
   /**
-   * Default handler invoked for all events except shutdown.
+   * Default handler invoked for all events except terminate.
    *
    * @see WatchdogWriter::onTerminate()
    *

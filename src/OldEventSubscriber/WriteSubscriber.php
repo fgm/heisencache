@@ -2,8 +2,6 @@
 
 namespace Drupal\heisencache\EventSubscriber;
 
-use Drupal\heisencache\Event\EventSourceInterface;
-
 /**
  * Class WriteSubscriber listens to calls mutating the cache bin contents.
  *

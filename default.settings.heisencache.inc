@@ -34,7 +34,7 @@ $emitter
   // Sample Watchdog-based configuration to record cache misses and performance.
   // Note: WatchdogWriterSubscriber will not record anything on cached pages.
   //  ->register(new WatchdogWriterSubscriber(array_merge(
-  //    array('onShutdown'),
+  //    array('onTerminate'),
   //    MissSubscriber::getEmittedEvents(),
   //    PerformanceSubscriber::getEmittedEvents()
   //  )));
@@ -43,7 +43,7 @@ $emitter
   // from the Drupal page cache.
   // Note: SqlWriterSubscriber needs the Heisencache module to be enabled.
   ->register(new SqlWriterSubscriber(array_merge(
-    array('onShutdown'),
+    array('onTerminate'),
     MissSubscriber::getEmittedEvents()
   )))
 

@@ -12,7 +12,7 @@ use Symfony\Component\DependencyInjection\Reference;
  *
  * @package Drupal\heisencache\EventSubscriber
  */
-class WatchdogWriter extends BaseWriter {
+class WatchdogWriter extends WriterBase {
 
   /**
    * The logger.channel.heisencache service.
@@ -21,7 +21,13 @@ class WatchdogWriter extends BaseWriter {
    */
   protected $logger;
 
-  public function __construct(array $events = [], LoggerInterface $logger) {
+  /**
+   * WatchdogWriter constructor.
+   *
+   * @param array|null $events
+   * @param \Psr\Log\LoggerInterface $logger
+   */
+  public function __construct($events = [], LoggerInterface $logger) {
     parent::__construct($events);
     $this->logger = $logger;
   }
@@ -29,6 +35,7 @@ class WatchdogWriter extends BaseWriter {
   public static function describe(): Definition {
     $def = parent::describe()
       ->addArgument(new Reference(H::LOGGER));
+    $def->replaceArgument(0, NULL);
     return $def;
   }
 
