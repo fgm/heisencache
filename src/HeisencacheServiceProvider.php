@@ -237,12 +237,13 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
     foreach ($subscribers as ['rc' => $rc]) {
       if ($rc->implementsInterface(EventSourceInterface::class)) {
         $rm = $rc->getMethod('getEmittedEvents');
-        $result += $rm->invoke(NULL);
+        $sourceEvents = $rm->invoke(NULL);
+        $result = array_merge($result, $sourceEvents);
       }
     }
 
-    sort($result);
     $result = array_unique($result);
+    sort($result);
     return $result;
   }
 

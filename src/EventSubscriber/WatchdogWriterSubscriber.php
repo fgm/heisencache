@@ -6,7 +6,6 @@ use Drupal\heisencache\HeisencacheServiceProvider as H;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Definition;
 use Symfony\Component\DependencyInjection\Reference;
-use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * WatchdogWriterSubscriber class: accumulate events, write them at end of page.

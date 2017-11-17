@@ -2,6 +2,8 @@
 
 namespace Drupal\heisencache\EventSubscriber;
 
+use Drupal\heisencache\Event\BackendGet;
+use Drupal\heisencache\Event\BackendGetMultiple;
 use Drupal\heisencache\Event\EventInterface;
 use Drupal\heisencache\Event\MissEvent;
 use Drupal\heisencache\HeisencacheServiceProvider as H;
@@ -20,8 +22,8 @@ class MissSubscriber extends ConfigurableListenerBase implements EventSourceInte
   /**
    * Events
    */
-  const MISS = EventInterface::POST . '_miss';
-  const MISS_MULTIPLE = EventInterface::POST . '_miss_multiple';
+  const MISS = H::MODULE . '.' . EventInterface::POST . '_miss';
+  const MISS_MULTIPLE = H::MODULE . '.' . EventInterface::POST . '_miss_multiple';
 
   const NAME = "misses";
 
@@ -41,16 +43,19 @@ class MissSubscriber extends ConfigurableListenerBase implements EventSourceInte
    * @param string $cid
    * @param mixed $value
    */
-  public function afterBackendGet($channel, $cid, $value) {
-    if ($value !== FALSE) {
+  public function afterBackendGet(BackendGet $event) {
+    $data = $event->data();
+    if (!empty($data['result'])) {
       return;
     }
+    $cid = $data['cid'] ?? NULL;
     $missInfo = [
       'misses' => [$cid],
       'requested' => [$cid],
     ];
-    $event = new MissEvent($channel, EventInterface::POST, $missInfo);
+    $event = new MissEvent($event->bin, EventInterface::POST, $missInfo);
     $this->dispatcher()->dispatch(self::MISS, $event);
+    $this->cid = NULL;
   }
 
   /**
@@ -59,26 +64,29 @@ class MissSubscriber extends ConfigurableListenerBase implements EventSourceInte
    *
    * @return array
    */
-  public function afterBackendGetMultiple($channel, $missed) {
-    if (empty($missed)) {
+  public function afterBackendGetMultiple(BackendGetMultiple $event) {
+    $data = $event->data();
+    if (count($data['result']) == count($this->multipleCids)) {
       return;
     }
 
+    $result = array_flip($data['result'] ?? []);
     $requested = $this->multipleCids;
-    $this->multipleCids = [];
+    $missed = array_diff($requested, $result);
     $missInfo = [
       'misses' => $missed,
       'requested' => $requested,
     ];
-    $event = new MissEvent($channel, EventInterface::POST, $missInfo);
+    $event = new MissEvent($event->bin, EventInterface::POST, $missInfo);
     $this->dispatcher()->dispatch(self::MISS_MULTIPLE, $event);
+    $this->multipleCids = [];
   }
 
-  public function beforeBackendGetMultiple($channel, $cids) {
-    $this->multipleCids = $cids;
+  public function beforeBackendGetMultiple(BackendGetMultiple $event) {
+    $this->multipleCids = $event->data()['cids'];
   }
 
-  public static function describe(): Definition {
+  public static function describe(array $knownEvents = []): Definition {
     $def = parent::describe()
       ->addArgument(new Reference(H::LOGGER))
     ;

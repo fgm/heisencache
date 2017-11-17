@@ -144,7 +144,7 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
     if (!isset(static::$events)) {
       $methods = get_class_methods(CacheBackendInterface::class);
       $events = [
-        EventInterface::IN . EventInterface::BACKEND_CONSTRUCT,
+        H::MODULE . '.' . EventInterface::IN . EventInterface::BACKEND_CONSTRUCT,
         // We pretend to emit it, but it is really emitted by the kernel.
         KernelEvents::TERMINATE,
       ];
