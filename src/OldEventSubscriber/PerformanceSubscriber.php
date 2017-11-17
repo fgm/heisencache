@@ -13,7 +13,7 @@ class PerformanceSubscriber extends ConfigurableListenerBase implements EventSou
 
   const NAME = "performance";
 
-  protected static $subscribedEvents = [
+  protected static $listenedEvents = [
     'beforeClear' => 1,
     'afterClear' => 1,
 

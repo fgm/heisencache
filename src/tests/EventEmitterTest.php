@@ -148,11 +148,11 @@ class EventEmitterTest extends \PHPUnit_Framework_TestCase {
     $event1 = 'event1';
     $event2 = 'event2';
     $events = array($event1, $event2);
-    $mocked = array_merge($events, array('getSubscribedEvents'));
+    $mocked = array_merge($events, array('getListenedEvents'));
 
     $subscriber = $this->getMockSubscriber($mocked);
     $subscriber->expects($this->once())
-      ->method('getSubscribedEvents')
+      ->method('getListenedEvents')
       ->will($this->returnValue($events));
 
     $emitter = new EventEmitter();

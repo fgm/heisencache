@@ -21,7 +21,9 @@ use Drupal\heisencache\EventSubscriber\EventSourceInterface;
 use Drupal\heisencache\Event\RemoveBin;
 use Drupal\heisencache\EventSubscriber\EventSourceTrait;
 use Drupal\heisencache\HeisencacheServiceProvider as H;
+use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
+use Symfony\Component\HttpKernel\KernelEvents;
 
 /**
  * Class InstrumentedBin wraps event sources around cache handlers.
@@ -142,11 +144,14 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
     if (!isset(static::$events)) {
       $methods = get_class_methods(CacheBackendInterface::class);
       $events = [
-        H::MODULE . '.onTerminate',
+        EventInterface::IN . EventInterface::BACKEND_CONSTRUCT,
+        // We pretend to emit it, but it is really emitted by the kernel.
+        KernelEvents::TERMINATE,
       ];
       foreach ($methods as $method) {
-        $events[] = H::MODULE . '.' . EventInterface::PRE . ucfirst($method);
-        $events[] = H::MODULE . '.' . EventInterface::POST . ucfirst($method);
+        $snake = Container::underscore($method);
+        $events[] = EventInterface::PRE . "_{$snake}";
+        $events[] = EventInterface::POST . "_{$snake}";
       }
       static::$events = $events;
     }

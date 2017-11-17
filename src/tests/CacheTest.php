@@ -14,6 +14,7 @@ namespace OSInet\Heisencache\tests;
 
 use OSInet\Heisencache\Cache;
 use OSInet\Heisencache\Config;
+use Drupal\heisencache\HeisencacheServiceProvider as H;
 
 class CacheTest extends \PHPUnit_Framework_TestCase {
 
@@ -46,7 +47,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase {
     // Override default override with our mock cache. Since this is not a public
     // property and there is no setter, force it using reflection.
     $core_cache = \Drupal::cache('cache');
-    $dispatcher = \Drupal::service('event_dispatcher');
+    $dispatcher = \Drupal::service(H::DISPATCHER);
     $cache = new Cache('cache', $core_cache, $dispatcher);
     $rp = new \ReflectionProperty($cache, 'handler');
     $rp->setAccessible(TRUE);

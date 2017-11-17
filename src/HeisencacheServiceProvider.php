@@ -32,6 +32,9 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
 
   const FQNS = __NAMESPACE__ . '\\' . self::NS;
 
+  // Core services.
+  const DISPATCHER = 'event_dispatcher';
+
   // Generic service names.
   const LOGGER = 'logger.channel.' . self::MODULE;
 
@@ -143,7 +146,8 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
    * @param string $name
    *   The name under which to register the service.
    * @param array|null $events
-   *   The events which the service listens to. Passing null means all events.
+   *   The short names of the events which the service listens to, or null.
+   *   Passing null means all events.
    * @param \ReflectionClass $rc
    *   The reflection class for the service.
    * @param array $knownEvents
@@ -163,7 +167,14 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
       : $container->getDefinition($name);
 
     if (is_null($events)) {
-      $events = $knownEvents;
+      $autoEvents = $definition->getArguments()
+        // Auto-described services have an argument 0 holding their events.
+        ? $definition->getArgument(0)
+        // Third party listeners may implements ConfigurableListenerInterface,
+        // but not DescribedService interface, in which case they do not have
+        // an arguments array as the first argument.
+        : NULL;
+      $events = empty($autoEvents) ? $knownEvents : $autoEvents;
     }
 
     foreach ($events as $eventName) {

@@ -3,7 +3,7 @@
 namespace Drupal\heisencache\Routing;
 
 use Drupal\Core\Routing\RouteSubscriberBase;
-use Drupal\heisencache\Controller\ReportController;
+use Drupal\heisencache\Controller\ConfigurationController;
 use Symfony\Component\Routing\Route;
 use Symfony\Component\Routing\RouteCollection;
 
@@ -13,17 +13,17 @@ use Symfony\Component\Routing\RouteCollection;
  * @package Drupal\heisencache\Routing
  */
 class RouteProvider extends RouteSubscriberBase {
-  const REPORT = 'heisencache.report';
+  const CONFIG = 'heisencache.config';
 
   /**
    * {@inheritdoc}
    */
   protected function alterRoutes(RouteCollection $collection) {
-    $route = (new Route('/admin/reports/heisencache'))->addDefaults([
-      '_controller' => ReportController::class . '::build',
-      '_title' => 'Heisencache report',
+    $route = (new Route('/admin/config/heisencache'))->addDefaults([
+      '_controller' => ConfigurationController::class . '::build',
+      '_title' => 'Heisencache configuration report',
     ])->setRequirement('_permission', 'access site reports');
-    $collection->add(self::REPORT, $route);
+    $collection->add(self::CONFIG, $route);
   }
 
 }

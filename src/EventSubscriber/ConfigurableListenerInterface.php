@@ -18,17 +18,15 @@ interface ConfigurableListenerInterface {
    *
    * @param string $eventName
    *   The short name for Heisencache events
-   * @param bool $raw
-   *   Is the event name to be used as such ? Should be true for non-H events.
    */
-  public function addEvent(string $eventName, bool $raw = FALSE): void;
+  public function addEvent(string $eventName): void;
 
   /**
    * Return the events to which the service is listening.
    *
    * @return array
    */
-  public function getSubscribedEvents(): array;
+  public function getListenedEvents(): array;
 
   /**
    * Remove an event from the service listening list.

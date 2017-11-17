@@ -73,23 +73,21 @@ abstract class EventBase extends Event implements EventInterface {
   }
 
   /**
-   * Build candidate handler names for an event name.
+   * Build a candidate handler name for an event name.
    *
    * @param string $eventName
-   *   The name of the event for which to build candidates.
+   *   The name of the event for which to build a candidate method name.
    *
-   * @return array
-   *   The name of the candidate handlers.
+   * @return string
+   *   The name of the candidate handler.
    */
-  public static function callbacksFromEventName(string $eventName) : array {
-    $callbacks = [];
-    list(, $event) = explode('.', $eventName, 2);
-    $callbacks[] = 'on' . Container::camelize($event);
-    foreach (['after', 'before', 'on'] as $kind) {
-      $callbacks[] = lcfirst(Container::camelize("${kind}_${event}"));
-    }
-
-    return $callbacks;
+  public static function callbackFromEventName(string $eventName) : string {
+    $own = H::MODULE . '.';
+    $pos = strpos($eventName, $own);
+    $event = ($pos === 0) ? substr($eventName, strlen($own)) : "on.{$eventName}";
+    $spaced = strtr($event, ['_' => ' ', '.' => ' ', '\\' => '_ ']);
+    $callback = lcfirst(strtr(ucwords($spaced), [' ' => '']));
+    return $callback;
   }
 
   /**

@@ -29,9 +29,7 @@ abstract class WriterBase extends ConfigurableListenerBase implements TerminateW
     if (!isset($events)) {
       $events = InstrumentedBin::getEmittedEvents();
     }
-    foreach ($events as $eventName) {
-      $this->addEvent($eventName);
-    }
+    parent::__construct($events);
     $this->history = array();
   }
 
@@ -51,6 +49,10 @@ abstract class WriterBase extends ConfigurableListenerBase implements TerminateW
     $this->history[] = array($eventName, $args);
   }
 
+  public function isListenedTo(string $event_name) {
+    return in_array($event_name, $this->listenedEvents);
+  }
+
   /**
    * on() will accept ANY event for this subscriber, but only handle ours.
    *
@@ -60,7 +62,7 @@ abstract class WriterBase extends ConfigurableListenerBase implements TerminateW
    * @throws \Drupal\heisencache\Exception\InvalidArgumentException
    */
   public function __call($eventName, $args) {
-    if (!in_array($eventName, $this->subscribedEvents)) {
+    if (!$this->isCallable($eventName)) {
       throw new InvalidArgumentException("Unsupported event $eventName");
     }
     else {

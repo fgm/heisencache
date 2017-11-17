@@ -33,25 +33,25 @@ interface EventInterface {
    *
    * Each of these events may be triggered as "in" or "after"|"before".
    */
-  const BACKEND_CONSTRUCT = H::MODULE . '_backend_construct';
+  const BACKEND_CONSTRUCT = '_backend_construct';
 
-  const BACKEND_DELETE = H::MODULE . '_backend_delete';
-  const BACKEND_DELETE_ALL = H::MODULE . '_backend_delete_all';
-  const BACKEND_DELETE_MULTIPLE = H::MODULE . '_backend_delete_multiple';
+  const BACKEND_DELETE = '_backend_delete';
+  const BACKEND_DELETE_ALL = '_backend_delete_all';
+  const BACKEND_DELETE_MULTIPLE = '_backend_delete_multiple';
 
-  const BACKEND_GARBAGE_COLLECTION = H::MODULE . '_backend_garbage_collection';
+  const BACKEND_GARBAGE_COLLECTION = '_backend_garbage_collection';
 
-  const BACKEND_GET = H::MODULE . '_backend_get';
-  const BACKEND_GET_MULTIPLE = H::MODULE . '_backend_get_multiple';
+  const BACKEND_GET = '_backend_get';
+  const BACKEND_GET_MULTIPLE = '_backend_get_multiple';
 
-  const BACKEND_INVALIDATE = H::MODULE . '_backend_invalidate';
-  const BACKEND_INVALIDATE_ALL = H::MODULE . '_backend_invalidate_all';
-  const BACKEND_INVALIDATE_MULTIPLE = H::MODULE . '_backend_invalidate_multiple';
+  const BACKEND_INVALIDATE = '_backend_invalidate';
+  const BACKEND_INVALIDATE_ALL = '_backend_invalidate_all';
+  const BACKEND_INVALIDATE_MULTIPLE = '_backend_invalidate_multiple';
 
-  const BACKEND_SET = H::MODULE . '_backend_set';
-  const BACKEND_SET_MULTIPLE = H::MODULE . '_backend_set_multiple';
+  const BACKEND_SET = '_backend_set';
+  const BACKEND_SET_MULTIPLE = '_backend_set_multiple';
 
-  const REMOVE_BIN = H::MODULE . '_remove_bin';
+  const REMOVE_BIN = '_remove_bin';
 
   /**
    * The list of Heisencache events, for "wildcard" listeners.

@@ -7,6 +7,6 @@ interface TerminateWriterInterface {
   /**
    * Writes the collected information gathered during the page cycle.
    */
-  public function onTerminate(): void;
+  public function onKernelTerminate(): void;
 
 }

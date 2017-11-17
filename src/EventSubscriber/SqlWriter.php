@@ -39,7 +39,7 @@ class SqlWriter extends WriterBase {
     }
   }
 
-  public function onTerminate(): void {
+  public function onKernelTerminate(): void {
     if (empty($this->history)) {
       return;
     }

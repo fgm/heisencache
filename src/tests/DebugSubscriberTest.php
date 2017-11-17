@@ -39,13 +39,13 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
     $events = array($event1, $event2);
 
     $sub = new DebugSubscriber($events);
-    $actual = $sub->getSubscribedEvents();
+    $actual = $sub->getListenedEvents();
     $this->assertEquals($actual, $events);
   }
 
   public function testImplicitEventRegistration() {
     $sub = new DebugSubscriber();
-    $actual = $sub->getSubscribedEvents();
+    $actual = $sub->getListenedEvents();
     $this->assertEquals($actual, $this->events);
   }
 
@@ -54,12 +54,12 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
 
     /** @var \OSInet\Heisencache\Tests\MockEventSubscriberInterface $mock */
     $mock = $this->getMockBuilder(self::FQCN)
-      ->setMethods(array('getSubscribedEvents', 'show'))
+      ->setMethods(array('getListenedEvents', 'show'))
       ->getMock();
     $mock->expects($this->exactly(count($this->events)))
       ->method('show');
     $mock->expects($this->once())
-      ->method('getSubscribedEvents')
+      ->method('getListenedEvents')
       ->will($this->returnValue($this->events));
 
     $emitter = new EventEmitter();

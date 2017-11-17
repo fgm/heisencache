@@ -22,11 +22,11 @@ class BaseEventSubscriberTest extends \PHPUnit_Framework_TestCase {
     $mock = $this->getMockForAbstractClass('OSInet\Heisencache\BaseEventSubscriber');
     $mock->addEvent($event1);
 
-    $actual = $mock->getSubscribedEvents();
+    $actual = $mock->getListenedEvents();
     $this->assertEquals($events, $actual);
 
     $mock->removeEvent($event1);
-    $actual = $mock->getSubscribedEvents();
+    $actual = $mock->getListenedEvents();
     $this->assertEquals(array(), $actual);
   }
 }

@@ -13,7 +13,7 @@ class WriteSubscriber extends ConfigurableListenerBase implements EventSourceInt
 
   const NAME = "writes";
 
-  protected $subscribedEvents = [
+  protected $listenedEvents = [
     'afterSet' =>  1,
     'afterClear' => 1,
   ];

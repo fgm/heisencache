@@ -3,6 +3,7 @@
 namespace Drupal\heisencache\Cache;
 
 use Drupal\heisencache\Exception\ConfigurationException;
+use Drupal\heisencache\HeisencacheServiceProvider as H;
 use Symfony\Component\DependencyInjection\Compiler\CompilerPassInterface;
 use Symfony\Component\DependencyInjection\ContainerBuilder;
 use Symfony\Component\DependencyInjection\Reference;
@@ -27,12 +28,12 @@ class CacheInstrumentationPass implements CompilerPassInterface {
    * {@inheritdoc}
    */
   public function process(ContainerBuilder $container) {
-    if (!$container->hasDefinition('event_dispatcher')) {
+    if (!$container->hasDefinition(H::DISPATCHER)) {
       throw new ConfigurationException('Event dispatcher service not found during Heisencache configuration.');
     }
 
     $bins = $container->getParameter('cache_bins');
-    $this->dispatcher = new Reference('event_dispatcher');
+    $this->dispatcher = new Reference(H::DISPATCHER);
     array_walk($bins, [$this, 'decorateBin'], $container);
   }
 

@@ -3,6 +3,7 @@
 namespace Drupal\heisencache\EventSubscriber;
 
 use Drupal\heisencache\Event\EventBase;
+use Drupal\heisencache\HeisencacheServiceProvider as H;
 use Symfony\Component\DependencyInjection\Definition;
 
 /**
@@ -44,7 +45,7 @@ trait EventSourceTrait {
 
   public function dispatcher() {
     if (!isset($this->eventDispatcher)) {
-      $this->eventDispatcher = \Drupal::service('event_dispatcher');
+      $this->eventDispatcher = \Drupal::service(H::DISPATCHER);
     }
 
     return $this->eventDispatcher;

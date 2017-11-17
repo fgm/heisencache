@@ -9,13 +9,13 @@ use Symfony\Component\DependencyInjection\Definition;
 abstract class ConfigurableListenerBase implements ConfigurableListenerInterface, DescribedServiceInterface {
 
   /**
-   * An array of the events subscribed by instances of this class.
+   * An array of the events instances of this class listened to.
    *
    * Note that each new instance may add new events, never remove any.
    *
    * @var array
    */
-  public $subscribedEvents = [];
+  public $listenedEvents = [];
 
   /**
    * ConfigurableSubscriberBase constructor.
@@ -30,8 +30,8 @@ abstract class ConfigurableListenerBase implements ConfigurableListenerInterface
   /**
    * {@inheritdoc}
    */
-  public function addEvent(string $eventName, bool $raw = FALSE): void {
-    $this->subscribedEvents[$eventName] = $raw ? TRUE : $eventName;
+  public function addEvent(string $eventName): void {
+    $this->listenedEvents[$eventName] = $eventName;
   }
 
   /**
@@ -48,15 +48,15 @@ abstract class ConfigurableListenerBase implements ConfigurableListenerInterface
   /**
    * {@inheritdoc}
    */
-  public function getSubscribedEvents(): array {
-    return $this->subscribedEvents;
+  public function getListenedEvents(): array {
+    return $this->listenedEvents;
   }
 
   /**
    * {@inheritdoc}
    */
   public function removeEvent($eventName): void {
-    unset($this->subscribedEvents[$eventName]);
+    unset($this->listenedEvents[$eventName]);
   }
 
 }

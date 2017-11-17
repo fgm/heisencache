@@ -6,6 +6,7 @@ use Drupal\heisencache\Event\EventInterface;
 use Drupal\heisencache\Event\MissEvent;
 use Drupal\heisencache\HeisencacheServiceProvider as H;
 use Symfony\Component\DependencyInjection\Definition;
+use Symfony\Component\DependencyInjection\Reference;
 
 /**
  * Class MissSubscriber tracks cache get[_multiple] calls resulting in a MISS.
@@ -19,9 +20,8 @@ class MissSubscriber extends ConfigurableListenerBase implements EventSourceInte
   /**
    * Events
    */
-  const MISS = EventInterface::POST . '_' . H::MODULE . '_miss';
-
-  const MISS_MULTIPLE = EventInterface::POST . '_' . H::MODULE . '_miss_multiple';
+  const MISS = EventInterface::POST . '_miss';
+  const MISS_MULTIPLE = EventInterface::POST . '_miss_multiple';
 
   const NAME = "misses";
 
@@ -30,20 +30,18 @@ class MissSubscriber extends ConfigurableListenerBase implements EventSourceInte
     self::MISS_MULTIPLE,
   ];
 
-  public $subscribedEvents = [
-    EventInterface::POST . '.' . EventInterface::BACKEND_GET => 1,
-    EventInterface::POST . '.' . EventInterface::BACKEND_GET_MULTIPLE => 1,
-    EventInterface::PRE . '.' . EventInterface::BACKEND_GET_MULTIPLE => 1,
-  ];
-
   protected $multipleCids = [];
+
+  public function __construct(array $events = []) {
+    parent::__construct($events);
+  }
 
   /**
    * @param string $channel
    * @param string $cid
    * @param mixed $value
    */
-  public function afterGet($channel, $cid, $value) {
+  public function afterBackendGet($channel, $cid, $value) {
     if ($value !== FALSE) {
       return;
     }
@@ -61,7 +59,7 @@ class MissSubscriber extends ConfigurableListenerBase implements EventSourceInte
    *
    * @return array
    */
-  public function afterGetMultiple($channel, $missed) {
+  public function afterBackendGetMultiple($channel, $missed) {
     if (empty($missed)) {
       return;
     }
@@ -76,8 +74,20 @@ class MissSubscriber extends ConfigurableListenerBase implements EventSourceInte
     $this->dispatcher()->dispatch(self::MISS_MULTIPLE, $event);
   }
 
-  public function beforeGetMultiple($channel, $cids) {
+  public function beforeBackendGetMultiple($channel, $cids) {
     $this->multipleCids = $cids;
+  }
+
+  public static function describe(): Definition {
+    $def = parent::describe()
+      ->addArgument(new Reference(H::LOGGER))
+    ;
+    $def->replaceArgument(0, [
+      EventInterface::POST . EventInterface::BACKEND_GET,
+      EventInterface::POST . EventInterface::BACKEND_GET_MULTIPLE,
+      EventInterface::PRE . EventInterface::BACKEND_GET_MULTIPLE,
+    ]);
+    return $def;
   }
 
 }

@@ -4,19 +4,16 @@ namespace Drupal\heisencache\Controller;
 
 use Drupal\Core\DependencyInjection\ContainerInjectionInterface;
 use Drupal\Core\StringTranslation\StringTranslationTrait;
-use Drupal\heisencache\Event\EventBase;
-use Drupal\heisencache\EventSubscriber\ConfigurableListenerBase;
 use Drupal\heisencache\EventSubscriber\EventSourceInterface;
 use Drupal\heisencache\HeisencacheServiceProvider as H;
-use Robo\Task\Vcs\loadShortcuts;
 use Symfony\Component\DependencyInjection\ContainerInterface;
 
 /**
- * Class ReportController.
+ * Class ConfigController.
  *
  * @package Drupal\heisencache\Controller
  */
-class ReportController implements ContainerInjectionInterface {
+class ConfigurationController implements ContainerInjectionInterface {
 
   use StringTranslationTrait;
 
