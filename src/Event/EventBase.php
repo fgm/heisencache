@@ -3,6 +3,7 @@
 namespace Drupal\heisencache\Event;
 
 use Drupal\heisencache\HeisencacheServiceProvider as H;
+use Drupal\heisencache\HeisencacheServiceProvider;
 use Symfony\Component\DependencyInjection\Container;
 use Symfony\Component\EventDispatcher\Event;
 
@@ -140,7 +141,13 @@ abstract class EventBase extends Event implements EventInterface {
    * {@inheritdoc}
    */
   public function name() {
-    return $this->eventName;
+    $baseName = $this->eventName;
+
+    $name = (strpos($baseName, H::MODULE) === 0)
+      ? preg_replace('/^(' . H::MODULE . ')\./', "\$1.{$this->kind}_", $baseName)
+      : $baseName;
+
+    return $name;
   }
 
   /**
@@ -167,7 +174,7 @@ abstract class EventBase extends Event implements EventInterface {
    * @return $this
    */
   public function setData(array $data) {
-    array_merge($this->data, $data);
+    $this->data += $data;
     return $this;
   }
 

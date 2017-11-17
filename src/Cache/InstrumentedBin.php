@@ -150,8 +150,8 @@ class InstrumentedBin implements CacheBackendInterface, EventSourceInterface {
       ];
       foreach ($methods as $method) {
         $snake = Container::underscore($method);
-        $events[] = EventInterface::PRE . "_{$snake}";
-        $events[] = EventInterface::POST . "_{$snake}";
+        $events[] = H::MODULE . '.' . EventInterface::PRE . "_backend_{$snake}";
+        $events[] = H::MODULE . '.' . EventInterface::POST . "_backend_{$snake}";
       }
       static::$events = $events;
     }

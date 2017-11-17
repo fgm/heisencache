@@ -3,8 +3,9 @@
 namespace Drupal\heisencache\EventSubscriber;
 
 use Drupal\heisencache\Cache\InstrumentedBin;
+use Drupal\heisencache\Event\EventBase;
+use Drupal\heisencache\Event\EventInterface;
 use Drupal\heisencache\Exception\InvalidArgumentException;
-use Symfony\Component\DependencyInjection\Definition;
 
 abstract class WriterBase extends ConfigurableListenerBase implements TerminateWriterInterface {
 
@@ -30,7 +31,7 @@ abstract class WriterBase extends ConfigurableListenerBase implements TerminateW
       $events = InstrumentedBin::getEmittedEvents();
     }
     parent::__construct($events);
-    $this->history = array();
+    $this->history = [];
   }
 
   /**
@@ -42,11 +43,13 @@ abstract class WriterBase extends ConfigurableListenerBase implements TerminateW
    * @param array $args
    */
   public function genericCall($eventName, $args) {
+    $event = $args[0];
+    $data = ($event instanceof EventBase) ? $event->data() : '(CoreEvent)';
     if ($this->showGenericCalls && strpos($eventName, 'before') !== 0 && strpos($eventName, 'after') !== 0) {
-      echo "<p>" . __CLASS__ . "::$eventName(" . $args[0] . ")</p>\n";
+      echo "<p>" . __CLASS__ . "::$eventName(" . $data[0] . ")</p>\n";
     }
 
-    $this->history[] = array($eventName, $args);
+    $this->history[] = array($eventName, $data);
   }
 
   public function isListenedTo(string $event_name) {
@@ -56,13 +59,13 @@ abstract class WriterBase extends ConfigurableListenerBase implements TerminateW
   /**
    * on() will accept ANY event for this subscriber, but only handle ours.
    *
-   * @param string $eventName
+   * @param string $method
    * @param array $args
    *
-   * @throws \Drupal\heisencache\Exception\InvalidArgumentException
    */
-  public function __call($eventName, $args) {
-    if (!$this->isCallable($eventName)) {
+  public function __call($method, $args) {
+    list(, $eventName, ) = $args;
+    if (!$this->isListenedTo($eventName)) {
       throw new InvalidArgumentException("Unsupported event $eventName");
     }
     else {
@@ -73,4 +76,5 @@ abstract class WriterBase extends ConfigurableListenerBase implements TerminateW
   public function setDebugCalls($showGenericCalls = FALSE) {
     $this->showGenericCalls = $showGenericCalls;
   }
+
 }

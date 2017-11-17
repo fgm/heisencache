@@ -37,7 +37,7 @@ abstract class ConfigurableListenerBase implements ConfigurableListenerInterface
   /**
    * {@inheritdoc}
    */
-  public static function describe(): Definition {
+  public static function describe(array $knownEvents = []): Definition {
     $def = new Definition(get_called_class());
     $def->addArgument([])
       ->addTag(ConfigurableListenerInterface::LISTENER_TAG)

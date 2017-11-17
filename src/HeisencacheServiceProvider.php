@@ -162,7 +162,7 @@ class HeisencacheServiceProvider implements ServiceProviderInterface, ServiceMod
     array $knownEvents) {
     $definition = $rc->implementsInterface(DescribedServiceInterface::class)
       // Auto-described service: use its own description.
-      ? call_user_func([$rc->getName(), 'describe'])
+      ? call_user_func([$rc->getName(), 'describe'], $knownEvents)
       // Static service: use the existing container definition.
       : $container->getDefinition($name);
 

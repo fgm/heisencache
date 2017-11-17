@@ -38,7 +38,7 @@ class DebugSubscriber extends ConfigurableListenerBase {
     $stack = debug_backtrace(FALSE);
     $caller = $stack[1]['function'];
     $args = func_get_args();
-    $arg1 = is_string($args[1]) ? $args[1] : json_encode($args[1]);
+    $arg1 = substr(is_string($args[1]) ? $args[1] : json_encode($args[1]), 0, 256);
     list($id, $color) = $this->color();
     echo "<span style='color: ${color}'>$id: $caller($bin, {$arg1})</span><br />\n";
   }
@@ -110,7 +110,8 @@ class DebugSubscriber extends ConfigurableListenerBase {
     if ($event->kind() !== EventBase::POST) {
       return;
     }
-    $this->show($event->bin, $event->data()['cid'], $event->data()['value']);
+    $data = $event->data();
+    $this->show($event->bin, array_intersect_key($data, ['cid' => 1, 'result' => 1]));
   }
 
   public function beforeBackendGetMultiple(BackendGetMultiple $event): void {
@@ -187,14 +188,14 @@ class DebugSubscriber extends ConfigurableListenerBase {
     if ($event->kind() !== EventBase::PRE) {
       return;
     }
-    $this->show($event->bin, $event->data()['cid'], $event->data()['value']);
+    $this->show($event->bin, array_intersect_key($event->data(), ['cid' => 1, 'data' => 1]));
   }
 
   public function afterBackendSet(BackendSet $event): void {
     if ($event->kind() !== EventBase::POST) {
       return;
     }
-    $this->show($event->bin, $event->data()['cid'], $event->data()['value']);
+    $this->show($event->bin, array_intersect_key($event->data(), ['cid' => 1, 'data' => 1]));
   }
 
   public function beforeBackendSetMultiple(BackendSetMultiple $event): void {

@@ -2,7 +2,6 @@
 
 namespace Drupal\heisencache\EventSubscriber;
 
-use Drupal\heisencache\Event\EventInterface;
 use Drupal\heisencache\HeisencacheServiceProvider as H;
 use Psr\Log\LoggerInterface;
 use Symfony\Component\DependencyInjection\Definition;
@@ -34,22 +33,20 @@ class WatchdogWriterSubscriber extends WriterBase {
     $this->logger = $logger;
   }
 
-  public static function describe(): Definition {
-    $def = parent::describe()
+  public static function describe(array $knownEvents = []): Definition {
+    $def = parent::describe($knownEvents)
       ->addArgument(new Reference(H::LOGGER))
     ;
-    $def->replaceArgument(0, [
-      KernelEvents::TERMINATE,
-      EventInterface::IN . EventInterface::BACKEND_CONSTRUCT,
-    ]);
+    $def->replaceArgument(0, $knownEvents);
     return $def;
   }
 
   public function onKernelTerminate(): void {
-    if (TRUE || !empty($this->history)) {
+    if (!empty($this->history)) {
       $this->logger->debug('Cache events: @events', [
         '@events' => serialize($this->history),
       ]);
     }
   }
+
 }
