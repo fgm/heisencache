@@ -10,7 +10,7 @@
  * @license General Public License version 2 or later
  */
 
-use OSInet\Heisencache\SqlWriterSubscriber;
+use Drupal\heisencache\SqlWriterSubscriber;
 
 #require_once __DIR__ . '/vendor/autoload.php';
 

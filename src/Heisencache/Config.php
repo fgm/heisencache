@@ -10,17 +10,17 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache;
+namespace OSInet\heisencache;
 
 /**
  * Class Config.
  *
  * Configure Heisencache from the original cache chain.
  *
- * @package OSInet\Heisencache
+ * @package Drupal\heisencache
  */
 class Config {
-  const CACHE_CLASS = 'OSInet\Heisencache\Cache';
+  const CACHE_CLASS = 'Drupal\heisencache\Cache';
   const VAR_CACHE_DEFAULT_CLASS = 'cache_default_class';
   const VAR_CACHE_CLASS_PREFIX = 'cache_class_';
 
@@ -50,12 +50,12 @@ class Config {
   protected $defaultClass;
 
   /**
-   * @var \OSInet\Heisencache\EventEmitter
+   * @var \Drupal\heisencache\EventEmitter
    */
   protected $emitter;
 
   /**
-   * @var \OSInet\Heisencache\Config
+   * @var \Drupal\heisencache\Config
    */
   protected static $instance;
 
@@ -107,7 +107,7 @@ class Config {
    *   The original site settings, prior to override. Only needed for initial
    *   instance creation, ignored in later calls.
    *
-   * @return \OSInet\Heisencache\Config
+   * @return \Drupal\heisencache\Config
    */
   public static function instance($conf = array()) {
     if (!isset(static::$instance)) {

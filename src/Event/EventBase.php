@@ -12,8 +12,7 @@
 
 namespace Drupal\heisencache\Event;
 
-
-use Symfony\Component\EventDispatcher\Event;
+use Symfony\Contracts\EventDispatcher\Event;
 
 /**
  * Class EventBase
@@ -57,7 +56,7 @@ abstract class EventBase extends Event implements EventInterface {
     $this->data = $data;
     $class = explode('\\', get_class($this));
     $event_name = array_pop($class);
-    $event_name = strtolower(preg_replace('/[A-Z]*/g', '_$1', $event_name));
+    $event_name = strtolower(preg_replace('/[A-Z]*/', '_$1', $event_name));
     $this->eventName = $event_name;
   }
 

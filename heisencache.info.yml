@@ -13,5 +13,5 @@ type: module
 package: Performance and scalability
 # project status url = http://features.osinet.eu/fserver
 
-php: 7.1
-core: 8.x
+php: 8.0
+core_version_requirement: ^8 || ^9 || ^10

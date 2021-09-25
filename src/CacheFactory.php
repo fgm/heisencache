@@ -16,7 +16,7 @@ namespace Drupal\heisencache;
 use Drupal\Core\Cache\CacheFactoryInterface;
 use Drupal\heisencache\Event\EventDispatcherTrait;
 use Drupal\heisencache\Event\FactoryGetEvent;
-use OSInet\Heisencache\Cache;
+use Drupal\heisencache\Cache;
 use Symfony\Component\DependencyInjection\ContainerAwareInterface;
 use Symfony\Component\DependencyInjection\ContainerAwareTrait;
 use Symfony\Component\DependencyInjection\ContainerInterface;

@@ -10,19 +10,19 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache\tests;
+namespace Drupal\heisencache\tests;
 
+use Drupal\heisencache\MissSubscriber;
+use PHPUnit\Framework\TestCase;
 
-use OSInet\Heisencache\MissSubscriber;
-
-class MissSubscriberTest extends \PHPUnit_Framework_TestCase {
+class MissSubscriberTest extends TestCase {
 
   const CHANNEL = "some channel";
 
   protected $emitter;
 
   public function setUp() {
-    $this->emitter = $this->getMock('OSInet\Heisencache\EventEmitter');
+    $this->emitter = $this->getMock('Drupal\heisencache\EventEmitter');
   }
 
   public function testGetHit() {

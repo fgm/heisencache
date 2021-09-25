@@ -10,20 +10,21 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache\tests;
+namespace Drupal\heisencache\tests;
 
-use OSInet\Heisencache\EventEmitter;
+use Drupal\heisencache\EventEmitter;
+use PHPUnit\Framework\TestCase;
 
-class EventEmitterTest extends \PHPUnit_Framework_TestCase {
+class EventEmitterTest extends TestCase {
 
-  const SUBSCRIBER_CLASS = 'OSInet\Heisencache\DebugSubscriber';
+  const SUBSCRIBER_CLASS = 'Drupal\heisencache\DebugSubscriber';
   const CHANNEL = "some channel";
 
   /**
    * @param array $events
    * @param null $class
    *
-   * @return \OSInet\Heisencache\tests\MockEventSubscriberInterface
+   * @return \Drupal\heisencache\tests\MockEventSubscriberInterface
    */
   protected function getMockSubscriber(array $events, $class = NULL) {
     static $sequence = 0;

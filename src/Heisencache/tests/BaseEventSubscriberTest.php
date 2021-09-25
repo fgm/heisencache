@@ -10,16 +10,18 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache\tests;
+namespace Drupal\heisencache\tests;
 
-class BaseEventSubscriberTest extends \PHPUnit_Framework_TestCase {
+use PHPUnit\Framework\TestCase;
+
+class BaseEventSubscriberTest extends TestCase {
 
   public function testRemoveEvent() {
     $event1 = 'event1';
     $events = array($event1);
 
-    /** @var \OSInet\Heisencache\tests\MockEventSubscriberInterface $mock */
-    $mock = $this->getMockForAbstractClass('OSInet\Heisencache\BaseEventSubscriber');
+    /** @var \Drupal\heisencache\tests\MockEventSubscriberInterface $mock */
+    $mock = $this->getMockForAbstractClass('Drupal\heisencache\BaseEventSubscriber');
     $mock->addEvent($event1);
 
     $actual = $mock->getSubscribedEvents();

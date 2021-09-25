@@ -10,19 +10,19 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache\tests;
+namespace Drupal\heisencache\tests;
 
+use Drupal\heisencache\WriteSubscriber;
+use PHPUnit\Framework\TestCase;
 
-use OSInet\Heisencache\WriteSubscriber;
-
-class WriteSubscriberTest extends \PHPUnit_Framework_TestCase {
+class WriteSubscriberTest extends TestCase {
 
   const CHANNEL = "some channel";
 
   protected $emitter;
 
   public function setUp() {
-    $this->emitter = $this->getMock('OSInet\Heisencache\EventEmitter');
+    $this->emitter = $this->getMock('Drupal\heisencache\EventEmitter');
   }
 
   public function testSet() {

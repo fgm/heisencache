@@ -11,7 +11,7 @@
  * @license General Public License version 2 or later
  */
 
-use OSInet\Heisencache\SqlWriterSubscriber;
+use Drupal\heisencache\SqlWriterSubscriber;
 
 /**
  * Helper for hook_views_data_alter() on the Heisencache sink table.

@@ -31,7 +31,9 @@ function heisencache_menu() {
  * Implements hook_views_api().
  */
 function heisencache_views_api() {
-  $path = drupal_get_path('module', 'heisencache');
+  /** @var \Drupal\Core\Extension\ExtensionPathResolver $er */
+  $er = \Drupal::service('extension.path.resolver');
+  $path = $er->getPath('module', 'heisencache');
   $ret = array(
     'api' => "3",
     'path' => "$path/views",

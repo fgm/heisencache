@@ -10,12 +10,12 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache\tests;
+namespace Drupal\heisencache\tests;
 
-use OSInet\Heisencache\Cache;
-use OSInet\Heisencache\Config;
+use Drupal\heisencache\Config;
+use PHPUnit\Framework\TestCase;
 
-class CacheTest extends \PHPUnit_Framework_TestCase {
+class CacheTest extends TestCase {
 
   /**
    * Ensure Cache::get() actually returns the data from the original handler.
@@ -29,7 +29,7 @@ class CacheTest extends \PHPUnit_Framework_TestCase {
 
     // Create a mock DB cache which will return $expected.
     $handler = $this->getMockBuilder('\DrupalDatabaseCache')
-      ->setMethods(array('get'))
+      ->onlyMethods(array('get'))
       ->setConstructorArgs(array($bin))
       ->getMock();
     $handler->expects($this->once())

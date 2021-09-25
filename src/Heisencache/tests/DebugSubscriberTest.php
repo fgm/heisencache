@@ -10,19 +10,18 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache\tests;
+namespace Drupal\heisencache\tests;
 
+use Drupal\heisencache\DebugSubscriber;
+use Drupal\heisencache\EventEmitter;
+use Drupal\heisencache\MissSubscriber;
+use PHPUnit\Framework\TestCase;
 
-use OSInet\Heisencache\Cache;
-use OSInet\Heisencache\DebugSubscriber;
-use OSInet\Heisencache\EventEmitter;
-use OSInet\Heisencache\MissSubscriber;
-
-class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
+class DebugSubscriberTest extends TestCase {
   /**
    * Fully qualified class name for DebugSubscriber.
    */
-  const FQCN = 'OSInet\Heisencache\DebugSubscriber';
+  const FQCN = 'Drupal\heisencache\DebugSubscriber';
 
   protected $events = NULL;
 
@@ -52,9 +51,9 @@ class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
   public function testEventHandling() {
     $channel = "some_bin";
 
-    /** @var \OSInet\Heisencache\Tests\MockEventSubscriberInterface $mock */
+    /** @var \Drupal\heisencache\Tests\MockEventSubscriberInterface $mock */
     $mock = $this->getMockBuilder(self::FQCN)
-      ->setMethods(array('getSubscribedEvents', 'show'))
+      ->onlyMethods(['getSubscribedEvents', 'show'])
       ->getMock();
     $mock->expects($this->exactly(count($this->events)))
       ->method('show');

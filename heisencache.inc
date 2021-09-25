@@ -10,7 +10,7 @@
  * @license General Public License version 2 or later
  */
 
-use OSInet\Heisencache\Config;
+use Drupal\heisencache\Config;
 
 require_once __DIR__ . '/class_loader.inc';
 

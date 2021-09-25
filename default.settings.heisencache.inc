@@ -15,7 +15,7 @@
  */
 
 // Operate in the plugin namespace
-namespace OSInet\Heisencache;
+namespace OSInet\heisencache;
 
 $emitter = Config::instance()->getEmitter();
 

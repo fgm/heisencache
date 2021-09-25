@@ -10,11 +10,12 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache\tests;
+namespace Drupal\heisencache\tests;
 
-use OSInet\Heisencache\PerformanceSubscriber;
+use Drupal\heisencache\PerformanceSubscriber;
+use PHPUnit\Framework\TestCase;
 
-class PerformanceSubscriberTest extends \PHPUnit_Framework_TestCase {
+class PerformanceSubscriberTest extends TestCase {
 
   const CHANNEL = "some channel";
 

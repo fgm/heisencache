@@ -10,7 +10,7 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache;
+namespace Drupal\heisencache;
 
 
 class PerformanceSubscriber extends EventSourceSubscriber {

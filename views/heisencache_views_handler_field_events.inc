@@ -11,7 +11,9 @@
  * @license General Public License version 2 or later
  */
 
-class heisencache_views_handler_field_events extends views_handler_field {
+use Drupal\views\Plugin\views\field\FieldPluginBase;
+
+class heisencache_views_handler_field_events extends FieldPluginBase {
 
   /**
    * Render the field.

@@ -10,11 +10,11 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache\tests;
+namespace Drupal\heisencache\tests;
 
+use Drupal\heisencache\EventSubscriberInterface;
+use PHPUnit\Framework\MockObject\MockObject;
 
-use OSInet\Heisencache\EventSubscriberInterface;
-
-interface MockEventSubscriberInterface extends EventSubscriberInterface, \PHPUnit_Framework_MockObject_MockObject {
+interface MockEventSubscriberInterface extends EventSubscriberInterface, MockObject {
 
 }

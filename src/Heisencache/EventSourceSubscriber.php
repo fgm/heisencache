@@ -10,14 +10,16 @@
  * @license General Public License version 2 or later
  */
 
-namespace OSInet\Heisencache;
+namespace Drupal\heisencache;
 
+
+use Drupal\heisencache\Event\EventSourceInterface;
 
 class EventSourceSubscriber extends BaseEventSubscriber implements EventSourceInterface {
 
   protected static $emittedEvents = array();
   /**
-   * @var \OSInet\Heisencache\EventEmitter
+   * @var \Drupal\heisencache\EventEmitter
    */
   protected $emitter;
 
