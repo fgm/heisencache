@@ -1,33 +1,25 @@
 <?php
-/**
- * @file
- * CacheFactory.php
- *
- * @author: Frédéric G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2015 Ouest Systèmes Informatiques (OSInet).
- *
- * @license General Public License version 2 or later
- */
 
 namespace Drupal\heisencache;
-
 
 use Drupal\Core\Cache\CacheFactoryInterface;
 use Drupal\heisencache\Event\EventDispatcherTrait;
 use Drupal\heisencache\Event\FactoryGetEvent;
-use Drupal\heisencache\Cache;
-use Symfony\Component\DependencyInjection\ContainerAwareInterface;
-use Symfony\Component\DependencyInjection\ContainerAwareTrait;
-use Symfony\Component\DependencyInjection\ContainerInterface;
-use Symfony\Component\EventDispatcher\Event;
 use Symfony\Component\EventDispatcher\EventDispatcherInterface;
 
 /**
- * Class CacheFactory is a decorator for the core CacheFactory, adding event
- * generation around its methods, and building decorated CacheBacking instances.
+ * Class CacheFactory is a decorator for the core CacheFactory.
+ *
+ * It adds event generation around the core methods, and builds decorated
+ * CacheBacking instances.
  *
  * @package Drupal\heisencache
+ *
+ * @author: Frédéric G. MARAND <fgm@osinet.fr>
+ *
+ * @copyright (c) 2015-2020 Ouest Systèmes Informatiques (OSInet).
+ *
+ * @license General Public License version 2 or later
  */
 class CacheFactory implements CacheFactoryInterface {
 
@@ -36,12 +28,22 @@ class CacheFactory implements CacheFactoryInterface {
   const FACTORY_GET = 'factory get';
 
   /**
+   * The core cache service.
+   *
    * @var \Drupal\Core\Cache\CacheFactoryInterface
    */
-  protected $decorated_factory;
+  protected CacheFactoryInterface $coreFactory;
 
-  public function __construct(EventDispatcherInterface $dispatcher, CacheFactoryInterface $core_factory)  {
-    $this->decorated_factory = $core_factory;
+  /**
+   * The constructor.
+   *
+   * @param \Symfony\Component\EventDispatcher\EventDispatcherInterface $dispatcher
+   *   The event_dispatcher service.
+   * @param \Drupal\Core\Cache\CacheFactoryInterface $core_factory
+   *   The core cache service.
+   */
+  public function __construct(EventDispatcherInterface $dispatcher, CacheFactoryInterface $core_factory) {
+    $this->coreFactory = $core_factory;
     $this->dispatcher = $dispatcher;
   }
 
@@ -51,7 +53,7 @@ class CacheFactory implements CacheFactoryInterface {
   public function get($bin) {
     $event = new FactoryGetEvent($bin);
     $this->dispatch($event);
-    $decorated_backend = $this->decorated_factory->get($bin);
+    $decorated_backend = $this->coreFactory->get($bin);
     $decorator = new Cache($bin, $decorated_backend, $this->dispatcher);
     $this->dispatch($event->setPost());
     return $decorator;
