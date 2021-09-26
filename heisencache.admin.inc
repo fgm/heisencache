@@ -4,37 +4,51 @@
  * @file
  * Heisencache administrative UI controllers.
  *
- * @author: Frederic G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
 
-function heisencache_page_reports() {
+declare(strict_types=1);
+
+/**
+ * Page controller for admin/reports/heisencache.
+ *
+ * @return array
+ *   A render array.
+ */
+function heisencache_page_reports(): array {
+  if (!module_exists('views')) {
+    return [
+      '#markup' => t('<p><a href="!extend">Enable Views module</a> to used Heisencache Views report.</p>',
+        [
+          '!extend' => url('admin/modules#views'),
+        ]),
+    ];
+  }
   $views = array_filter(views_get_all_views(), function ($view) {
     return isset($view->export_module) && $view->export_module == 'heisencache';
   });
 
-  $items = array();
+  $items = [];
   foreach ($views as $view) {
     foreach ($view->display as $display) {
-      if (empty($display->display_options['path']))  {
+      if (empty($display->display_options['path'])) {
         continue;
       }
 
-      $display_options = $display->display_options;
-      $path = $display_options['path'];
-      $title = $display_options['menu']['title'];
+      $options = $display->display_options;
+      $path = $options['path'];
+      $title = $options['menu']['title'] ?? t('Heisencache @part', [
+        '@part' => basename($path),
+      ]);
       $items[$title] = l($title, $path);
     }
   }
 
   ksort($items);
-  $ret = array(
+  return [
     '#theme' => 'item_list',
     '#items' => $items,
-  );
-
-  return $ret;
+  ];
 }

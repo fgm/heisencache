@@ -1,14 +1,15 @@
 <?php
+
 /**
  * @file
  * Heisencache: exported Watchdog view.
  *
- * @author: Frederic G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
+
+declare(strict_types=1);
 
 $view = new view();
 $view->name = 'heisencache_watchdog';
@@ -35,23 +36,23 @@ $handler->display->display_options['pager']['options']['offset'] = '0';
 $handler->display->display_options['pager']['options']['id'] = '0';
 $handler->display->display_options['pager']['options']['quantity'] = '9';
 $handler->display->display_options['style_plugin'] = 'table';
-$handler->display->display_options['style_options']['columns'] = array(
+$handler->display->display_options['style_options']['columns'] = [
   'wid' => 'wid',
   'uid' => 'uid',
-);
+];
 $handler->display->display_options['style_options']['default'] = '-1';
-$handler->display->display_options['style_options']['info'] = array(
-  'wid' => array(
+$handler->display->display_options['style_options']['info'] = [
+  'wid' => [
     'align' => '',
     'separator' => '',
     'empty_column' => 0,
-  ),
-  'uid' => array(
+  ],
+  'uid' => [
     'align' => '',
     'separator' => '',
     'empty_column' => 0,
-  ),
-);
+  ],
+];
 /* Relationship: Heisencache/dblog: Emitter */
 $handler->display->display_options['relationships']['uid']['id'] = 'uid';
 $handler->display->display_options['relationships']['uid']['table'] = 'watchdog';

@@ -1,14 +1,15 @@
 <?php
+
 /**
  * @file
  * Heisencache: exported view for data sink.
  *
- * @author: Frederic G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
+
+declare(strict_types=1);
 
 $view = new view();
 $view->name = 'heisencache_sink';

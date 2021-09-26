@@ -4,13 +4,16 @@
  * @file
  * Heisencache: field handler for bulk data in watchdog.
  *
- * @author: Frederic G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
 
+declare(strict_types=1);
+
+/**
+ * Views field handler for Heisencache Event data.
+ */
 class heisencache_views_handler_field_events extends views_handler_field {
 
   /**
@@ -18,23 +21,23 @@ class heisencache_views_handler_field_events extends views_handler_field {
    *
    * FIXME: sanitize !
    *
-   * @param $values
+   * @param array $values
    *   The values retrieved from the database.
    *
    * @return string
+   *   The string representation of the field.
    */
-  function render($values) {
+  public function render(array $values) {
     $value = $this->get_value($values);
-    // return $this->sanitize_value($value);
-
-    return '<pre>' . print_r($value, TRUE) . '</pre>';
+    return "<pre>" . $this->sanitize_value($value) . "</pre>";
   }
 
   /**
    * Unserialize values prior to rendering.
    */
-  function pre_render(&$values) {
+  public function pre_render(&$values) {
     foreach ($values as &$value) {
+      /** @var mixed $raw_value */
       $raw_value = $this->get_value($value);
       try {
         $wrapper = unserialize($raw_value);
@@ -47,4 +50,5 @@ class heisencache_views_handler_field_events extends views_handler_field {
       $value->{$this->field_alias} = $history;
     }
   }
+
 }

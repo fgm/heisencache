@@ -3,9 +3,7 @@
  * @file
  * Unit tests for the MissSubscriber class.
  *
- * @author: Frederic G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -14,8 +12,9 @@ namespace OSInet\Heisencache\tests;
 
 
 use OSInet\Heisencache\MissSubscriber;
+use PHPUnit\Framework\TestCase;
 
-class MissSubscriberTest extends \PHPUnit_Framework_TestCase {
+class MissSubscriberTest extends TestCase {
 
   const CHANNEL = "some channel";
 

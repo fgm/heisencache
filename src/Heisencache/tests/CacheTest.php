@@ -3,9 +3,7 @@
  * @file
  * Unit tests for the Cache class.
  *
- * @author: Frédéric G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2014 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2014-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -14,8 +12,9 @@ namespace OSInet\Heisencache\tests;
 
 use OSInet\Heisencache\Cache;
 use OSInet\Heisencache\Config;
+use PHPUnit\Framework\TestCase;
 
-class CacheTest extends \PHPUnit_Framework_TestCase {
+class CacheTest extends TestCase {
 
   /**
    * Ensure Cache::get() actually returns the data from the original handler.

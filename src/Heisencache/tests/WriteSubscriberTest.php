@@ -3,9 +3,7 @@
  * @file
  * Unit tests for the WriteSubscriber class.
  *
- * @author: bpresles
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -14,8 +12,9 @@ namespace OSInet\Heisencache\tests;
 
 
 use OSInet\Heisencache\WriteSubscriber;
+use PHPUnit\Framework\TestCase;
 
-class WriteSubscriberTest extends \PHPUnit_Framework_TestCase {
+class WriteSubscriberTest extends TestCase {
 
   const CHANNEL = "some channel";
 

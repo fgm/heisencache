@@ -4,9 +4,7 @@
  * @file
  * Heisencache: class loader.
  *
- * @author: Frederic G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -17,8 +15,8 @@
  * - When loading for unit tests, start by loading Drupal cache API.
  */
 function heisencache_require() {
-  /* When running unit tests, we need to load cache.inc , otherwise it will be
-    included by the Drupal bootstrap process. */
+  // When running unit tests, we need to load cache.inc , otherwise it will be
+  // included by the Drupal bootstrap process.
   if (defined('HEISENCACHE_DRUPAL_BASE')) {
     $drupal_base = realpath(HEISENCACHE_DRUPAL_BASE);
     if (empty($drupal_base)) {

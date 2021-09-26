@@ -3,9 +3,7 @@
  * @file
  * Unit tests for the DebugSubscriber class.
  *
- * @author: Frederic G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -17,8 +15,9 @@ use OSInet\Heisencache\Cache;
 use OSInet\Heisencache\DebugSubscriber;
 use OSInet\Heisencache\EventEmitter;
 use OSInet\Heisencache\MissSubscriber;
+use PHPUnit\Framework\TestCase;
 
-class DebugSubscriberTest extends \PHPUnit_Framework_TestCase {
+class DebugSubscriberTest extends TestCase {
   /**
    * Fully qualified class name for DebugSubscriber.
    */

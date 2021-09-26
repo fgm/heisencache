@@ -3,9 +3,7 @@
  * @file
  * PerformanceSubscriberTest.php
  *
- * @author: Frédéric G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2014 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2014-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
@@ -13,8 +11,9 @@
 namespace OSInet\Heisencache\tests;
 
 use OSInet\Heisencache\PerformanceSubscriber;
+use PHPUnit\Framework\TestCase;
 
-class PerformanceSubscriberTest extends \PHPUnit_Framework_TestCase {
+class PerformanceSubscriberTest extends TestCase {
 
   const CHANNEL = "some channel";
 

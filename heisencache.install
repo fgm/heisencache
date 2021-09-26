@@ -1,18 +1,17 @@
 <?php
+
 /**
  * @file
- * Heisencache installer: define the SQL Writer schema
+ * Heisencache installer: define the SQL Writer schema.
  *
- * @author: Frederic G. MARAND <fgm@osinet.fr>
- *
- * @copyright (c) 2013-2014 Ouest Systèmes Informatiques (OSInet).
+ * @copyright (c) 2013-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
 
-use OSInet\Heisencache\SqlWriterSubscriber;
+declare(strict_types=1);
 
-require_once __DIR__ . '/vendor/autoload.php';
+use OSInet\Heisencache\SqlWriterSubscriber;
 
 /**
  * Implements hook_schema().

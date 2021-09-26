@@ -12,8 +12,11 @@
   "license": "GPL-2.0+",
   "minimum-stability": "dev",
   "name": "drupal/heisencache",
+  "require": {
+    "php": "^7.4 || ^8",
+    "phpunit/phpunit": "^5"
+  },
   "require-dev": {
-    "phpunit/phpunit": "3.7.10"
   },
   "type": "drupal-module"
 }
