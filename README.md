@@ -9,7 +9,8 @@ Heisencache works by intercepting ALL cache settings and inserting itself as a
 transparent proxy in front of the other caches, which it invokes on behalf of
 the client code invoking cache operations.
 
-Note that this plugin requires PHP &gt;= 5.3.
+Note that this plugin requires PHP &ge; 7.4.
+
 
 ## Installation example
 

@@ -14,7 +14,7 @@
   "name": "drupal/heisencache",
   "require": {
     "php": "^7.4 || ^8",
-    "phpunit/phpunit": "^5"
+    "phpunit/phpunit": "^9.5.10"
   },
   "require-dev": {
   },

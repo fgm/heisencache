@@ -15,7 +15,7 @@
 declare(strict_types=1);
 
 // Operate in the plugin namespace.
-namespace OSInet\Heisencache;
+namespace Drupal\heisencache;
 
 $emitter = Config::instance()->getEmitter();
 

@@ -27,7 +27,7 @@ class heisencache_views_handler_field_events extends views_handler_field {
    * @return string
    *   The string representation of the field.
    */
-  public function render(array $values) {
+  public function render($values) {
     $value = $this->get_value($values);
     return "<pre>" . $this->sanitize_value($value) . "</pre>";
   }

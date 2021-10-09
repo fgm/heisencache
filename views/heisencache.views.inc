@@ -11,7 +11,7 @@
 
 declare(strict_types=1);
 
-use OSInet\Heisencache\SqlWriterSubscriber;
+use Drupal\heisencache\EventSubscriber\SqlWriterSubscriber;
 
 /**
  * Helper for hook_views_data_alter() on the Heisencache sink table.
