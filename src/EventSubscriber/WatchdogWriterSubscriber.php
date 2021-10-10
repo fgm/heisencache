@@ -5,7 +5,7 @@ declare(strict_types=1);
 namespace Drupal\heisencache\EventSubscriber;
 
 
-use Drupal\Core\Logger\RfcLogLevel;
+use Psr\Log\LogLevel;
 
 /**
  * Watchdog Writer: accumulate events, write them to dblog at end of page.
@@ -16,11 +16,11 @@ use Drupal\Core\Logger\RfcLogLevel;
  */
 class WatchdogWriterSubscriber extends BaseWriterSubscriber {
 
-  public function onShutdown(string $_channel) {
+  public function onShutdown(string $_channel): void {
     if (!empty($this->history)) {
       watchdog('heisencache', 'Cache events: @events', array(
         '@events' => serialize($this->history),
-      ), RfcLogLevel::DEBUG);
+      ), WATCHDOG_DEBUG);
     }
   }
 }

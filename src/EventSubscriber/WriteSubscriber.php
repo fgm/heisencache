@@ -15,12 +15,12 @@ class WriteSubscriber extends EventSourceSubscriber {
 
   const NAME = "writes";
 
-  protected $subscribedEvents = [
+  protected array $subscribedEvents = [
     'afterSet' => 1,
     'afterClear' => 1,
   ];
 
-  protected static $emittedEvents = [
+  protected static array $emittedEvents = [
     'write',
   ];
 
@@ -58,7 +58,7 @@ class WriteSubscriber extends EventSourceSubscriber {
    *
    * @return array
    */
-  public function afterClear(string $channel, string $cid, bool $wildcard): array {
+  public function afterClear(string $channel, ?string $cid, bool $wildcard): array {
     $clearInfo = [
       'subscriber' => static::NAME,
       'op' => 'clear',

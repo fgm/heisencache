@@ -15,7 +15,7 @@ class PerformanceSubscriber extends EventSourceSubscriber {
 
   const NAME = "performance";
 
-  protected $subscribedEvents = [
+  protected array $subscribedEvents = [
     'beforeClear' => 1,
     'afterClear' => 1,
 
@@ -32,23 +32,21 @@ class PerformanceSubscriber extends EventSourceSubscriber {
     'afterGetMultiple' => 1,
   ];
 
-  protected static $emittedEvents = ['performance'];
+  protected static array $emittedEvents = ['performance'];
 
-  protected static $timers = [];
+  protected static array $timers = [];
 
-  protected $pendingGetMultiple;
+  protected array $pendingGetMultiple;
 
-  public static function getTimerId($channel, $cids) {
-    array_unshift($cids, $channel);
-    $timer_id = serialize($cids);
-
-    return $timer_id;
+  public static function getTimerId(string $channel, array $cacheId): string {
+    array_unshift($cacheId, $channel);
+    return serialize($cacheId);
   }
 
   /**
    * @param string $channel
    */
-  public function beforeClear($channel) {
+  public function beforeClear(string $channel): void {
     $timer_id = static::getTimerId($channel, []);
     static::$timers[$timer_id] = microtime(TRUE);
   }
@@ -58,15 +56,15 @@ class PerformanceSubscriber extends EventSourceSubscriber {
    *
    * @return array
    */
-  public function afterClear($channel) {
-    $timer_id = static::getTimerId($channel, []);
+  public function afterClear(string $channel, ?string $cid, bool $wildcard): array {
+    $timerId = static::getTimerId($channel, []);
     $performanceInfo = [
       'subscriber' => static::NAME,
       'op' => 'clear',
       'bin' => $channel,
-      'delay' => (microtime(TRUE) - static::$timers[$timer_id]) * 1E3,
+      'delay' => (microtime(TRUE) - static::$timers[$timerId]) * 1E3,
     ];
-    unset(static::$timers[$timer_id]);
+    unset(static::$timers[$timerId]);
 
     $this->emitter->emit('performance', $channel, $performanceInfo);
 
@@ -74,10 +72,10 @@ class PerformanceSubscriber extends EventSourceSubscriber {
   }
 
   /**
-   * @param $channel
-   * @param $cid
+   * @param string $channel
+   * @param string $cid
    */
-  public function beforeGet($channel, $cid) {
+  public function beforeGet(string $channel, string $cid): void {
     $timer_id = static::getTimerId($channel, [$cid]);
     static::$timers[$timer_id] = microtime(TRUE);
   }
@@ -89,7 +87,7 @@ class PerformanceSubscriber extends EventSourceSubscriber {
    *
    * @return array
    */
-  public function afterGet($channel, $cid, $value) {
+  public function afterGet(string $channel, string $cid, $value): array {
     $timer_id = static::getTimerId($channel, [$cid]);
     $performanceInfo = [
       'subscriber' => static::NAME,
@@ -112,7 +110,7 @@ class PerformanceSubscriber extends EventSourceSubscriber {
    * @param string $channel
    * @param array $cids
    */
-  public function beforeGetMultiple(string $channel, array $cids) {
+  public function beforeGetMultiple(string $channel, array $cids): void {
     $timerId = static::getTimerId($channel, $cids);
     $this->pendingGetMultiple[$channel] = $cids;
     static::$timers[$timerId] = microtime(TRUE);
@@ -120,25 +118,25 @@ class PerformanceSubscriber extends EventSourceSubscriber {
 
   /**
    * @param string $channel
-   * @param string[] $missed_cids
-   * @param mixed[] $result
+   * @param string[] $missed_cache_ids
+   * @param array $result
    *
    * @return array
    */
-  public function afterGetMultiple(string $channel, array $missed_cids, array $result): array {
-    $cids = $this->pendingGetMultiple[$channel];
-    $timer_id = static::getTimerId($channel, $cids);
+  public function afterGetMultiple(string $channel, array $missed_cache_ids, array $result): array {
+    $cacheIds = $this->pendingGetMultiple[$channel];
+    $timerId = static::getTimerId($channel, $cacheIds);
     $performanceInfo = [
       'subscriber' => static::NAME,
       'op' => 'getMultiple',
       'bin' => $channel,
-      'requested' => $cids,
-      'delay' => (microtime(TRUE) - static::$timers[$timer_id]) * 1E3,
+      'requested' => $cacheIds,
+      'delay' => (microtime(TRUE) - static::$timers[$timerId]) * 1E3,
     ];
-    unset(static::$timers[$timer_id]);
+    unset(static::$timers[$timerId]);
 
     // Most back-ends will use at least 1 32-bit word to return FALSE.
-    $size = 4 * count($missed_cids);
+    $size = 4 * count($missed_cache_ids);
 
     foreach ($result as $data) {
       $size += strlen(serialize($data));
@@ -153,7 +151,7 @@ class PerformanceSubscriber extends EventSourceSubscriber {
   /**
    * @param string $channel
    */
-  public function beforeIsEmpty(string $channel) {
+  public function beforeIsEmpty(string $channel): void {
     $timerId = static::getTimerId($channel, []);
     static::$timers[$timerId] = microtime(TRUE);
   }
@@ -182,7 +180,7 @@ class PerformanceSubscriber extends EventSourceSubscriber {
    * @param string $channel
    * @param string $cid
    */
-  public function beforeSet(string $channel, array $cid) {
+  public function beforeSet(string $channel, string $cid): void {
     $timerId = static::getTimerId($channel, [$cid]);
     static::$timers[$timerId] = microtime(TRUE);
   }

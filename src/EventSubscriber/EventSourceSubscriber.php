@@ -16,7 +16,7 @@ use Drupal\heisencache\EventEmitter;
  */
 class EventSourceSubscriber extends BaseEventSubscriber implements EventSourceInterface {
 
-  protected static $emittedEvents = [];
+  protected static array $emittedEvents = [];
 
   /**
    * @var \Drupal\heisencache\EventEmitter

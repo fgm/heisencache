@@ -31,31 +31,31 @@ class Config {
    * @var string[]
    *   The bins exposed to the Drupal cache API.
    */
-  protected $visible_bins = [];
+  protected array $visibleBins = [];
 
   /**
    * @var array
    *   The actual cache classes to use according to settings.php.
    */
-  protected $actual_bins = [];
+  protected array $actualBins = [];
 
   /**
    * @var array
    *   A local copy of the original raw $conf.
    */
-  protected $conf;
+  protected array $conf;
 
   /**
    * @var string
    *   The name of the original default cache class, used as:
    *     $class = variable_get('cache_default_class', 'DrupalDatabaseCache');
    */
-  protected $defaultClass;
+  protected string $defaultClass;
 
   /**
    * @var \Drupal\heisencache\EventEmitter
    */
-  protected $emitter;
+  protected EventEmitter $emitter;
 
   /**
    * @var \Drupal\heisencache\Config
@@ -67,6 +67,9 @@ class Config {
     $this->emitter = new EventEmitter();
   }
 
+  /**
+   * @throws \Exception
+   */
   protected function __clone() {
     throw new \Exception('Heisencache configuration should not be cloned.');
   }
@@ -78,19 +81,19 @@ class Config {
    *
    * @return mixed
    */
-  public function getCacheHandler($bin) {
-    if (!isset($this->actual_bins[$bin])) {
-      $this->actual_bins[$bin] = new $this->defaultClass($bin);
+  public function getCacheHandler(string $bin) {
+    if (!isset($this->actualBins[$bin])) {
+      $this->actualBins[$bin] = new $this->defaultClass($bin);
     }
 
-    $ret = $this->actual_bins[$bin];
+    $ret = $this->actualBins[$bin];
     return $ret;
   }
 
   /**
    * @return EventEmitter
    */
-  public function getEmitter() {
+  public function getEmitter(): EventEmitter {
     return $this->emitter;
   }
 
@@ -99,7 +102,7 @@ class Config {
    *
    * @return string
    */
-  public function getSrcDir() {
+  public function getSrcDir(): string {
     return __DIR__;
   }
 
@@ -112,7 +115,7 @@ class Config {
    *
    * @return \Drupal\heisencache\Config
    */
-  public static function instance($conf = []) {
+  public static function instance(array $conf = []): self {
     if (!isset(static::$instance)) {
       static::$instance = new static($conf);
     }
@@ -124,11 +127,8 @@ class Config {
    *
    * @return string
    */
-  protected function overrideDefaultCacheClass() {
-    $this->defaultClass = isset($this->conf[self::VAR_CACHE_DEFAULT_CLASS])
-      ? $this->conf[self::VAR_CACHE_DEFAULT_CLASS]
-      : 'DrupalDatabaseCache';
-
+  protected function overrideDefaultCacheClass(): string {
+    $this->defaultClass = $this->conf[self::VAR_CACHE_DEFAULT_CLASS] ?? 'DrupalDatabaseCache';
     return static::CACHE_CLASS;
   }
 
@@ -138,20 +138,20 @@ class Config {
    *
    * Instantiate the original cache handlers for later use.
    *
-   * @return \string[]
+   * @return string[]
    *   A by-bin-name hash of the Heisencache class name.
    */
-  protected function overrideCacheClasses() {
+  protected function overrideCacheClasses(): array {
     $len = strlen(self::VAR_CACHE_CLASS_PREFIX);
 
     foreach ($this->conf as $bin => $class) {
       if (!strncmp($bin, self::VAR_CACHE_CLASS_PREFIX, $len)) {
-        $this->visible_bins[$bin] = static::CACHE_CLASS;
-        $this->actual_bins[$bin] = new $class($bin);
+        $this->visibleBins[$bin] = static::CACHE_CLASS;
+        $this->actualBins[$bin] = new $class($bin);
       }
     }
 
-    return $this->visible_bins;
+    return $this->visibleBins;
   }
 
   /**
@@ -165,13 +165,12 @@ class Config {
    * @return array
    *   The overridden configuration.
    */
-  public function override() {
+  public function override(): array {
     $cacheConf = array_merge([
       self::VAR_CACHE_DEFAULT_CLASS => $this->overrideDefaultCacheClass(),
     ], $this->overrideCacheClasses());
 
-    $conf = array_merge($GLOBALS['conf'], $cacheConf);
-    return $conf;
+    return array_merge($GLOBALS['conf'], $cacheConf);
   }
 
 }

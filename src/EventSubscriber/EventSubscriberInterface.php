@@ -22,18 +22,18 @@ interface EventSubscriberInterface {
    *
    * @return void
    */
-  public function addEvent($eventName);
+  public function addEvent(string $eventName);
 
   /**
    * @return string[]
    */
-  public function getSubscribedEvents();
+  public function getSubscribedEvents(): array;
 
   /**
    * @param string $eventName
    *
    * @return void
    */
-  public function removeEvent($eventName);
+  public function removeEvent(string $eventName);
 
 }

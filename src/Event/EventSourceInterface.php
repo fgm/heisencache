@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace Drupal\heisencache\Event;
 
-
 /**
  * EventSourceInterface is the interface shared by classes emitting events.
  *

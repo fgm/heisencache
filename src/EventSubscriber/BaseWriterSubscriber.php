@@ -1,9 +1,10 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Drupal\heisencache\EventSubscriber;
 
-use Drupal\heisencache\Event\EventSourceInterface;
+use Drupal\heisencache\Cache\Cache;
 
 /**
  * A base class for subscribers writing results.
@@ -18,13 +19,13 @@ abstract class BaseWriterSubscriber extends BaseEventSubscriber {
    * @var array
    *   Array of events triggered in this page cycle.
    */
-  protected $history;
+  protected array $history;
 
   /**
    * @var bool
    *   Echo generalCall() call information for debugging purposes..
    */
-  protected $showGenericCalls;
+  protected bool $showGenericCalls = FALSE;
 
   public function __construct(array $events = NULL) {
     if (!isset($events)) {
@@ -42,10 +43,10 @@ abstract class BaseWriterSubscriber extends BaseEventSubscriber {
    * @param string $eventName
    * @param array $args
    *
-   * @see WatchdogWriterSubscriber::onShutdown()
+   * @see \Drupal\heisencache\EventSubscriber\WatchdogWriterSubscriber::onShutdown()
    *
    */
-  public function genericCall($eventName, $args) {
+  public function genericCall(string $eventName, array $args) {
     if ($this->showGenericCalls
       && strpos($eventName, 'before') !== 0
       && strpos($eventName, 'after') !== 0
@@ -64,7 +65,7 @@ abstract class BaseWriterSubscriber extends BaseEventSubscriber {
    *
    * @throws \InvalidArgumentException
    */
-  public function __call($eventName, $args) {
+  public function __call(string $eventName, array $args) {
     if (!in_array($eventName, $this->subscribedEvents)) {
       throw new \InvalidArgumentException("Unsupported event $eventName");
     }
@@ -73,7 +74,7 @@ abstract class BaseWriterSubscriber extends BaseEventSubscriber {
     }
   }
 
-  public function setDebugCalls($showGenericCalls = FALSE) {
+  public function setDebugCalls(bool $showGenericCalls = FALSE) {
     $this->showGenericCalls = $showGenericCalls;
   }
 

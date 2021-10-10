@@ -14,5 +14,5 @@ core = 7.x
 
 ; Cache plugin does not use legacy D7 autoloading, so no files[] for it.
 
-; Views integration uses autoloading, though, so files[] for it.
+; Views integration uses legacy D7 autoloading, though, so files[] for it.
 files[] = views/heisencache_views_handler_field_events.inc

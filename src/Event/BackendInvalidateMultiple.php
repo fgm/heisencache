@@ -1,19 +1,19 @@
 <?php
+
+declare(strict_types=1);
+
+namespace Drupal\heisencache\Event;
+
 /**
- * @file
- * BackendInvalidateMultiple.php
+ * Class BackendInvalidateMultiple: triggered pre/post multiple-items
+ * invalidation.
+ *
+ * @package Drupal\heisencache\Event
  *
  * @copyright (c) 2015-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
-
-namespace Drupal\heisencache\Event;
-
-/**
- * Class BackendInvalidateMultiple: triggered pre/post multiple-items invalidation.
- *
- * @package Drupal\heisencache\Event
- */
 class BackendInvalidateMultiple extends EventBase {
+
 }

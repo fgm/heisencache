@@ -1,16 +1,30 @@
 <?php
+
+namespace Drupal\heisencache\EventSubscriber;
+
+use Drupal\heisencache\Cache\Cache;
+
 /**
- * @file
  * An universal subscriber for debug purposes.
  *
  * @copyright (c) 2013-2021 Ouest Systèmes Informatiques (OSInet).
  *
  * @license General Public License version 2 or later
  */
-
-namespace Drupal\heisencache\EventSubscriber;
-
 class DebugSubscriber extends BaseEventSubscriber {
+
+  public function __construct(array $events = NULL) {
+    if (!isset($events)) {
+      $events = array_merge(
+        Cache::getEmittedEvents(),
+        MissSubscriber::getEmittedEvents()
+      );
+    }
+    foreach ($events as $eventName) {
+      $this->addEvent($eventName);
+    }
+  }
+
   public function show() {
     $stack = debug_backtrace(FALSE);
     $caller = $stack[1]['function'];
@@ -19,22 +33,12 @@ class DebugSubscriber extends BaseEventSubscriber {
     echo "$caller({$arg0})<br />\n";
   }
 
-  public function __construct(array $events = NULL) {
-    if (!isset($events)) {
-      $events = array_merge(Cache::getEmittedEvents(), MissSubscriber::getEmittedEvents());
-    }
-    foreach ($events as $eventName) {
-      $this->addEvent($eventName);
-    }
-  }
-
   public function beforeGet($channel, $key) {
-   $this->show($key);
+    $this->show($key);
   }
 
   public function afterGet($channel, $key, $value) {
-   $this->show($key, $value);
-
+    $this->show($key, $value);
   }
 
   public function beforeGetMultiple($channel, array $keys) {
@@ -57,8 +61,9 @@ class DebugSubscriber extends BaseEventSubscriber {
     $this->show();
   }
 
-  public function afterClear($channel) {
+  public function afterClear(string $channel, ?string $cid, bool $wildcard): array {
     $this->show();
+    return [];
   }
 
   public function beforeIsEmpty($channel) {
@@ -78,10 +83,11 @@ class DebugSubscriber extends BaseEventSubscriber {
   }
 
   public function onCacheConstruct($channel) {
-   $this->show($channel);
+    $this->show($channel);
   }
 
   public function onShutdown($channel) {
     $this->show($channel);
   }
+
 }

@@ -30,7 +30,7 @@ class EventEmitter {
    * @return int
    * @throws \InvalidArgumentException
    */
-  public function on($eventName, EventSubscriberInterface $subscriber) {
+  public function on(string $eventName, EventSubscriberInterface $subscriber): int {
     $hash = spl_object_hash($subscriber);
     $nameArg = ['@eventName' => $eventName];
     if (!isset($this->subscribers[$eventName][$hash])) {
@@ -38,8 +38,12 @@ class EventEmitter {
         $this->subscribers[$eventName][$hash] = $subscriber;
       }
       else {
-        throw new \InvalidArgumentException(strtr("Trying to subscribe to unsupported event @eventName",
-          $nameArg));
+        throw new \InvalidArgumentException(
+          strtr(
+            "Trying to subscribe to unsupported event @eventName",
+            $nameArg
+          )
+        );
       }
     }
     elseif ($subscriber === $this->subscribers[$eventName][$hash]) {
@@ -67,7 +71,7 @@ class EventEmitter {
    * @return int
    *   The number of subscribers to which the event was sent.
    */
-  public function emit($eventName, $channel) {
+  public function emit($eventName, $channel): int {
     if (empty($this->subscribers[$eventName])) {
       return 0;
     }
@@ -87,7 +91,7 @@ class EventEmitter {
    *
    * @return \Drupal\heisencache\EventEmitter
    */
-  public function register(EventSubscriberInterface $subscriber) {
+  public function register(EventSubscriberInterface $subscriber): EventEmitter {
     foreach ($subscriber->getSubscribedEvents() as $eventName) {
       $this->on($eventName, $subscriber);
     }
@@ -102,11 +106,7 @@ class EventEmitter {
    * @return \Drupal\heisencache\EventSubscriber\EventSubscriberInterface[]
    */
   public function getSubscribersByEventName($eventName) {
-    $ret = isset($this->subscribers[$eventName])
-      ? $this->subscribers[$eventName]
-      : [];
-
-    return $ret;
+    return $this->subscribers[$eventName] ?? [];
   }
 
 }

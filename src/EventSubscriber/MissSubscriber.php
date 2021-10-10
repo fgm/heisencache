@@ -15,13 +15,13 @@ class MissSubscriber extends EventSourceSubscriber {
 
   const NAME = "misses";
 
-  protected $subscribedEvents = [
+  protected array $subscribedEvents = [
     'afterGet' => 1,
     'afterGetMultiple' => 1,
     'beforeGetMultiple' => 1,
   ];
 
-  protected static $emittedEvents = [
+  protected static array $emittedEvents = [
     'miss',
     'missMultiple',
   ];
@@ -35,7 +35,7 @@ class MissSubscriber extends EventSourceSubscriber {
    *
    * @return array
    */
-  public function afterGet($channel, $cid, $value) {
+  public function afterGet($channel, $cid, $value): array {
     if ($value === FALSE) {
       $missInfo = [
         'subscriber' => static::NAME,
@@ -83,7 +83,7 @@ class MissSubscriber extends EventSourceSubscriber {
     return $missInfo;
   }
 
-  public function beforeGetMultiple(string $_channel, $cids) {
+  public function beforeGetMultiple(string $_channel, array $cids): void {
     $this->multipleCids = $cids;
   }
 
