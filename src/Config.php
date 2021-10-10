@@ -10,6 +10,8 @@
 
 namespace Drupal\heisencache;
 
+use Drupal\heisencache\Cache\Cache;
+
 /**
  * Class Config.
  *
@@ -18,21 +20,24 @@ namespace Drupal\heisencache;
  * @package Drupal\heisencache
  */
 class Config {
-  const CACHE_CLASS = 'Drupal\heisencache\Cache';
+
+  const CACHE_CLASS = Cache::class;
+
   const VAR_CACHE_DEFAULT_CLASS = 'cache_default_class';
+
   const VAR_CACHE_CLASS_PREFIX = 'cache_class_';
 
   /**
    * @var string[]
    *   The bins exposed to the Drupal cache API.
    */
-  protected $visible_bins = array();
+  protected $visible_bins = [];
 
   /**
    * @var array
    *   The actual cache classes to use according to settings.php.
    */
-  protected $actual_bins = array();
+  protected $actual_bins = [];
 
   /**
    * @var array
@@ -107,7 +112,7 @@ class Config {
    *
    * @return \Drupal\heisencache\Config
    */
-  public static function instance($conf = array()) {
+  public static function instance($conf = []) {
     if (!isset(static::$instance)) {
       static::$instance = new static($conf);
     }
@@ -128,7 +133,8 @@ class Config {
   }
 
   /**
-   * Save the original cache handler definitions and return Heisencache for them.
+   * Save the original cache handler definitions and return Heisencache for
+   * them.
    *
    * Instantiate the original cache handlers for later use.
    *
@@ -160,11 +166,12 @@ class Config {
    *   The overridden configuration.
    */
   public function override() {
-    $cacheConf = array_merge(array(
+    $cacheConf = array_merge([
       self::VAR_CACHE_DEFAULT_CLASS => $this->overrideDefaultCacheClass(),
-    ), $this->overrideCacheClasses());
+    ], $this->overrideCacheClasses());
 
     $conf = array_merge($GLOBALS['conf'], $cacheConf);
     return $conf;
   }
+
 }

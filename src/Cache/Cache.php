@@ -57,7 +57,7 @@ class Cache implements \DrupalCacheInterface, EventSourceInterface {
    * @return \string[]
    *   The array of available events.
    */
-  public static function getEmittedEvents() {
+  public static function getEmittedEvents(): array {
     if (!isset(static::$events)) {
       $methods = get_class_methods('\DrupalCacheInterface');
       $events = ['onCacheConstruct', 'onShutdown'];

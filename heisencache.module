@@ -14,7 +14,7 @@ declare(strict_types=1);
 /**
  * Implements hook_menu().
  */
-function heisencache_menu() {
+function heisencache_menu(): array {
   $items = [];
   $items['admin/reports/heisencache'] = [
     'title' => 'Heisencache',
@@ -29,13 +29,11 @@ function heisencache_menu() {
 /**
  * Implements hook_views_api().
  */
-function heisencache_views_api() {
+function heisencache_views_api(): array {
   $path = drupal_get_path('module', 'heisencache');
-  $ret = [
+  return [
     'api' => "3",
     'path' => "$path/views",
     'template path' => "$path/themes",
   ];
-
-  return $ret;
 }

@@ -1,5 +1,4 @@
 <?php
-
 /**
  * @file
  * Configure the Heisencache cache proxy: instantiate subscribers.
@@ -22,7 +21,6 @@ $emitter = Config::instance()->getEmitter();
 $emitter
   ->register(new MissSubscriber($emitter))
   ->register(new PerformanceSubscriber($emitter))
-
   /* MissSubscriber is also an event source, like Cache, we can use its events. */
 
   /*

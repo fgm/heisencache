@@ -5,6 +5,11 @@
       "email": "fgm@osinet.fr"
     }
   ],
+  "autoload": {
+    "psr-4": {
+      "Drupal\\heisencache\\": "src/"
+    }
+  },
   "config": {
     "process-timeout": 3600
   },

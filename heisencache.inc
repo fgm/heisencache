@@ -22,14 +22,18 @@ require_once __DIR__ . '/class_loader.inc';
  * override it.
  *
  * @param array $configuration
- *   Ras site $conf.
+ *   Raw site $conf.
  *
  * @return array
  *   Adapted site $conf.
  */
 function heisencache_setup(array $configuration): array {
   $config = Config::instance($configuration);
-  drupal_register_shutdown_function(array($config->getEmitter(), 'emit'), 'onShutdown', 'cache');
+  drupal_register_shutdown_function(
+    [$config->getEmitter(), 'emit'],
+    'onShutdown',
+    'cache'
+  );
   return $config->override();
 }
 
