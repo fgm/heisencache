@@ -1,0 +1,55 @@
+includes: [] # Other .neon files to include
+
+parameters:
+    bootstrapFiles: # Initialize the runtime before running PHPStan
+        - heisencache.phpstan.php
+        - heisencache.inc
+    customRulesetUsed: false
+    dynamicConstantNames: # Constants which may very by environment
+        - HEISENCACHE_DRUPAL_BASE
+    earlyTerminatingFunctionCalls: []
+    earlyTerminatingMethodCalls: [] # Two levels: Class array / Methods array
+    excludePaths: # Files to not analyse, wildcards use fnmatch().
+        analyse: []
+        analyseAndScan:
+           - src/Cache/CacheInstrumentationPass.php
+           - src/Cache/InstrumentedBin.php
+           - src/HeisencacheServiceProvider.php
+    excludes_analyse: []
+    ignoreErrors: [] # Regular expressions
+    inferPrivatePropertyTypeFromConstructor: false
+    # level: 6
+    paths: [.]
+    phpVersion: 70400 # PHP 7.4
+    reportUnmatchedIgnoredErrors: true
+    scanDirectories: [src]
+    scanFiles:
+        - default.settings.heisencache.inc
+        - heisencache.admin.inc
+        - heisencache.inc
+        - heisencache.install
+        - heisencache.module
+    stubFiles: [] # Stubs with missing PHPdoc comments for existing code.
+    tipsOfTheDay: false
+    # tmpDir: tmp
+    treatPhpDocTypesAsCertain: true
+    universalObjectCratesClasses: [] # Default: \stdClass, \SimpleXMLElement
+
+    # Extra parameters for stricter analysis
+    checkAlwaysTrueCheckTypeFunctionCall: true
+    checkAlwaysTrueInstanceof: true
+    checkAlwaysTrueStrictComparison: true
+    checkExplicitMixedMissingReturn: true
+    checkFunctionNameCase: true
+    checkInternalClassCaseSensitivity: true
+    checkTooWideReturnTypesInProtectedAndPublicMethods: true
+    checkUninitializedProperties: true
+    polluteScopeWithAlwaysIterableForeach: false
+    polluteScopeWithLoopInitialAssignments: false
+    reportMaybesInMethodSignatures: true
+    reportStaticMethodSignatures: true
+    # Also see https://phpstan.org/config-reference#exceptions
+    # Also see https://phpstan.org/config-reference#vague-typehints
+    # Also see https://phpstan.org/config-reference#type-aliases
+    # Also see https://phpstan.org/config-reference#parallel-processing
+    # Also see https://phpstan.org/user-guide/output-format#opening-file-in-an-editor

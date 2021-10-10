@@ -100,4 +100,4 @@ function heisencache_setup(array $configuration): array {
   return $ret;
 }
 
-$GLOBALS['conf'] = heisencache_setup($GLOBALS['conf']);
+$GLOBALS['conf'] = heisencache_setup($GLOBALS['conf'] ?? []);

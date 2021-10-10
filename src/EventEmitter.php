@@ -19,7 +19,7 @@ class EventEmitter {
   /**
    * @var array[string][Drupal\heisencache\EventSubscriber\EventSubscriberInterface]
    */
-  protected array $subscribers;
+  protected array $subscribers = [];
 
   /**
    * Bind a subscriber to an event name.

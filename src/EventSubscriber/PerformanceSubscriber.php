@@ -36,7 +36,7 @@ class PerformanceSubscriber extends EventSourceSubscriber {
 
   protected static array $timers = [];
 
-  protected array $pendingGetMultiple;
+  protected array $pendingGetMultiple = [];
 
   public static function getTimerId(string $channel, array $cacheId): string {
     array_unshift($cacheId, $channel);

@@ -27,7 +27,7 @@ class CacheTest extends TestCase {
     $bin = 'cache';
 
     // Create a mock DB cache which will return $expected.
-    $handler = $this->getMockBuilder('\DrupalDatabaseCache')
+    $handler = $this->getMockBuilder(\DrupalDatabaseCache::class)
       ->setMethods(array('get'))
       ->setConstructorArgs(array($bin))
       ->getMock();
@@ -44,9 +44,7 @@ class CacheTest extends TestCase {
 
     // Override default override with our mock cache. Since this is not a public
     // property and there is no setter, force it using reflection.
-    $core_cache = \Drupal::cache('cache');
-    $dispatcher = \Drupal::service('event_dispatcher');
-    $cache = new Cache('cache', $core_cache, $dispatcher);
+    $cache = new Cache('cache');
     $rp = new \ReflectionProperty($cache, 'handler');
     $rp->setAccessible(TRUE);
     $rp->setValue($cache, $handler);

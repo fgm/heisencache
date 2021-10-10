@@ -19,12 +19,7 @@ use PHPUnit\Framework\TestCase;
  */
 class DebugSubscriberTest extends TestCase {
 
-  /**
-   * Fully qualified class name for DebugSubscriber.
-   */
-  const FQCN = 'Drupal\heisencache\DebugSubscriber';
-
-  protected $events = NULL;
+  protected array $events = [];
 
   public function setUp(): void {
     $this->events = array_merge(
@@ -53,7 +48,7 @@ class DebugSubscriberTest extends TestCase {
     $channel = "some_bin";
 
     /** @var \Drupal\heisencache\tests\MockEventSubscriberInterface $mock */
-    $mock = $this->getMockBuilder(self::FQCN)
+    $mock = $this->getMockBuilder(DebugSubscriber::class)
       ->setMethods(['getSubscribedEvents', 'show'])
       ->getMock();
     $mock->expects($this->exactly(count($this->events)))

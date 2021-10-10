@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\heisencache\tests;
 
+use _PHPStan_76800bfb5\Evenement\EventEmitter;
 use Drupal\heisencache\EventSubscriber\WriteSubscriber;
 use PHPUnit\Framework\TestCase;
 
@@ -18,10 +19,10 @@ class WriteSubscriberTest extends TestCase {
 
   const CHANNEL = "some channel";
 
-  protected $emitter;
+  protected ?EventEmitter $emitter = NULL;
 
-  public function setUp() {
-    $this->emitter = $this->getMock('Drupal\heisencache\EventEmitter');
+  public function setUp(): void {
+    $this->emitter = $this->getMockBuilder(EventEmitter::class)->getMock();
   }
 
   public function testSet() {
@@ -30,7 +31,7 @@ class WriteSubscriberTest extends TestCase {
     $serialized = serialize($value);
 
     $actual = $sub->afterSet(self::CHANNEL, 'k', $value, 120);
-    $this->assertInternalType('array', $actual);
+    $this->assertIsArray($actual);
     $this->assertNotEmpty($actual);
     $this->assertArrayHasKey('value_size', $actual);
     $this->assertEquals(strlen($serialized), $actual['value_size']);
@@ -41,7 +42,7 @@ class WriteSubscriberTest extends TestCase {
     $wildcard = TRUE;
     $actual = $sub->afterClear(self::CHANNEL, 'k', $wildcard);
 
-    $this->assertInternalType('array', $actual);
+    $this->assertIsArray($actual);
     $this->assertNotEmpty($actual);
     $this->assertArrayHasKey('wildcard', $actual);
     $this->assertEquals($wildcard, $actual['wildcard']);
@@ -51,7 +52,7 @@ class WriteSubscriberTest extends TestCase {
     $sub = new WriteSubscriber($this->emitter);
     $actual = $sub->getEmittedEvents();
 
-    $this->assertInternalType('array', $actual);
+    $this->assertIsArray($actual);
     $this->assertNotEmpty($actual);
     $this->assertEquals(1, count($actual));
     $this->assertEquals('write', $actual[0]);

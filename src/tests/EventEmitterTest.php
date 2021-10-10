@@ -1,9 +1,11 @@
 <?php
+
 declare(strict_types=1);
 
 namespace Drupal\heisencache\tests;
 
 use Drupal\heisencache\EventEmitter;
+use Drupal\heisencache\EventSubscriber\DebugSubscriber;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -15,7 +17,8 @@ use PHPUnit\Framework\TestCase;
  */
 class EventEmitterTest extends TestCase {
 
-  const SUBSCRIBER_CLASS = 'Drupal\heisencache\DebugSubscriber';
+  const SUBSCRIBER_CLASS = DebugSubscriber::class;
+
   const CHANNEL = "some channel";
 
   /**
@@ -24,15 +27,18 @@ class EventEmitterTest extends TestCase {
    *
    * @return \Drupal\heisencache\tests\MockEventSubscriberInterface
    */
-  protected function getMockSubscriber(array $events, $class = NULL) {
+  protected function getMockSubscriber(array $events) {
     static $sequence = 0;
 
-    if (!isset($class)) {
-      $class = "MockSubscriber$sequence";
-      $sequence++;
-    }
-
-    $subscriber = $this->getMock(self::SUBSCRIBER_CLASS, $events, array(), $class, FALSE);
+    $class = "MockSubscriber$sequence";
+    $sequence++;
+    $subscriber = $this->getMockBuilder(self::SUBSCRIBER_CLASS)
+      ->onlyMethods($events)
+      ->setMockClassName($class)
+      ->disableOriginalConstructor()
+      ->enableOriginalClone()
+      ->enableAutoload()
+      ->getMock();
     return $subscriber;
   }
 
@@ -40,25 +46,36 @@ class EventEmitterTest extends TestCase {
     $event1 = 'event1';
     $emitter = new EventEmitter();
 
-    $subscriber = $this->getMockSubscriber(array($event1));
+    $subscriber = $this->getMockSubscriber([$event1]);
 
     try {
       $emitter->on($event1, $subscriber);
-    }
-    catch (\Exception $e) {
+    } catch (\Exception $e) {
       $this->fail('Passing a subscriber to on() does not throw an exception.');
     }
 
     $actual = $emitter->getSubscribersByEventName($event1);
-    $this->assertInternalType('array', $actual, "getSubscribersByEventName() returns an array.");
-    $this->assertEquals(count($actual), 1, "Exactly 1 subscriber returned for event.");
-    $this->assertEquals(reset($actual), $subscriber, "Single subscriber on event is returned correctly.");
+    $this->assertIsArray(
+      $actual,
+      "getSubscribersByEventName() returns an array."
+    );
+    $this->assertEquals(
+      count($actual),
+      1,
+      "Exactly 1 subscriber returned for event."
+    );
+    $this->assertEquals(
+      reset($actual),
+      $subscriber,
+      "Single subscriber on event is returned correctly."
+    );
 
     try {
       $emitter->on($event1, $subscriber);
-    }
-    catch (\Exception $e) {
-      $this->fail('Passing the same subscriber twice to on() does not throw an exception.');
+    } catch (\Exception $e) {
+      $this->fail(
+        'Passing the same subscriber twice to on() does not throw an exception.'
+      );
     }
   }
 
@@ -67,13 +84,12 @@ class EventEmitterTest extends TestCase {
     $event2 = 'event2';
     $emitter = new EventEmitter();
 
-    $subscriber = $this->getMockSubscriber(array($event1));
+    $subscriber = $this->getMockSubscriber([$event1]);
 
     try {
       $emitter->on($event2, $subscriber);
       $this->fail('Passing a subscriber to on() throws an exception.');
-    }
-    catch (\InvalidArgumentException $e) {
+    } catch (\InvalidArgumentException $e) {
     }
   }
 
@@ -82,72 +98,118 @@ class EventEmitterTest extends TestCase {
     $event2 = 'event2';
     $emitter = new EventEmitter();
 
-    $subscriber = $this->getMockSubscriber(array($event1, $event2));
+    $subscriber = $this->getMockSubscriber([$event1, $event2]);
 
     try {
       $emitter->on($event1, $subscriber);
-    }
-    catch (\Exception $e) {
+    } catch (\Exception $e) {
       $this->fail('Passing a subscriber to on() does not throw an exception.');
-      }
+    }
 
     $actual = $emitter->getSubscribersByEventName($event1);
-    $this->assertInternalType('array', $actual, "getSubscribersByEventName() returns an array.");
-    $this->assertEquals(count($actual), 1, "Exactly 1 subscriber returned for first event.");
-    $this->assertEquals(reset($actual), $subscriber, "Single subscriber on first event is returned correctly.");
+    $this->assertIsArray(
+      $actual,
+      "getSubscribersByEventName() returns an array."
+    );
+    $this->assertEquals(
+      count($actual),
+      1,
+      "Exactly 1 subscriber returned for first event."
+    );
+    $this->assertEquals(
+      reset($actual),
+      $subscriber,
+      "Single subscriber on first event is returned correctly."
+    );
 
     try {
       $emitter->on($event2, $subscriber);
-    }
-    catch (\Exception $e) {
+    } catch (\Exception $e) {
       echo "Exception: " . $e->getMessage() . "\n";
-      $this->fail('Passing the same subscriber to on() for a second event does not throw an exception.');
+      $this->fail(
+        'Passing the same subscriber to on() for a second event does not throw an exception.'
+      );
     }
     $actual = $emitter->getSubscribersByEventName($event2);
-    $this->assertInternalType('array', $actual, "getSubscribersByEventName() returns an array.");
-    $this->assertEquals(count($actual), 1, "Exactly 1 subscriber returned for second event.");
-    $this->assertEquals(reset($actual), $subscriber, "Single subscriber on second event is returned correctly.");
+    $this->assertIsArray(
+      $actual,
+      "getSubscribersByEventName() returns an array."
+    );
+    $this->assertEquals(
+      count($actual),
+      1,
+      "Exactly 1 subscriber returned for second event."
+    );
+    $this->assertEquals(
+      reset($actual),
+      $subscriber,
+      "Single subscriber on second event is returned correctly."
+    );
   }
 
   public function testOnTwoSubscribersSingleEvent() {
     $event1 = 'event1';
     $emitter = new EventEmitter();
 
-    $sub1 = $this->getMockSubscriber(array($event1));
-    $sub2 = $this->getMockSubscriber(array($event1));
+    $sub1 = $this->getMockSubscriber([$event1]);
+    $sub2 = $this->getMockSubscriber([$event1]);
 
     try {
       $emitter->on($event1, $sub1);
-    }
-    catch (\Exception $e) {
+    } catch (\Exception $e) {
       $this->fail('Passing a subscriber to on() does not throw an exception.');
     }
 
     $actual = $emitter->getSubscribersByEventName($event1);
-    $this->assertInternalType('array', $actual, "getSubscribersByEventName() returns an array.");
-    $this->assertEquals(count($actual), 1, "Exactly 1 subscriber returned for event.");
-    $this->assertEquals(reset($actual), $sub1, "Single subscriber on first event is returned correctly.");
+    $this->assertIsArray(
+      $actual,
+      "getSubscribersByEventName() returns an array."
+    );
+    $this->assertEquals(
+      count($actual),
+      1,
+      "Exactly 1 subscriber returned for event."
+    );
+    $this->assertEquals(
+      reset($actual),
+      $sub1,
+      "Single subscriber on first event is returned correctly."
+    );
 
     try {
       $emitter->on($event1, $sub2);
-    }
-    catch (\Exception $e) {
-      $this->fail('Passing a different subscriber to on() for the same event does not throw an exception.');
+    } catch (\Exception $e) {
+      $this->fail(
+        'Passing a different subscriber to on() for the same event does not throw an exception.'
+      );
     }
 
     $actual = $emitter->getSubscribersByEventName($event1);
-    $this->assertInternalType('array', $actual, "getSubscribersByEventName() returns an array.");
-    $this->assertEquals(count($actual), 2, "Exactly 2 subscribers returned for event.");
+    $this->assertIsArray(
+      $actual,
+      "getSubscribersByEventName() returns an array."
+    );
+    $this->assertEquals(
+      count($actual),
+      2,
+      "Exactly 2 subscribers returned for event."
+    );
 
-    $this->assertTrue(in_array($sub1, $actual), "First subscriber on event is returned correctly.");
-    $this->assertTrue(in_array($sub2, $actual), "Second subscriber on event is returned correctly.");
+    $this->assertTrue(
+      in_array($sub1, $actual),
+      "First subscriber on event is returned correctly."
+    );
+    $this->assertTrue(
+      in_array($sub2, $actual),
+      "Second subscriber on event is returned correctly."
+    );
   }
 
   public function testRegister() {
     $event1 = 'event1';
     $event2 = 'event2';
-    $events = array($event1, $event2);
-    $mocked = array_merge($events, array('getSubscribedEvents'));
+    $events = [$event1, $event2];
+    $mocked = array_merge($events, ['getSubscribedEvents']);
 
     $subscriber = $this->getMockSubscriber($mocked);
     $subscriber->expects($this->once())
@@ -167,7 +229,7 @@ class EventEmitterTest extends TestCase {
     $event1 = 'event1';
     $emitter = new EventEmitter();
 
-    $subscriber = $this->getMockSubscriber(array($event1));
+    $subscriber = $this->getMockSubscriber([$event1]);
     $subscriber->expects($this->once())
       ->method($event1);
     $emitter->on($event1, $subscriber);
@@ -195,7 +257,7 @@ class EventEmitterTest extends TestCase {
     $event2 = 'event2';
     $emitter = new EventEmitter();
 
-    $subscriber = $this->getMockSubscriber(array($event1));
+    $subscriber = $this->getMockSubscriber([$event1]);
     // Not called because this event is not the one being emitted.
     $subscriber->expects($this->never())
       ->method($event1);
@@ -210,4 +272,5 @@ class EventEmitterTest extends TestCase {
     $notified_count = $emitter->emit($event2, self::CHANNEL);
     $this->assertEquals(0, $notified_count);
   }
+
 }

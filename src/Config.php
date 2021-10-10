@@ -19,7 +19,7 @@ use Drupal\heisencache\Cache\Cache;
  *
  * @package Drupal\heisencache
  */
-class Config {
+final class Config {
 
   const CACHE_CLASS = Cache::class;
 
@@ -50,7 +50,7 @@ class Config {
    *   The name of the original default cache class, used as:
    *     $class = variable_get('cache_default_class', 'DrupalDatabaseCache');
    */
-  protected string $defaultClass;
+  protected string $defaultClass = '';
 
   /**
    * @var \Drupal\heisencache\EventEmitter

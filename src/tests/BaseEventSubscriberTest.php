@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\heisencache\tests;
 
+use Drupal\heisencache\EventSubscriber\BaseEventSubscriber;
 use PHPUnit\Framework\TestCase;
 
 /**
@@ -20,7 +21,7 @@ class BaseEventSubscriberTest extends TestCase {
     $events = [$event1];
 
     /** @var \Drupal\heisencache\tests\MockEventSubscriberInterface $mock */
-    $mock = $this->getMockForAbstractClass('Drupal\heisencache\BaseEventSubscriber');
+    $mock = $this->getMockForAbstractClass(BaseEventSubscriber::class);
     $mock->addEvent($event1);
 
     $actual = $mock->getSubscribedEvents();

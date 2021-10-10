@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace Drupal\heisencache\tests;
 
+use _PHPStan_76800bfb5\Evenement\EventEmitter;
 use Drupal\heisencache\EventSubscriber\MissSubscriber;
 use PHPUnit\Framework\TestCase;
 
@@ -20,14 +21,16 @@ class MissSubscriberTest extends TestCase {
 
   protected $emitter;
 
-  public function setUp() {
-    $this->emitter = $this->getMock('Drupal\heisencache\EventEmitter');
+  public function setUp(): void {
+    $this->emitter = $this->getMockBuilder(EventEmitter::class)
+      ->getMock();
+    $this->createMock(EventEmitter::class);
   }
 
   public function testGetHit() {
     $sub = new MissSubscriber($this->emitter);
     $actual = $sub->afterGet(self::CHANNEL, 'k', 'v');
-    $this->assertInternalType('array', $actual);
+    $this->assertIsArray($actual);
     $this->assertEmpty($actual);
   }
 
@@ -37,7 +40,7 @@ class MissSubscriberTest extends TestCase {
     $sub = new MissSubscriber($this->emitter);
     $actual = $sub->afterGet(self::CHANNEL, $key, FALSE);
 
-    $this->assertInternalType('array', $actual);
+    $this->assertIsArray($actual);
     $this->assertNotEmpty($actual);
     $this->assertArrayHasKey('misses', $actual);
     $this->assertNotEmpty($actual['misses']);
@@ -52,7 +55,7 @@ class MissSubscriberTest extends TestCase {
     $sub->beforeGetMultiple(self::CHANNEL, $initial_cids);
     $actual = $sub->afterGetMultiple(self::CHANNEL, $missed_cids);
 
-    $this->assertInternalType('array', $actual);
+    $this->assertIsArray($actual);
     $this->assertNotEmpty($actual);
     $this->assertArrayHasKey('full_miss', $actual);
     $this->assertFalse($actual['full_miss']);
@@ -71,7 +74,7 @@ class MissSubscriberTest extends TestCase {
     $sub->beforeGetMultiple(self::CHANNEL, $initial_cids);
     $actual = $sub->afterGetMultiple(self::CHANNEL, $missed_cids);
 
-    $this->assertInternalType('array', $actual);
+    $this->assertIsArray($actual);
     $this->assertNotEmpty($actual);
     $this->assertArrayHasKey('full_miss', $actual);
     $this->assertTrue($actual['full_miss']);
@@ -89,9 +92,8 @@ class MissSubscriberTest extends TestCase {
     $sub = new MissSubscriber($this->emitter);
     $sub->beforeGetMultiple(self::CHANNEL, $initial_cids);
     $actual = $sub->afterGetMultiple(self::CHANNEL, $missed_cids);
-    $this->assertInternalType('array', $actual);
+    $this->assertIsArray($actual);
     $this->assertEmpty($actual);
-
   }
 
 }
