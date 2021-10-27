@@ -31,7 +31,11 @@ $conf['cache_class_cache_update']    = 'DrupalDatabaseCache';
 $conf['cache_backends'][]            = 'sites/all/modules/contrib/redis/redis.autoload.inc';
 
 # Then override the configuration: declare the plugin, load it, and invoke it.
-$conf['cache_backends'][] = 'sites/all/modules/contrib/heisencache/heisencache.inc';
+$plugin = 'sites/all/modules/contrib/heisencache/heisencache.inc';
+require_once __DIR__ . "/../../$plugin";
+$conf['cache_backends'][] =  $plugin;
+# Load its configuration from settings.heisencache.inc.
+$conf = \Drupal\heisencache\heisencache_setup($conf);
 ```
 
 ----
